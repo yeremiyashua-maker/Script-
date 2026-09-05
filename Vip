@@ -1,0 +1,1008 @@
+-- Servicios principales
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Detección automática del ejecutor
+local executorName = "Desconocido"
+pcall(function()
+    if identifyexecutor then
+        executorName = identifyexecutor()
+    elseif syn then
+        executorName = "Synapse X"
+    elseif KRNL_LOADED then
+        executorName = "Krnl"
+    elseif Fluxus then
+        executorName = "Fluxus"
+    elseif Delta then
+        executorName = "Delta"
+    else
+        executorName = "Mobile Executor"
+    end
+end)
+
+-- Limpieza previa para evitar duplicados
+pcall(function()
+    if playerGui:FindFirstChild("FoxnameHubGUI") then playerGui.FoxnameHubGUI:Destroy() end
+    if playerGui:FindFirstChild("FoxnameIntroGUI") then playerGui.FoxnameIntroGUI:Destroy() end
+    if playerGui:FindFirstChild("FoxnameFloatingNotification") then playerGui.FoxnameFloatingNotification:Destroy() end
+    if game:GetService("CoreGui"):FindFirstChild("FoxnameHubGUI") then game:GetService("CoreGui").FoxnameHubGUI:Destroy() end
+    if game:GetService("CoreGui"):FindFirstChild("FoxnameIntroGUI") then game:GetService("CoreGui").FoxnameIntroGUI:Destroy() end
+    if Workspace:FindFirstChild("FoxnameBeamFolder") then Workspace.FoxnameBeamFolder:Destroy() end
+    if Workspace:FindFirstChild("FoxnameESPFolder") then Workspace.FoxnameESPFolder:Destroy() end
+end)
+
+------------------------------------------------------------------
+-- 💜 PANTALLA DE INTRODUCCIÓN (KEY SYSTEM & ANIME BACKGROUND)
+------------------------------------------------------------------
+local IntroGui = Instance.new("ScreenGui")
+IntroGui.Name = "FoxnameIntroGUI"
+IntroGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+IntroGui.ResetOnSpawn = false
+IntroGui.IgnoreGuiInset = true
+IntroGui.Parent = playerGui
+
+local IntroFrame = Instance.new("Frame")
+IntroFrame.Name = "IntroFrame"
+IntroFrame.Parent = IntroGui
+IntroFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+IntroFrame.Size = UDim2.new(1, 0, 1, 0)
+IntroFrame.ZIndex = 100
+
+-- Imagen de fondo con el mismo ID de anime
+local IntroBg = Instance.new("ImageLabel")
+IntroBg.Parent = IntroFrame
+IntroBg.BackgroundTransparency = 1
+IntroBg.Size = UDim2.new(1, 0, 1, 0)
+IntroBg.Image = "rbxassetid://84658427883904"
+IntroBg.ImageTransparency = 0.3
+IntroBg.ScaleType = Enum.ScaleType.Crop
+IntroBg.ZIndex = 101
+
+local IntroBoxFrame = Instance.new("Frame")
+IntroBoxFrame.Parent = IntroFrame
+IntroBoxFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+IntroBoxFrame.BackgroundTransparency = 0.15
+IntroBoxFrame.Position = UDim2.new(0.5, -160, 0.5, -110)
+IntroBoxFrame.Size = UDim2.new(0, 320, 0, 220)
+IntroBoxFrame.ZIndex = 102
+Instance.new("UICorner", IntroBoxFrame).CornerRadius = UDim.new(0, 14)
+
+local IntroStroke = Instance.new("UIStroke")
+IntroStroke.Color = Color3.fromRGB(255, 150, 240)
+IntroStroke.Thickness = 2.5
+IntroStroke.Parent = IntroBoxFrame
+
+local IntroTitle = Instance.new("TextLabel")
+IntroTitle.Parent = IntroBoxFrame
+IntroTitle.BackgroundTransparency = 1
+IntroTitle.Position = UDim2.new(0, 0, 0, 20)
+IntroTitle.Size = UDim2.new(1, 0, 0, 30)
+IntroTitle.ZIndex = 103
+IntroTitle.Font = Enum.Font.GothamBold
+IntroTitle.Text = "🌸 Foxname Hub - Key System 🌸"
+IntroTitle.TextColor3 = Color3.fromRGB(255, 230, 255)
+IntroTitle.TextSize = 13
+
+local KeyTextBox = Instance.new("TextBox")
+KeyTextBox.Parent = IntroBoxFrame
+KeyTextBox.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+KeyTextBox.BackgroundTransparency = 0.25
+KeyTextBox.Position = UDim2.new(0.5, -120, 0, 75)
+KeyTextBox.Size = UDim2.new(0, 240, 0, 38)
+KeyTextBox.ZIndex = 103
+KeyTextBox.Font = Enum.Font.GothamBold
+KeyTextBox.PlaceholderText = "Ingresa la Key..."
+KeyTextBox.PlaceholderColor3 = Color3.fromRGB(200, 160, 220)
+KeyTextBox.Text = ""
+KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyTextBox.TextSize = 12
+KeyTextBox.ClearTextOnFocus = false
+Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 8)
+
+local KeyBoxStroke = Instance.new("UIStroke")
+KeyBoxStroke.Color = Color3.fromRGB(200, 100, 250)
+KeyBoxStroke.Thickness = 1.5
+KeyBoxStroke.Parent = KeyTextBox
+
+local VerifyBtn = Instance.new("TextButton")
+VerifyBtn.Parent = IntroBoxFrame
+VerifyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+VerifyBtn.Position = UDim2.new(0.5, -120, 0, 130)
+VerifyBtn.Size = UDim2.new(0, 240, 0, 38)
+VerifyBtn.ZIndex = 103
+VerifyBtn.Font = Enum.Font.GothamBold
+VerifyBtn.Text = "Verificar Key"
+VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+VerifyBtn.TextSize = 12
+Instance.new("UICorner", VerifyBtn).CornerRadius = UDim.new(0, 8)
+
+local IntroStatus = Instance.new("TextLabel")
+IntroStatus.Parent = IntroBoxFrame
+IntroStatus.BackgroundTransparency = 1
+IntroStatus.Position = UDim2.new(0, 0, 0, 180)
+IntroStatus.Size = UDim2.new(1, 0, 0, 20)
+IntroStatus.ZIndex = 103
+IntroStatus.Font = Enum.Font.GothamMedium
+IntroStatus.Text = ""
+IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
+IntroStatus.TextSize = 10.5
+
+-- Función que carga todo el Hub una vez verificada la Key correctamente
+local function loadMainHub()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "FoxnameHubGUI"
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.IgnoreGuiInset = true
+    ScreenGui.Parent = playerGui
+
+    -- Notificación flotante externa con estilo mágico
+    local NotifGui = Instance.new("ScreenGui")
+    NotifGui.Name = "FoxnameFloatingNotification"
+    NotifGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    NotifGui.ResetOnSpawn = false
+    NotifGui.IgnoreGuiInset = true
+    NotifGui.Parent = playerGui
+
+    local FloatingNotif = Instance.new("TextLabel")
+    FloatingNotif.Name = "FloatingNotif"
+    FloatingNotif.Parent = NotifGui
+    FloatingNotif.BackgroundColor3 = Color3.fromRGB(15, 8, 25)
+    FloatingNotif.Position = UDim2.new(0.5, -140, 0.1, 0)
+    FloatingNotif.Size = UDim2.new(0, 280, 0, 38)
+    FloatingNotif.Visible = false
+    FloatingNotif.ZIndex = 999
+    FloatingNotif.Font = Enum.Font.GothamBold
+    FloatingNotif.Text = ""
+    FloatingNotif.TextColor3 = Color3.fromRGB(255, 225, 245)
+    FloatingNotif.TextSize = 11.5
+    Instance.new("UICorner", FloatingNotif).CornerRadius = UDim.new(0, 10)
+    local NotifStroke = Instance.new("UIStroke")
+    NotifStroke.Color = Color3.fromRGB(255, 140, 230)
+    NotifStroke.Thickness = 2.5
+    NotifStroke.Parent = FloatingNotif
+
+    local function showFloatingMessage(text)
+        pcall(function()
+            FloatingNotif.Text = text
+            FloatingNotif.Visible = true
+            FloatingNotif.TextTransparency = 1
+            FloatingNotif.BackgroundTransparency = 1
+            NotifStroke.Transparency = 1
+            
+            TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 0, BackgroundTransparency = 0.1}):Play()
+            TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+            
+            task.delay(1.5, function()
+                pcall(function()
+                    TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
+                    TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
+                    task.wait(0.3)
+                    FloatingNotif.Visible = false
+                end)
+            end)
+        end)
+    end
+
+    ------------------------------------------------------------------
+    -- 💜 CÍRCULO FLOTANTE ANIMADO Y MEGA DECORADO
+    ------------------------------------------------------------------
+    local CircleButton = Instance.new("ImageButton")
+    CircleButton.Name = "CircleButton"
+    CircleButton.Parent = ScreenGui
+    CircleButton.BackgroundColor3 = Color3.fromRGB(20, 10, 35)
+    CircleButton.Position = UDim2.new(0.04, 0, 0.12, 0)
+    CircleButton.Size = UDim2.new(0, 56, 0, 56)
+    CircleButton.Image = "rbxassetid://84658427883904"
+    CircleButton.Visible = true
+    Instance.new("UICorner", CircleButton).CornerRadius = UDim.new(1, 0)
+
+    local UIStrokeCircle = Instance.new("UIStroke")
+    UIStrokeCircle.Color = Color3.fromRGB(255, 130, 245)
+    UIStrokeCircle.Thickness = 3.5
+    UIStrokeCircle.Parent = CircleButton
+
+    local CircleGlow = Instance.new("UIStroke")
+    CircleGlow.Color = Color3.fromRGB(180, 50, 220)
+    CircleGlow.Thickness = 6
+    CircleGlow.Transparency = 0.4
+    CircleGlow.Parent = CircleButton
+
+    CircleButton.MouseEnter:Connect(function()
+        TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 62, 0, 62)}):Play()
+    end)
+    CircleButton.MouseLeave:Connect(function()
+        TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 56, 0, 56)}):Play()
+    end)
+
+    ------------------------------------------------------------------
+    -- 💜 VENTANA PRINCIPAL ULTRA DECORADA (MEGA ESTÉTICA ANIME)
+    ------------------------------------------------------------------
+    local HubFrame = Instance.new("Frame")
+    HubFrame.Name = "HubFrame"
+    HubFrame.Parent = ScreenGui
+    HubFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    HubFrame.BackgroundTransparency = 0.1
+    HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
+    HubFrame.Size = UDim2.new(0, 490, 0, 300)
+    HubFrame.ClipsDescendants = true
+    HubFrame.Visible = true
+    Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
+
+    local UIStrokeHub = Instance.new("UIStroke")
+    UIStrokeHub.Color = Color3.fromRGB(255, 150, 240)
+    UIStrokeHub.Thickness = 3
+    UIStrokeHub.Parent = HubFrame
+
+    -- Marco interno secundario brillante para efecto de lujo
+    local InnerBorder = Instance.new("Frame")
+    InnerBorder.Parent = HubFrame
+    InnerBorder.BackgroundTransparency = 1
+    InnerBorder.Position = UDim2.new(0, 4, 0, 4)
+    InnerBorder.Size = UDim2.new(1, -8, 1, -8)
+    InnerBorder.ZIndex = 2
+    local InnerStroke = Instance.new("UIStroke")
+    InnerStroke.Color = Color3.fromRGB(200, 100, 255)
+    InnerStroke.Transparency = 0.5
+    InnerStroke.Thickness = 1.2
+    InnerStroke.Parent = InnerBorder
+    Instance.new("UICorner", InnerBorder).CornerRadius = UDim.new(0, 12)
+
+    -- Fondo de anime translúcido
+    local BgAnimeImg = Instance.new("ImageLabel")
+    BgAnimeImg.Parent = HubFrame
+    BgAnimeImg.BackgroundTransparency = 1
+    BgAnimeImg.Size = UDim2.new(1, 0, 1, 0)
+    BgAnimeImg.Image = "rbxassetid://84658427883904"
+    BgAnimeImg.ImageTransparency = 0.5
+    BgAnimeImg.ScaleType = Enum.ScaleType.Crop
+    BgAnimeImg.ZIndex = 1
+
+    -- Lluvia de pétalos mágicos más densa y decorada
+    local SnowContainer = Instance.new("Folder")
+    SnowContainer.Name = "SnowContainer"
+    SnowContainer.Parent = HubFrame
+
+    task.spawn(function()
+        while ScreenGui and ScreenGui.Parent do
+            pcall(function()
+                local flake = Instance.new("Frame")
+                flake.Parent = SnowContainer
+                flake.BackgroundColor3 = Color3.fromRGB(255, 200, 250)
+                flake.BackgroundTransparency = 0.25
+                flake.BorderSizePixel = 0
+                
+                local size = math.random(3, 7)
+                flake.Size = UDim2.new(0, size, 0, size)
+                flake.Position = UDim2.new(math.random(2, 98) / 100, 0, -0.1, 0)
+                Instance.new("UICorner", flake).CornerRadius = UDim.new(1, 0)
+                
+                local fallTime = math.random(4, 7)
+                local tw = TweenService:Create(flake, TweenInfo.new(fallTime, Enum.EasingStyle.Linear), {Position = UDim2.new(flake.Position.X.Scale, 0, 1.1, 0)})
+                tw:Play()
+                tw.Completed:Connect(function() flake:Destroy() end)
+            end)
+            task.wait(0.25)
+        end
+    end)
+
+    ------------------------------------------------------------------
+    -- BARRA SUPERIOR DECORADA
+    ------------------------------------------------------------------
+    local TopBar = Instance.new("Frame")
+    TopBar.Parent = HubFrame
+    TopBar.BackgroundTransparency = 1
+    TopBar.Position = UDim2.new(0, 12, 0, 8)
+    TopBar.Size = UDim2.new(1, -24, 0, 26)
+    TopBar.ZIndex = 5
+
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Parent = TopBar
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Size = UDim2.new(0, 240, 1, 0)
+    TitleLabel.ZIndex = 6
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.Text = "🌸✨ Foxname - Luxury Anime Hub ✨🌸"
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 230, 255)
+    TitleLabel.TextSize = 11.5
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local CloseBtn = Instance.new("TextButton")
+    CloseBtn.Parent = TopBar
+    CloseBtn.BackgroundTransparency = 1
+    CloseBtn.Position = UDim2.new(1, -22, 0, 0)
+    CloseBtn.Size = UDim2.new(0, 22, 1, 0)
+    CloseBtn.ZIndex = 10
+    CloseBtn.Font = Enum.Font.GothamBold
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 200, 240)
+    CloseBtn.TextSize = 15
+
+    ------------------------------------------------------------------
+    -- SIDEBAR (Pestañas: Main, Visuals/ESP, Owner)
+    ------------------------------------------------------------------
+    local Sidebar = Instance.new("ScrollingFrame")
+    Sidebar.Parent = HubFrame
+    Sidebar.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+    Sidebar.BackgroundTransparency = 0.25
+    Sidebar.Position = UDim2.new(0, 6, 0, 38)
+    Sidebar.Size = UDim2.new(0, 125, 1, -44)
+    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 130)
+    Sidebar.ScrollBarThickness = 0
+    Sidebar.ZIndex = 4
+    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
+
+    local SubtitleTop = Instance.new("TextLabel")
+    SubtitleTop.Parent = Sidebar
+    SubtitleTop.BackgroundTransparency = 1
+    SubtitleTop.Position = UDim2.new(0, 10, 0, 6)
+    SubtitleTop.Size = UDim2.new(1, -15, 0, 14)
+    SubtitleTop.ZIndex = 5
+    SubtitleTop.Font = Enum.Font.GothamMedium
+    SubtitleTop.Text = "💎 foxname.top"
+    SubtitleTop.TextColor3 = Color3.fromRGB(210, 160, 245)
+    SubtitleTop.TextSize = 9.5
+    SubtitleTop.TextXAlignment = Enum.TextXAlignment.Left
+
+    local function createTabButton(name, yPos, active)
+        local btn = Instance.new("TextButton")
+        btn.Parent = Sidebar
+        btn.BackgroundColor3 = active and Color3.fromRGB(105, 35, 170) or Color3.fromRGB(22, 10, 38)
+        btn.BackgroundTransparency = active and 0.1 or 0.55
+        btn.Position = UDim2.new(0, 6, 0, yPos)
+        btn.Size = UDim2.new(1, -12, 0, 28)
+        btn.ZIndex = 5
+        btn.Font = Enum.Font.GothamBold
+        btn.Text = "  " .. name
+        btn.TextColor3 = active and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(215, 190, 245)
+        btn.TextSize = 10.5
+        btn.TextXAlignment = Enum.TextXAlignment.Left
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        return btn
+    end
+
+    local TabMain = createTabButton("📖 Worlds", 28, true)
+    local TabVisuals = createTabButton("🎯 Visuals/ESP", 60, false)
+    local TabOwner = createTabButton("👑 Owner", 92, false)
+
+    ------------------------------------------------------------------
+    -- CONTENEDOR 1: MAIN (WORLDS + WORLD 5 PRIMERO CON NUEVAS COORDENADAS)
+    ------------------------------------------------------------------
+    local MainContainer = Instance.new("ScrollingFrame")
+    MainContainer.Parent = HubFrame
+    MainContainer.BackgroundTransparency = 1
+    MainContainer.Position = UDim2.new(0, 136, 0, 38)
+    MainContainer.Size = UDim2.new(1, -142, 1, -44)
+    MainContainer.CanvasSize = UDim2.new(0, 0, 0, 250)
+    MainContainer.ScrollBarThickness = 3
+    MainContainer.ZIndex = 4
+
+    -- BOTÓN MENÚ WORLDS
+    local WorldsMenuBtn = Instance.new("TextButton")
+    WorldsMenuBtn.Parent = MainContainer
+    WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    WorldsMenuBtn.BackgroundTransparency = 0.25
+    WorldsMenuBtn.Position = UDim2.new(0, 0, 0, 4)
+    WorldsMenuBtn.Size = UDim2.new(1, -8, 0, 36)
+    WorldsMenuBtn.ZIndex = 5
+    WorldsMenuBtn.Font = Enum.Font.GothamBold
+    WorldsMenuBtn.Text = "   📖 Seleccionar Worlds ▾"
+    WorldsMenuBtn.TextColor3 = Color3.fromRGB(255, 220, 255)
+    WorldsMenuBtn.TextSize = 10.5
+    WorldsMenuBtn.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", WorldsMenuBtn).CornerRadius = UDim.new(0, 8)
+
+    local WorldsStroke = Instance.new("UIStroke")
+    WorldsStroke.Color = Color3.fromRGB(200, 100, 250)
+    WorldsStroke.Transparency = 0.3
+    WorldsStroke.Thickness = 1.5
+    WorldsStroke.Parent = WorldsMenuBtn
+
+    -- SUBVENTANA DESPLEGABLE DE WORLDS (World 5 colocado primero según las capturas y coordenadas provistas)
+    local WorldDropdown = Instance.new("Frame")
+    WorldDropdown.Parent = MainContainer
+    WorldDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
+    WorldDropdown.BackgroundTransparency = 0.1
+    WorldDropdown.Position = UDim2.new(0, 0, 0, 44)
+    WorldDropdown.Size = UDim2.new(1, -8, 0, 178)
+    WorldDropdown.ZIndex = 10
+    WorldDropdown.Visible = false
+    Instance.new("UICorner", WorldDropdown).CornerRadius = UDim.new(0, 8)
+    local UIStrokeDrop = Instance.new("UIStroke")
+    UIStrokeDrop.Color = Color3.fromRGB(230, 130, 255)
+    UIStrokeDrop.Thickness = 2
+    UIStrokeDrop.Parent = WorldDropdown
+
+    local function createWorldBtn(name, yPos)
+        local btn = Instance.new("TextButton")
+        btn.Parent = WorldDropdown
+        btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        btn.Position = UDim2.new(0, 8, 0, yPos)
+        btn.Size = UDim2.new(1, -16, 0, 24)
+        btn.ZIndex = 11
+        btn.Font = Enum.Font.GothamBold
+        btn.Text = name .. " [OFF]"
+        btn.TextColor3 = Color3.fromRGB(255, 210, 255)
+        btn.TextSize = 10
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        return btn
+    end
+
+    local World5Btn = createWorldBtn("World 5", 6)
+    local World1Btn = createWorldBtn("World 1", 33)
+    local World2Btn = createWorldBtn("World 2", 60)
+    local World3Btn = createWorldBtn("World 3", 87)
+    local World4Btn = createWorldBtn("World 4", 114)
+
+    local menuOpen = false
+    WorldsMenuBtn.MouseButton1Click:Connect(function()
+        menuOpen = not menuOpen
+        WorldDropdown.Visible = menuOpen
+        WorldsMenuBtn.Text = menuOpen and "   📖 Seleccionar Worlds ▴" or "   📖 Seleccionar Worlds ▾"
+    end)
+
+    -- PANEL DE ESTADO Y COORDENADAS
+    local StatusInfo = Instance.new("TextLabel")
+    StatusInfo.Parent = MainContainer
+    StatusInfo.BackgroundTransparency = 1
+    StatusInfo.Position = UDim2.new(0, 4, 0, 168)
+    StatusInfo.Size = UDim2.new(1, -12, 0, 18)
+    StatusInfo.ZIndex = 5
+    StatusInfo.Font = Enum.Font.GothamMedium
+    StatusInfo.Text = "Estado: Esperando selección..."
+    StatusInfo.TextColor3 = Color3.fromRGB(230, 170, 255)
+    StatusInfo.TextSize = 9.5
+    StatusInfo.TextXAlignment = Enum.TextXAlignment.Left
+
+    local CoordsBox = Instance.new("TextBox")
+    CoordsBox.Parent = MainContainer
+    CoordsBox.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    CoordsBox.BackgroundTransparency = 0.25
+    CoordsBox.Position = UDim2.new(0, 0, 0, 190)
+    CoordsBox.Size = UDim2.new(1, -8, 0, 30)
+    CoordsBox.ZIndex = 5
+    CoordsBox.Font = Enum.Font.GothamBold
+    CoordsBox.Text = "0, 0, 0"
+    CoordsBox.TextColor3 = Color3.fromRGB(255, 230, 255)
+    CoordsBox.TextSize = 10.5
+    CoordsBox.ClearTextOnFocus = false
+    Instance.new("UICorner", CoordsBox).CornerRadius = UDim.new(0, 8)
+
+    local CoordsStroke = Instance.new("UIStroke")
+    CoordsStroke.Color = Color3.fromRGB(200, 100, 250)
+    CoordsStroke.Transparency = 0.3
+    CoordsStroke.Thickness = 1.5
+    CoordsStroke.Parent = CoordsBox
+
+    ------------------------------------------------------------------
+    -- CONTENEDOR 2: VISUALS / ESP (LÍNEAS Y SHADER REALISTA LLUVIOSO)
+    ------------------------------------------------------------------
+    local VisualsContainer = Instance.new("ScrollingFrame")
+    VisualsContainer.Parent = HubFrame
+    VisualsContainer.BackgroundTransparency = 1
+    VisualsContainer.Position = UDim2.new(0, 136, 0, 38)
+    VisualsContainer.Size = UDim2.new(1, -142, 1, -44)
+    VisualsContainer.CanvasSize = UDim2.new(0, 0, 0, 120)
+    VisualsContainer.ScrollBarThickness = 3
+    VisualsContainer.Visible = false
+    VisualsContainer.ZIndex = 4
+
+    local function createToggleOption(name, yPos, callback)
+        local frame = Instance.new("Frame")
+        frame.Parent = VisualsContainer
+        frame.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+        frame.BackgroundTransparency = 0.25
+        frame.Position = UDim2.new(0, 0, 0, yPos)
+        frame.Size = UDim2.new(1, -8, 0, 36)
+        frame.ZIndex = 5
+        Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(200, 100, 250)
+        stroke.Transparency = 0.3
+        stroke.Thickness = 1.5
+        stroke.Parent = frame
+
+        local label = Instance.new("TextLabel")
+        label.Parent = frame
+        label.BackgroundTransparency = 1
+        label.Position = UDim2.new(0, 12, 0, 0)
+        label.Size = UDim2.new(0, 200, 1, 0)
+        label.ZIndex = 6
+        label.Font = Enum.Font.GothamBold
+        label.Text = name
+        label.TextColor3 = Color3.fromRGB(255, 220, 255)
+        label.TextSize = 10.5
+        label.TextXAlignment = Enum.TextXAlignment.Left
+
+        local toggleBg = Instance.new("TextButton")
+        toggleBg.Parent = frame
+        toggleBg.BackgroundColor3 = Color3.fromRGB(55, 25, 80)
+        toggleBg.Position = UDim2.new(1, -48, 0.5, -11)
+        toggleBg.Size = UDim2.new(0, 40, 0, 22)
+        toggleBg.AutoButtonColor = false
+        toggleBg.ZIndex = 6
+        toggleBg.Text = ""
+        Instance.new("UICorner", toggleBg).CornerRadius = UDim.new(1, 0)
+
+        local circle = Instance.new("Frame")
+        circle.Parent = toggleBg
+        circle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        circle.Position = UDim2.new(0, 3, 0.5, -8)
+        circle.Size = UDim2.new(0, 16, 0, 16)
+        circle.ZIndex = 7
+        Instance.new("UICorner", circle).CornerRadius = UDim.new(1, 0)
+
+        local active = false
+        toggleBg.MouseButton1Click:Connect(function()
+            active = not active
+            if active then
+                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(180, 50, 240)}):Play()
+                TweenService:Create(circle, TweenInfo.new(0.15), {Position = UDim2.new(1, -19, 0.5, -8)}):Play()
+            else
+                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(55, 25, 80)}):Play()
+                TweenService:Create(circle, TweenInfo.new(0.15), {Position = UDim2.new(0, 3, 0.5, -8)}):Play()
+            end
+            callback(active)
+        end)
+
+        return frame
+    end
+
+    ------------------------------------------------------------------
+    -- 💜 1. LÍNEAS ESP (Avatar + Enemigos con Nombres)
+    ------------------------------------------------------------------
+    local espActive = false
+    local espFolder = Instance.new("Folder", Workspace)
+    espFolder.Name = "FoxnameESPFolder"
+
+    local function updateESP()
+        pcall(function()
+            for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
+            if not espActive then return end
+
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                    local char = plr.Character
+                    local root = char:FindFirstChild("HumanoidRootPart")
+                    local head = char:FindFirstChild("Head")
+                    
+                    if root and head and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        local linePart = Instance.new("Part")
+                        linePart.Size = Vector3.new(0.25, 0.25, (player.Character.HumanoidRootPart.Position - root.Position).Magnitude)
+                        linePart.CFrame = CFrame.new(player.Character.HumanoidRootPart.Position, root.Position) * CFrame.new(0, 0, -linePart.Size.Z / 2)
+                        linePart.Anchored = true
+                        linePart.CanCollide = false
+                        linePart.Material = Enum.Material.Neon
+                        linePart.Color = Color3.fromRGB(255, 120, 245)
+                        linePart.Parent = espFolder
+
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "ESPName"
+                        billboard.Adornee = head
+                        billboard.Size = UDim2.new(0, 110, 0, 40)
+                        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = espFolder
+
+                        local nameLabel = Instance.new("TextLabel")
+                        nameLabel.Parent = billboard
+                        nameLabel.BackgroundTransparency = 1
+                        nameLabel.Size = UDim2.new(1, 0, 1, 0)
+                        nameLabel.Font = Enum.Font.GothamBold
+                        nameLabel.Text = "🎯 " .. plr.Name
+                        nameLabel.TextColor3 = Color3.fromRGB(255, 190, 255)
+                        nameLabel.TextSize = 11.5
+                        nameLabel.TextStrokeTransparency = 0.2
+                        nameLabel.TextStrokeColor3 = Color3.fromRGB(120, 20, 160)
+                    end
+                end
+            end
+        end)
+    end
+
+    RunService.RenderStepped:Connect(function()
+        if espActive then
+            updateESP()
+        end
+    end)
+
+    createToggleOption("🎯 Enemy Lines & Names ESP", 4, function(state)
+        espActive = state
+        if not espActive then
+            for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
+            showFloatingMessage("ESP Desactivado")
+        else
+            showFloatingMessage("ESP Activado (Líneas y Nombres) 💜")
+        end
+    end)
+
+    ------------------------------------------------------------------
+    -- 💜 2. SHADER REALISTA LLUVIOSO
+    ------------------------------------------------------------------
+    local shaderActive = false
+    local originalLighting = {}
+
+    createToggleOption("✨ Realistic Rainy Shader", 48, function(state)
+        shaderActive = state
+        pcall(function()
+            if shaderActive then
+                originalLighting.Brightness = Lighting.Brightness
+                originalLighting.OutdoorAmbient = Lighting.OutdoorAmbient
+                originalLighting.GlobalShadows = Lighting.GlobalShadows
+
+                Lighting.Brightness = 1.8
+                Lighting.GlobalShadows = true
+                Lighting.OutdoorAmbient = Color3.fromRGB(90, 85, 110)
+
+                local bloom = Lighting:FindFirstChild("FoxnameRainBloom") or Instance.new("BloomEffect", Lighting)
+                bloom.Name = "FoxnameRainBloom"
+                bloom.Intensity = 0.85
+                bloom.Size = 24
+                bloom.Threshold = 0.4
+
+                local cc = Lighting:FindFirstChild("FoxnameRainCC") or Instance.new("ColorCorrectionEffect", Lighting)
+                cc.Name = "FoxnameRainCC"
+                cc.TintColor = Color3.fromRGB(225, 230, 255)
+                cc.Saturation = 0.05
+                cc.Contrast = 0.15
+
+                showFloatingMessage("🌧️ Realistic Rainy Shader [ON]")
+            else
+                if originalLighting.Brightness then
+                    Lighting.Brightness = originalLighting.Brightness
+                    Lighting.OutdoorAmbient = originalLighting.OutdoorAmbient or Color3.fromRGB(128, 128, 128)
+                    Lighting.GlobalShadows = originalLighting.GlobalShadows
+                end
+                local bloom = Lighting:FindFirstChild("FoxnameRainBloom")
+                if bloom then bloom:Destroy() end
+                local cc = Lighting:FindFirstChild("FoxnameRainCC")
+                if cc then cc:Destroy() end
+
+                showFloatingMessage("🌧️ Realistic Rainy Shader [OFF]")
+            end
+        end)
+    end)
+
+    ------------------------------------------------------------------
+    -- LÓGICA DE RUTA Y RECOLECCIÓN DE WINS (INCLUYENDO WORLD 5 ACTUALIZADO)
+    ------------------------------------------------------------------
+    -- Coordenadas basadas en las capturas provistas para World 5 (A: inicio, B: teletransporte, C: wins)
+    local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
+    local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
+    local posC5 = Vector3.new(-7600.6, 290.5, 8357.4)
+
+    local posA1 = Vector3.new(-435.6, 27.3, -224.1)
+    local posB1 = Vector3.new(-9460.4, 387.0, -237.8)
+    local posC1 = Vector3.new(-9460.5, 390.6, -257.9)
+
+    local posA2 = Vector3.new(-439.2, 27.4, -2532.3)
+    local posB2 = Vector3.new(-3632.1, 153.2, -9379.6)
+    local posC2 = Vector3.new(-3606.7, 157.3, -9378.7)
+
+    local posA3 = Vector3.new(-438.7, 27.3, 5776.5)
+    local posB3 = Vector3.new(-8076.4, 280.0, 2773.3)
+    local posC3 = Vector3.new(-8078.1, 283.1, 2741.1)
+
+    local posA4 = Vector3.new(-438.7, 27.3, 5776.5)
+    local posB4 = Vector3.new(-7758.6, 18.6, 5778.8)
+    local posC4 = Vector3.new(-7759.8, 22.1, 5742.2)
+
+    local beamFolder = Instance.new("Folder", Workspace)
+    beamFolder.Name = "FoxnameBeamFolder"
+
+    local function drawNeonLine(startPos, endPos)
+        pcall(function()
+            for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
+            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Parent = beamFolder
+        end)
+    end
+
+    local function clearNeonLine()
+        pcall(function() for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end end)
+    end
+
+    RunService.RenderStepped:Connect(function()
+        pcall(function()
+            local char = player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            if root then
+                local p = root.Position
+                CoordsBox.Text = string.format("%.1f, %.1f, %.1f", p.X, p.Y, p.Z)
+            end
+        end)
+    end)
+
+    local world1Active = false
+    local world2Active = false
+    local world3Active = false
+    local world4Active = false
+    local world5Active = false
+
+    local function resetAllWorlds()
+        world1Active = false
+        world2Active = false
+        world3Active = false
+        world4Active = false
+        world5Active = false
+        World1Btn.Text = "World 1 [OFF]"
+        World1Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World2Btn.Text = "World 2 [OFF]"
+        World2Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World3Btn.Text = "World 3 [OFF]"
+        World3Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World4Btn.Text = "World 4 [OFF]"
+        World4Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World5Btn.Text = "World 5 [OFF]"
+        World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        StatusInfo.Text = "Estado: Apagado"
+        clearNeonLine()
+    end
+
+    World5Btn.MouseButton1Click:Connect(function()
+        world5Active = not world5Active
+        if world5Active then
+            resetAllWorlds()
+            world5Active = true
+            World5Btn.Text = "World 5 [ON]"
+            World5Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: World 5 Activo 💜"
+        else
+            resetAllWorlds()
+        end
+    end)
+
+    World1Btn.MouseButton1Click:Connect(function()
+        world1Active = not world1Active
+        if world1Active then
+            resetAllWorlds()
+            world1Active = true
+            World1Btn.Text = "World 1 [ON]"
+            World1Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: World 1 Activo 💜"
+        else
+            resetAllWorlds()
+        end
+    end)
+
+    World2Btn.MouseButton1Click:Connect(function()
+        world2Active = not world2Active
+        if world2Active then
+            resetAllWorlds()
+            world2Active = true
+            World2Btn.Text = "World 2 [ON]"
+            World2Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: World 2 Activo 💜"
+        else
+            resetAllWorlds()
+        end
+    end)
+
+    World3Btn.MouseButton1Click:Connect(function()
+        world3Active = not world3Active
+        if world3Active then
+            resetAllWorlds()
+            world3Active = true
+            World3Btn.Text = "World 3 [ON]"
+            World3Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: World 3 Activo 💜"
+        else
+            resetAllWorlds()
+        end
+    end)
+
+    World4Btn.MouseButton1Click:Connect(function()
+        world4Active = not world4Active
+        if world4Active then
+            resetAllWorlds()
+            world4Active = true
+            World4Btn.Text = "World 4 [ON]"
+            World4Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: World 4 Activo 💜"
+        else
+            resetAllWorlds()
+        end
+    end)
+
+    local function runWorldLoop(isActiveRef, posA, posB, posC, worldName)
+        task.spawn(function()
+            while true do
+                if isActiveRef() then
+                    local char = player.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+                    
+                    if root and humanoid then
+                        root.CFrame = CFrame.new(posA)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        root.CFrame = CFrame.new(posB)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        local travelTime = 3.5
+                        local elapsed = 0
+                        StatusInfo.Text = "Estado: " .. worldName .. " - Recorriendo..."
+                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
+                            local dt = RunService.RenderStepped:Wait()
+                            elapsed = elapsed + dt
+                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
+                            if humanoid.Health <= 0 then break end
+                            root.CFrame = CFrame.new(posB:Lerp(posC, alpha))
+                            drawNeonLine(root.Position, posC)
+                        end
+
+                        root.CFrame = CFrame.new(posC)
+                        clearNeonLine()
+                        
+                        local collected = false
+                        pcall(function()
+                            for _, obj in pairs(Workspace:GetDescendants()) do
+                                if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
+                                    local part = obj.Parent
+                                    if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
+                                        firetouchinterest(root, part, 0)
+                                        firetouchinterest(root, part, 1)
+                                        collected = true
+                                    end
+                                end
+                            end
+                        end)
+
+                        if collected then
+                            showFloatingMessage("¡Wins recogidas (" .. worldName .. ")! 💜")
+                        else
+                            showFloatingMessage("¡" .. worldName .. " alcanzado!")
+                        end
+
+                        StatusInfo.Text = "Estado: ¡Completado (" .. worldName .. ")! 💜"
+                        task.wait(1.0)
+                    else
+                        task.wait(1)
+                    end
+                else
+                    task.wait(0.4)
+                end
+            end
+        end)
+    end
+
+    runWorldLoop(function() return world5Active end, posA5, posB5, posC5, "W5")
+    runWorldLoop(function() return world1Active end, posA1, posB1, posC1, "W1")
+    runWorldLoop(function() return world2Active end, posA2, posB2, posC2, "W2")
+    runWorldLoop(function() return world3Active end, posA3, posB3, posC3, "W3")
+    runWorldLoop(function() return world4Active end, posA4, posB4, posC4, "W4")
+
+    ------------------------------------------------------------------
+    -- PESTAÑA OWNER
+    ------------------------------------------------------------------
+    local OwnerContainer = Instance.new("Frame")
+    OwnerContainer.Name = "OwnerContainer"
+    OwnerContainer.Parent = HubFrame
+    OwnerContainer.BackgroundTransparency = 1
+    OwnerContainer.Position = UDim2.new(0, 136, 0, 38)
+    OwnerContainer.Size = UDim2.new(1, -142, 1, -44)
+    OwnerContainer.Visible = false
+    OwnerContainer.ZIndex = 4
+
+    local OwnerAvatar = Instance.new("ImageLabel")
+    OwnerAvatar.Parent = OwnerContainer
+    OwnerAvatar.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
+    OwnerAvatar.Position = UDim2.new(0.5, -35, 0, 15)
+    OwnerAvatar.Size = UDim2.new(0, 70, 0, 70)
+    OwnerAvatar.ZIndex = 5
+    pcall(function()
+        OwnerAvatar.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    end)
+    if OwnerAvatar.Image == "" then
+        OwnerAvatar.Image = "rbxassetid://104233303368529"
+    end
+    Instance.new("UICorner", OwnerAvatar).CornerRadius = UDim.new(1, 0)
+
+    local OwnerStroke = Instance.new("UIStroke")
+    OwnerStroke.Color = Color3.fromRGB(230, 130, 255)
+    OwnerStroke.Thickness = 2.5
+    OwnerStroke.Parent = OwnerAvatar
+
+    local OwnerTextTitle = Instance.new("TextLabel")
+    OwnerTextTitle.Parent = OwnerContainer
+    OwnerTextTitle.BackgroundTransparency = 1
+    OwnerTextTitle.Position = UDim2.new(0, 0, 0, 95)
+    OwnerTextTitle.Size = UDim2.new(1, 0, 0, 24)
+    OwnerTextTitle.ZIndex = 5
+    OwnerTextTitle.Font = Enum.Font.GothamBold
+    OwnerTextTitle.Text = "👑 OWNER 👑"
+    OwnerTextTitle.TextColor3 = Color3.fromRGB(255, 225, 255)
+    OwnerTextTitle.TextSize = 13
+
+    local OwnerTextName = Instance.new("TextLabel")
+    OwnerTextName.Parent = OwnerContainer
+    OwnerTextName.BackgroundTransparency = 1
+    OwnerTextName.Position = UDim2.new(0, 0, 0, 120)
+    OwnerTextName.Size = UDim2.new(1, 0, 0, 20)
+    OwnerTextName.ZIndex = 5
+    OwnerTextName.Font = Enum.Font.GothamMedium
+    OwnerTextName.Text = player.Name .. " (ID: " .. player.UserId .. ")"
+    OwnerTextName.TextColor3 = Color3.fromRGB(230, 200, 255)
+    OwnerTextName.TextSize = 11
+
+    ------------------------------------------------------------------
+    -- CONTROL DE NAVEGACIÓN ENTRE PESTAÑAS
+    ------------------------------------------------------------------
+    local function switchTab(activeBtn, targetContainer)
+        for _, btn in pairs({TabMain, TabVisuals, TabOwner}) do
+            btn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+            btn.BackgroundTransparency = 0.55
+            btn.TextColor3 = Color3.fromRGB(215, 190, 245)
+        end
+        for _, cont in pairs({MainContainer, VisualsContainer, OwnerContainer}) do
+            cont.Visible = false
+        end
+        
+        activeBtn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
+        activeBtn.BackgroundTransparency = 0.1
+        activeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        targetContainer.Visible = true
+    end
+
+    TabMain.MouseButton1Click:Connect(function() switchTab(TabMain, MainContainer) end)
+    TabVisuals.MouseButton1Click:Connect(function() switchTab(TabVisuals, VisualsContainer) end)
+    TabOwner.MouseButton1Click:Connect(function() switchTab(TabOwner, OwnerContainer) end)
+
+    ------------------------------------------------------------------
+    -- MOVIMIENTO FLUIDO (DRAG & DROP)
+    ------------------------------------------------------------------
+    local dragging, dragInput, dragStart, startPos
+    HubFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = HubFrame.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    RunService.RenderStepped:Connect(function()
+        if dragging and dragInput then
+            local delta = dragInput.Position - dragStart
+            HubFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    CloseBtn.MouseButton1Click:Connect(function() HubFrame.Visible = false end)
+    CircleButton.MouseButton1Click:Connect(function() HubFrame.Visible = not HubFrame.Visible end)
+end
+
+-- Evento de verificación de key
+VerifyBtn.MouseButton1Click:Connect(function()
+    if KeyTextBox.Text == "Vip" then
+        IntroStatus.TextColor3 = Color3.fromRGB(150, 255, 150)
+        IntroStatus.Text = "¡Key correcta! Entrando..."
+        task.wait(0.6)
+        TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(IntroBoxFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+        task.wait(0.5)
+        IntroGui:Destroy()
+        loadMainHub()
+    else
+        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
+        IntroStatus.Text = "Key incorrecta. Prueba con: Vip"
+    end
+end)
