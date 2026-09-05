@@ -12,7 +12,7 @@ end
 -- Cargar la librería Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Crear la ventana principal
+-- Crear la ventana principal con el tema "AmberGlow" (Tonos cálidos, café dorado/ámbar elegante)
 local Window = Rayfield:CreateWindow({
     Name = "byppas",
     LoadingTitle = "Cargando byppas...",
@@ -28,9 +28,10 @@ local Window = Rayfield:CreateWindow({
         RememberJoins = true
     },
     KeySystem = false,
+    Theme = "AmberGlow", -- Tema cálido/café elegante de Rayfield
 })
 
--- Función para crear el texto encima del personaje (BillboardGui)
+-- Función para crear el texto encima del personaje (BillboardGui) con estilo estético
 local function CreateBillboard()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -48,7 +49,7 @@ local function CreateBillboard()
         textLabel.Size = UDim2.new(1, 0, 1, 0)
         textLabel.BackgroundTransparency = 1
         textLabel.Text = "🧸byppas omega🧸"
-        textLabel.TextColor3 = Color3.fromRGB(255, 182, 193) -- Color rosado pastel estético
+        textLabel.TextColor3 = Color3.fromRGB(245, 222, 179) -- Tono trigo/crema brillante
         textLabel.TextScaled = true
         textLabel.Font = Enum.Font.SourceSansBold
         textLabel.TextStrokeTransparency = 0 -- Borde negro para legibilidad
