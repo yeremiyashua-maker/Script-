@@ -35,6 +35,7 @@ pcall(function()
     if game:GetService("CoreGui"):FindFirstChild("FoxnameIntroGUI") then game:GetService("CoreGui").FoxnameIntroGUI:Destroy() end
     if Workspace:FindFirstChild("FoxnameBeamFolder") then Workspace.FoxnameBeamFolder:Destroy() end
     if Workspace:FindFirstChild("FoxnameESPFolder") then Workspace.FoxnameESPFolder:Destroy() end
+    if Workspace:FindFirstChild("FoxnameTreadmillBeamFolder") then Workspace.FoxnameTreadmillBeamFolder:Destroy() end
 end)
 
 ------------------------------------------------------------------
@@ -323,7 +324,7 @@ local function loadMainHub()
     Sidebar.BackgroundTransparency = 0.25
     Sidebar.Position = UDim2.new(0, 6, 0, 38)
     Sidebar.Size = UDim2.new(0, 125, 1, -44)
-    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 130)
+    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 160)
     Sidebar.ScrollBarThickness = 0
     Sidebar.ZIndex = 4
     Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
@@ -357,9 +358,10 @@ local function loadMainHub()
         return btn
     end
 
-    local TabMain   = createTabButton("📖 Worlds",     28, true)
-    local TabVisuals = createTabButton("🎯 Visuals/ESP", 60, false)
-    local TabOwner  = createTabButton("👑 Owner",       92, false)
+    local TabMain        = createTabButton("📖 Worlds",         28, true)
+    local TabTreadmills  = createTabButton("🏃 Auto Treadmills",60, false)
+    local TabVisuals     = createTabButton("🎯 Visuals/ESP",    92, false)
+    local TabOwner       = createTabButton("👑 Owner",          124, false)
 
     ------------------------------------------------------------------
     -- MAIN CONTAINER
@@ -369,7 +371,7 @@ local function loadMainHub()
     MainContainer.BackgroundTransparency = 1
     MainContainer.Position = UDim2.new(0, 136, 0, 38)
     MainContainer.Size = UDim2.new(1, -142, 1, -44)
-    MainContainer.CanvasSize = UDim2.new(0, 0, 0, 280)  -- ampliado para Galaxy
+    MainContainer.CanvasSize = UDim2.new(0, 0, 0, 280)
     MainContainer.ScrollBarThickness = 3
     MainContainer.ZIndex = 4
 
@@ -393,13 +395,12 @@ local function loadMainHub()
     WorldsStroke.Thickness = 1.5
     WorldsStroke.Parent = WorldsMenuBtn
 
-    -- Dropdown ampliado para incluir Galaxy World
     local WorldDropdown = Instance.new("Frame")
     WorldDropdown.Parent = MainContainer
     WorldDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
     WorldDropdown.BackgroundTransparency = 0.1
     WorldDropdown.Position = UDim2.new(0, 0, 0, 44)
-    WorldDropdown.Size = UDim2.new(1, -8, 0, 206)  -- ampliado para Galaxy
+    WorldDropdown.Size = UDim2.new(1, -8, 0, 206)
     WorldDropdown.ZIndex = 10
     WorldDropdown.Visible = false
     Instance.new("UICorner", WorldDropdown).CornerRadius = UDim.new(0, 8)
@@ -423,13 +424,11 @@ local function loadMainHub()
         return btn
     end
 
-    -- Worlds originales intactos
     local World5Btn      = createWorldBtn("World 5",      6)
     local World1Btn      = createWorldBtn("World 1",     33)
     local World2Btn      = createWorldBtn("World 2",     60)
     local World3Btn      = createWorldBtn("World 3",     87)
     local World4Btn      = createWorldBtn("World 4",    114)
-    -- Galaxy World añadido al final
     local WorldGalaxyBtn = createWorldBtn("🌌 Galaxy World", 141)
 
     local menuOpen = false
@@ -470,6 +469,132 @@ local function loadMainHub()
     CoordsStroke.Transparency = 0.3
     CoordsStroke.Thickness = 1.5
     CoordsStroke.Parent = CoordsBox
+
+    ------------------------------------------------------------------
+    -- TREADMILLS CONTAINER (AUTO CAMINADORA CON LÍNEA MORADA Y VELOCIDAD)
+    ------------------------------------------------------------------
+    local TreadmillsContainer = Instance.new("ScrollingFrame")
+    TreadmillsContainer.Parent = HubFrame
+    TreadmillsContainer.BackgroundTransparency = 1
+    TreadmillsContainer.Position = UDim2.new(0, 136, 0, 38)
+    TreadmillsContainer.Size = UDim2.new(1, -142, 1, -44)
+    TreadmillsContainer.CanvasSize = UDim2.new(0, 0, 0, 250)
+    TreadmillsContainer.ScrollBarThickness = 3
+    TreadmillsContainer.Visible = false
+    TreadmillsContainer.ZIndex = 4
+
+    local TreadmillsMenuBtn = Instance.new("TextButton")
+    TreadmillsMenuBtn.Parent = TreadmillsContainer
+    TreadmillsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    TreadmillsMenuBtn.BackgroundTransparency = 0.25
+    TreadmillsMenuBtn.Position = UDim2.new(0, 0, 0, 4)
+    TreadmillsMenuBtn.Size = UDim2.new(1, -8, 0, 36)
+    TreadmillsMenuBtn.ZIndex = 5
+    TreadmillsMenuBtn.Font = Enum.Font.GothamBold
+    TreadmillsMenuBtn.Text = "   🏃 Auto Treadmills ▾"
+    TreadmillsMenuBtn.TextColor3 = Color3.fromRGB(255, 220, 255)
+    TreadmillsMenuBtn.TextSize = 10.5
+    TreadmillsMenuBtn.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", TreadmillsMenuBtn).CornerRadius = UDim.new(0, 8)
+
+    local TreadmillsStroke = Instance.new("UIStroke")
+    TreadmillsStroke.Color = Color3.fromRGB(200, 100, 250)
+    TreadmillsStroke.Transparency = 0.3
+    TreadmillsStroke.Thickness = 1.5
+    TreadmillsStroke.Parent = TreadmillsMenuBtn
+
+    local TreadmillsDropdown = Instance.new("Frame")
+    TreadmillsDropdown.Parent = TreadmillsContainer
+    TreadmillsDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
+    TreadmillsDropdown.BackgroundTransparency = 0.1
+    TreadmillsDropdown.Position = UDim2.new(0, 0, 0, 44)
+    TreadmillsDropdown.Size = UDim2.new(1, -8, 0, 115)
+    TreadmillsDropdown.ZIndex = 10
+    TreadmillsDropdown.Visible = false
+    Instance.new("UICorner", TreadmillsDropdown).CornerRadius = UDim.new(0, 8)
+    local UIStrokeTreadDrop = Instance.new("UIStroke")
+    UIStrokeTreadDrop.Color = Color3.fromRGB(230, 130, 255)
+    UIStrokeTreadDrop.Thickness = 2
+    UIStrokeTreadDrop.Parent = TreadmillsDropdown
+
+    local function createTreadmillBtn(name, yPos)
+        local btn = Instance.new("TextButton")
+        btn.Parent = TreadmillsDropdown
+        btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        btn.Position = UDim2.new(0, 8, 0, yPos)
+        btn.Size = UDim2.new(1, -16, 0, 24)
+        btn.ZIndex = 11
+        btn.Font = Enum.Font.GothamBold
+        btn.Text = name .. " [OFF]"
+        btn.TextColor3 = Color3.fromRGB(255, 210, 255)
+        btn.TextSize = 10
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        return btn
+    end
+
+    local TreadmillBasicBtn = createTreadmillBtn("A: Basic Treadmill", 6)
+    local TreadmillGoldBtn  = createTreadmillBtn("B: Gold Treadmill", 33)
+    local TreadmillGalaxyBtn = createTreadmillBtn("C: Galaxy Treadmill", 60)
+    local TreadmillVoidBtn  = createTreadmillBtn("D: Void Treadmill", 87)
+
+    local treadMenuOpen = false
+    TreadmillsMenuBtn.MouseButton1Click:Connect(function()
+        treadMenuOpen = not treadMenuOpen
+        TreadmillsDropdown.Visible = treadMenuOpen
+        TreadmillsMenuBtn.Text = treadMenuOpen and "   🏃 Auto Treadmills ▴" or "   🏃 Auto Treadmills ▾"
+    end)
+
+    -- Medidor de velocidad integrado abajo del apartado de caminadora
+    local SpeedContainer = Instance.new("Frame")
+    SpeedContainer.Parent = TreadmillsContainer
+    SpeedContainer.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    SpeedContainer.BackgroundTransparency = 0.25
+    SpeedContainer.Position = UDim2.new(0, 0, 0, 166)
+    SpeedContainer.Size = UDim2.new(1, -8, 0, 42)
+    SpeedContainer.ZIndex = 5
+    Instance.new("UICorner", SpeedContainer).CornerRadius = UDim.new(0, 8)
+
+    local SpeedStroke = Instance.new("UIStroke")
+    SpeedStroke.Color = Color3.fromRGB(200, 100, 250)
+    SpeedStroke.Transparency = 0.3
+    SpeedStroke.Thickness = 1.5
+    SpeedStroke.Parent = SpeedContainer
+
+    local SpeedLabel = Instance.new("TextLabel")
+    SpeedLabel.Parent = SpeedContainer
+    SpeedLabel.BackgroundTransparency = 1
+    SpeedLabel.Position = UDim2.new(0, 10, 0, 2)
+    SpeedLabel.Size = UDim2.new(0, 140, 0, 18)
+    SpeedLabel.ZIndex = 6
+    SpeedLabel.Font = Enum.Font.GothamBold
+    SpeedLabel.Text = "⚡ Velocidad Teleguiado:"
+    SpeedLabel.TextColor3 = Color3.fromRGB(255, 220, 255)
+    SpeedLabel.TextSize = 10
+    SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local SpeedBox = Instance.new("TextBox")
+    SpeedBox.Parent = SpeedContainer
+    SpeedBox.BackgroundColor3 = Color3.fromRGB(35, 15, 55)
+    SpeedBox.Position = UDim2.new(1, -75, 0, 6)
+    SpeedBox.Size = UDim2.new(0, 65, 0, 28)
+    SpeedBox.ZIndex = 6
+    SpeedBox.Font = Enum.Font.GothamBold
+    SpeedBox.Text = "50"
+    SpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SpeedBox.TextSize = 11
+    Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+    local TreadmillStatusInfo = Instance.new("TextLabel")
+    TreadmillStatusInfo.Parent = TreadmillsContainer
+    TreadmillStatusInfo.BackgroundTransparency = 1
+    TreadmillStatusInfo.Position = UDim2.new(0, 4, 0, 214)
+    TreadmillStatusInfo.Size = UDim2.new(1, -12, 0, 18)
+    TreadmillStatusInfo.ZIndex = 5
+    TreadmillStatusInfo.Font = Enum.Font.GothamMedium
+    TreadmillStatusInfo.Text = "Estado: Selecciona caminadora..."
+    TreadmillStatusInfo.TextColor3 = Color3.fromRGB(230, 170, 255)
+    TreadmillStatusInfo.TextSize = 9.5
+    TreadmillStatusInfo.TextXAlignment = Enum.TextXAlignment.Left
 
     ------------------------------------------------------------------
     -- VISUALS CONTAINER
@@ -552,7 +677,6 @@ local function loadMainHub()
     local espFolder = Instance.new("Folder", Workspace)
     espFolder.Name = "FoxnameESPFolder"
 
-    -- Guarda los colores originales para restaurarlos al desactivar
     local originalColors = {}
 
     local function applyPinkBodies(state)
@@ -562,13 +686,11 @@ local function loadMainHub()
                 for _, part in pairs(char:GetDescendants()) do
                     if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                         if state then
-                            -- Guarda color original
                             if not originalColors[part] then
                                 originalColors[part] = part.Color
                             end
                             part.Color = Color3.fromRGB(255, 182, 218)
                         else
-                            -- Restaura color original
                             if originalColors[part] then
                                 part.Color = originalColors[part]
                                 originalColors[part] = nil
@@ -592,7 +714,6 @@ local function loadMainHub()
                     local head = char:FindFirstChild("Head")
 
                     if root and head and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                        -- Línea ESP rosa
                         local linePart = Instance.new("Part")
                         linePart.Size = Vector3.new(0.25, 0.25, (player.Character.HumanoidRootPart.Position - root.Position).Magnitude)
                         linePart.CFrame = CFrame.new(player.Character.HumanoidRootPart.Position, root.Position) * CFrame.new(0, 0, -linePart.Size.Z / 2)
@@ -602,7 +723,6 @@ local function loadMainHub()
                         linePart.Color = Color3.fromRGB(255, 120, 245)
                         linePart.Parent = espFolder
 
-                        -- Nombre flotante
                         local billboard = Instance.new("BillboardGui")
                         billboard.Name = "ESPName"
                         billboard.Adornee = head
@@ -622,7 +742,6 @@ local function loadMainHub()
                         nameLabel.TextStrokeTransparency = 0.2
                         nameLabel.TextStrokeColor3 = Color3.fromRGB(120, 20, 160)
 
-                        -- Aplica cuerpo rosa en tiempo real
                         for _, part in pairs(char:GetDescendants()) do
                             if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                                 if not originalColors[part] then
@@ -647,7 +766,7 @@ local function loadMainHub()
         espActive = state
         if not espActive then
             for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
-            applyPinkBodies(false)  -- restaura colores originales
+            applyPinkBodies(false)
             showFloatingMessage("ESP Desactivado")
         else
             showFloatingMessage("ESP Activado (Líneas, Nombres y Cuerpos Rosa) 💜")
@@ -697,7 +816,7 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- COORDENADAS DE TODOS LOS WORLDS (ORIGINALES INTACTAS)
+    -- COORDENADAS DE TODOS LOS WORLDS
     ------------------------------------------------------------------
     local posA5 = Vector3.new(-439.1,  27.3,  7596.8)
     local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
@@ -719,10 +838,18 @@ local function loadMainHub()
     local posB4 = Vector3.new(-7758.6,  18.6,  5778.8)
     local posC4 = Vector3.new(-7759.8,  22.1,  5742.2)
 
-    -- Galaxy World coordenadas
     local posAG = Vector3.new(-438.2,  27.3,  -221.1)
     local posBG = Vector3.new(-1664.9, 110.2,  -239.2)
     local posCG = Vector3.new(-1663.4, 114.1,  -256.3)
+
+    -- Checkpoint inicial morado común para las caminadoras
+    local posPurpleTreadmill = Vector3.new(-437.4, 27.3, -221.4)
+
+    -- Coordenadas específicas exactas para A, B, C, D de las caminadoras
+    local posTreadmillA = Vector3.new(-448.2, 26.8, -291.1)
+    local posTreadmillB = Vector3.new(-412.1, 26.8, -289.5)
+    local posTreadmillC = Vector3.new(-395.4, 27.2, -285.9)
+    local posTreadmillD = Vector3.new(-371.6, 27.6, -287.3)
 
     local beamFolder = Instance.new("Folder", Workspace)
     beamFolder.Name = "FoxnameBeamFolder"
@@ -788,7 +915,6 @@ local function loadMainHub()
         clearNeonLine()
     end
 
-    -- Clicks originales intactos
     World5Btn.MouseButton1Click:Connect(function()
         world5Active = not world5Active
         if world5Active then
@@ -844,7 +970,6 @@ local function loadMainHub()
         else resetAllWorlds() end
     end)
 
-    -- Galaxy World click
     WorldGalaxyBtn.MouseButton1Click:Connect(function()
         worldGalaxyActive = not worldGalaxyActive
         if worldGalaxyActive then
@@ -913,13 +1038,170 @@ local function loadMainHub()
         end)
     end
 
-    -- Loops originales intactos + Galaxy World al final
     runWorldLoop(function() return world5Active end,      posA5, posB5, posC5, "W5")
     runWorldLoop(function() return world1Active end,      posA1, posB1, posC1, "W1")
     runWorldLoop(function() return world2Active end,      posA2, posB2, posC2, "W2")
     runWorldLoop(function() return world3Active end,      posA3, posB3, posC3, "W3")
     runWorldLoop(function() return world4Active end,      posA4, posB4, posC4, "W4")
     runWorldLoop(function() return worldGalaxyActive end, posAG, posBG, posCG, "Galaxy")
+
+    ------------------------------------------------------------------
+    -- LOGICA DE AUTO CAMINADORA (CON LÍNEA MORADA PERMANENTE Y TELEGUIADO)
+    ------------------------------------------------------------------
+    local treadmillBasicActive = false
+    local treadmillGoldActive  = false
+    local treadmillGalaxyActive = false
+    local treadmillVoidActive  = false
+
+    local treadmillFolder = Instance.new("Folder", Workspace)
+    treadmillFolder.Name = "FoxnameTreadmillBeamFolder"
+
+    local function drawTreadmillBeam(startPos, endPos)
+        pcall(function()
+            for _, v in pairs(treadmillFolder:GetChildren()) do v:Destroy() end
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
+            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Parent = treadmillFolder
+        end)
+    end
+
+    local function clearTreadmillBeam()
+        pcall(function()
+            for _, v in pairs(treadmillFolder:GetChildren()) do v:Destroy() end
+        end)
+    end
+
+    local function resetAllTreadmills()
+        treadmillBasicActive = false
+        treadmillGoldActive  = false
+        treadmillGalaxyActive = false
+        treadmillVoidActive  = false
+        TreadmillBasicBtn.Text = "A: Basic Treadmill [OFF]"
+        TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillGoldBtn.Text = "B: Gold Treadmill [OFF]"
+        TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [OFF]"
+        TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillVoidBtn.Text = "D: Void Treadmill [OFF]"
+        TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillStatusInfo.Text = "Estado: Apagado"
+        clearTreadmillBeam()
+    end
+
+    TreadmillBasicBtn.MouseButton1Click:Connect(function()
+        treadmillBasicActive = not treadmillBasicActive
+        if treadmillBasicActive then
+            resetAllTreadmills()
+            treadmillBasicActive = true
+            TreadmillBasicBtn.Text = "A: Basic Treadmill [ON]"
+            TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            TreadmillStatusInfo.Text = "Estado: A (Basic) Activo 🏃"
+        else resetAllTreadmills() end
+    end)
+
+    TreadmillGoldBtn.MouseButton1Click:Connect(function()
+        treadmillGoldActive = not treadmillGoldActive
+        if treadmillGoldActive then
+            resetAllTreadmills()
+            treadmillGoldActive = true
+            TreadmillGoldBtn.Text = "B: Gold Treadmill [ON]"
+            TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            TreadmillStatusInfo.Text = "Estado: B (Gold) Activo 🏃"
+        else resetAllTreadmills() end
+    end)
+
+    TreadmillGalaxyBtn.MouseButton1Click:Connect(function()
+        treadmillGalaxyActive = not treadmillGalaxyActive
+        if treadmillGalaxyActive then
+            resetAllTreadmills()
+            treadmillGalaxyActive = true
+            TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [ON]"
+            TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            TreadmillStatusInfo.Text = "Estado: C (Galaxy) Activo 🏃"
+        else resetAllTreadmills() end
+    end)
+
+    TreadmillVoidBtn.MouseButton1Click:Connect(function()
+        treadmillVoidActive = not treadmillVoidActive
+        if treadmillVoidActive then
+            resetAllTreadmills()
+            treadmillVoidActive = true
+            TreadmillVoidBtn.Text = "D: Void Treadmill [ON]"
+            TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            TreadmillStatusInfo.Text = "Estado: D (Void) Activo 🏃"
+        else resetAllTreadmills() end
+    end)
+
+    local function runTreadmillTeleguiado(isActiveRef, targetCoord, treadmillName)
+        task.spawn(function()
+            while true do
+                if isActiveRef() then
+                    local char = player.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+                    if root and humanoid then
+                        -- Aparece primero en el checkpoint de la imagen morada
+                        root.CFrame = CFrame.new(posPurpleTreadmill)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        TreadmillStatusInfo.Text = "Estado: Teleguiando a " .. treadmillName .. "..."
+                        
+                        local customSpeed = tonumber(SpeedBox.Text) or 50
+                        local distance = (posPurpleTreadmill - targetCoord).Magnitude
+                        local travelTime = math.clamp(distance / customSpeed, 0.2, 5)
+                        local elapsed = 0
+
+                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
+                            local dt = RunService.RenderStepped:Wait()
+                            elapsed = elapsed + dt
+                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
+                            if humanoid.Health <= 0 then break end
+                            root.CFrame = CFrame.new(posPurpleTreadmill:Lerp(targetCoord, alpha))
+                            drawTreadmillBeam(root.Position, targetCoord)
+                        end
+
+                        if not isActiveRef() then break end
+                        root.CFrame = CFrame.new(targetCoord)
+                        clearTreadmillBeam()
+
+                        -- Se queda fijo en la caminadora tocándola permanentemente
+                        TreadmillStatusInfo.Text = "Estado: Tocando " .. treadmillName .. " [Fijo]"
+                        while isActiveRef() and char and char.Parent and humanoid.Health > 0 do
+                            root.CFrame = CFrame.new(targetCoord)
+                            pcall(function()
+                                for _, obj in pairs(Workspace:GetDescendants()) do
+                                    if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
+                                        local part = obj.Parent
+                                        if part:IsA("BasePart") and (part.Position - targetCoord).Magnitude < 15 then
+                                            firetouchinterest(root, part, 0)
+                                            firetouchinterest(root, part, 1)
+                                        end
+                                    end
+                                end
+                            end)
+                            task.wait(0.2)
+                        end
+                    else
+                        task.wait(1)
+                    end
+                else
+                    clearTreadmillBeam()
+                    task.wait(0.4)
+                end
+            end
+        end)
+    end
+
+    runTreadmillTeleguiado(function() return treadmillBasicActive end, posTreadmillA, "Basic (A)")
+    runTreadmillTeleguiado(function() return treadmillGoldActive end, posTreadmillB, "Gold (B)")
+    runTreadmillTeleguiado(function() return treadmillGalaxyActive end, posTreadmillC, "Galaxy (C)")
+    runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void (D)")
 
     ------------------------------------------------------------------
     -- OWNER CONTAINER
@@ -978,12 +1260,12 @@ local function loadMainHub()
     -- NAVEGACIÓN ENTRE PESTAÑAS
     ------------------------------------------------------------------
     local function switchTab(activeBtn, targetContainer)
-        for _, btn in pairs({TabMain, TabVisuals, TabOwner}) do
+        for _, btn in pairs({TabMain, TabTreadmills, TabVisuals, TabOwner}) do
             btn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
             btn.BackgroundTransparency = 0.55
             btn.TextColor3 = Color3.fromRGB(215, 190, 245)
         end
-        for _, cont in pairs({MainContainer, VisualsContainer, OwnerContainer}) do
+        for _, cont in pairs({MainContainer, TreadmillsContainer, VisualsContainer, OwnerContainer}) do
             cont.Visible = false
         end
         activeBtn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
@@ -993,6 +1275,7 @@ local function loadMainHub()
     end
 
     TabMain.MouseButton1Click:Connect(function() switchTab(TabMain, MainContainer) end)
+    TabTreadmills.MouseButton1Click:Connect(function() switchTab(TabTreadmills, TreadmillsContainer) end)
     TabVisuals.MouseButton1Click:Connect(function() switchTab(TabVisuals, VisualsContainer) end)
     TabOwner.MouseButton1Click:Connect(function() switchTab(TabOwner, OwnerContainer) end)
 
