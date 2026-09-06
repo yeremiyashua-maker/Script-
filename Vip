@@ -38,7 +38,7 @@ pcall(function()
 end)
 
 ------------------------------------------------------------------
--- 💜 PANTALLA DE INTRODUCCIÓN (KEY SYSTEM & ANIME BACKGROUND)
+-- PANTALLA DE INTRODUCCIÓN (KEY SYSTEM & ANIME BACKGROUND)
 ------------------------------------------------------------------
 local IntroGui = Instance.new("ScreenGui")
 IntroGui.Name = "FoxnameIntroGUI"
@@ -54,7 +54,6 @@ IntroFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
 IntroFrame.ZIndex = 100
 
--- Imagen de fondo con el mismo ID de anime
 local IntroBg = Instance.new("ImageLabel")
 IntroBg.Parent = IntroFrame
 IntroBg.BackgroundTransparency = 1
@@ -133,7 +132,6 @@ IntroStatus.Text = ""
 IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
 IntroStatus.TextSize = 10.5
 
--- Función que carga todo el Hub una vez verificada la Key correctamente
 local function loadMainHub()
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "FoxnameHubGUI"
@@ -142,7 +140,6 @@ local function loadMainHub()
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.Parent = playerGui
 
-    -- Notificación flotante externa con estilo mágico
     local NotifGui = Instance.new("ScreenGui")
     NotifGui.Name = "FoxnameFloatingNotification"
     NotifGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -175,10 +172,8 @@ local function loadMainHub()
             FloatingNotif.TextTransparency = 1
             FloatingNotif.BackgroundTransparency = 1
             NotifStroke.Transparency = 1
-            
             TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 0, BackgroundTransparency = 0.1}):Play()
             TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
-            
             task.delay(1.5, function()
                 pcall(function()
                     TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
@@ -191,7 +186,7 @@ local function loadMainHub()
     end
 
     ------------------------------------------------------------------
-    -- 💜 CÍRCULO FLOTANTE ANIMADO Y MEGA DECORADO
+    -- CÍRCULO FLOTANTE
     ------------------------------------------------------------------
     local CircleButton = Instance.new("ImageButton")
     CircleButton.Name = "CircleButton"
@@ -222,7 +217,7 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- 💜 VENTANA PRINCIPAL ULTRA DECORADA (MEGA ESTÉTICA ANIME)
+    -- VENTANA PRINCIPAL
     ------------------------------------------------------------------
     local HubFrame = Instance.new("Frame")
     HubFrame.Name = "HubFrame"
@@ -240,7 +235,6 @@ local function loadMainHub()
     UIStrokeHub.Thickness = 3
     UIStrokeHub.Parent = HubFrame
 
-    -- Marco interno secundario brillante para efecto de lujo
     local InnerBorder = Instance.new("Frame")
     InnerBorder.Parent = HubFrame
     InnerBorder.BackgroundTransparency = 1
@@ -254,7 +248,6 @@ local function loadMainHub()
     InnerStroke.Parent = InnerBorder
     Instance.new("UICorner", InnerBorder).CornerRadius = UDim.new(0, 12)
 
-    -- Fondo de anime translúcido
     local BgAnimeImg = Instance.new("ImageLabel")
     BgAnimeImg.Parent = HubFrame
     BgAnimeImg.BackgroundTransparency = 1
@@ -264,7 +257,6 @@ local function loadMainHub()
     BgAnimeImg.ScaleType = Enum.ScaleType.Crop
     BgAnimeImg.ZIndex = 1
 
-    -- Lluvia de pétalos mágicos más densa y decorada
     local SnowContainer = Instance.new("Folder")
     SnowContainer.Name = "SnowContainer"
     SnowContainer.Parent = HubFrame
@@ -277,12 +269,10 @@ local function loadMainHub()
                 flake.BackgroundColor3 = Color3.fromRGB(255, 200, 250)
                 flake.BackgroundTransparency = 0.25
                 flake.BorderSizePixel = 0
-                
                 local size = math.random(3, 7)
                 flake.Size = UDim2.new(0, size, 0, size)
                 flake.Position = UDim2.new(math.random(2, 98) / 100, 0, -0.1, 0)
                 Instance.new("UICorner", flake).CornerRadius = UDim.new(1, 0)
-                
                 local fallTime = math.random(4, 7)
                 local tw = TweenService:Create(flake, TweenInfo.new(fallTime, Enum.EasingStyle.Linear), {Position = UDim2.new(flake.Position.X.Scale, 0, 1.1, 0)})
                 tw:Play()
@@ -293,7 +283,7 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- BARRA SUPERIOR DECORADA
+    -- BARRA SUPERIOR
     ------------------------------------------------------------------
     local TopBar = Instance.new("Frame")
     TopBar.Parent = HubFrame
@@ -325,7 +315,7 @@ local function loadMainHub()
     CloseBtn.TextSize = 15
 
     ------------------------------------------------------------------
-    -- SIDEBAR (Pestañas: Main, Visuals/ESP, Owner)
+    -- SIDEBAR
     ------------------------------------------------------------------
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Parent = HubFrame
@@ -367,23 +357,22 @@ local function loadMainHub()
         return btn
     end
 
-    local TabMain = createTabButton("📖 Worlds", 28, true)
+    local TabMain   = createTabButton("📖 Worlds",     28, true)
     local TabVisuals = createTabButton("🎯 Visuals/ESP", 60, false)
-    local TabOwner = createTabButton("👑 Owner", 92, false)
+    local TabOwner  = createTabButton("👑 Owner",       92, false)
 
     ------------------------------------------------------------------
-    -- CONTENEDOR 1: MAIN (WORLDS + WORLD 5 PRIMERO CON NUEVAS COORDENADAS)
+    -- MAIN CONTAINER
     ------------------------------------------------------------------
     local MainContainer = Instance.new("ScrollingFrame")
     MainContainer.Parent = HubFrame
     MainContainer.BackgroundTransparency = 1
     MainContainer.Position = UDim2.new(0, 136, 0, 38)
     MainContainer.Size = UDim2.new(1, -142, 1, -44)
-    MainContainer.CanvasSize = UDim2.new(0, 0, 0, 250)
+    MainContainer.CanvasSize = UDim2.new(0, 0, 0, 280)  -- ampliado para Galaxy
     MainContainer.ScrollBarThickness = 3
     MainContainer.ZIndex = 4
 
-    -- BOTÓN MENÚ WORLDS
     local WorldsMenuBtn = Instance.new("TextButton")
     WorldsMenuBtn.Parent = MainContainer
     WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
@@ -404,13 +393,13 @@ local function loadMainHub()
     WorldsStroke.Thickness = 1.5
     WorldsStroke.Parent = WorldsMenuBtn
 
-    -- SUBVENTANA DESPLEGABLE DE WORLDS (World 5 colocado primero según las capturas y coordenadas provistas)
+    -- Dropdown ampliado para incluir Galaxy World
     local WorldDropdown = Instance.new("Frame")
     WorldDropdown.Parent = MainContainer
     WorldDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
     WorldDropdown.BackgroundTransparency = 0.1
     WorldDropdown.Position = UDim2.new(0, 0, 0, 44)
-    WorldDropdown.Size = UDim2.new(1, -8, 0, 178)
+    WorldDropdown.Size = UDim2.new(1, -8, 0, 206)  -- ampliado para Galaxy
     WorldDropdown.ZIndex = 10
     WorldDropdown.Visible = false
     Instance.new("UICorner", WorldDropdown).CornerRadius = UDim.new(0, 8)
@@ -434,11 +423,14 @@ local function loadMainHub()
         return btn
     end
 
-    local World5Btn = createWorldBtn("World 5", 6)
-    local World1Btn = createWorldBtn("World 1", 33)
-    local World2Btn = createWorldBtn("World 2", 60)
-    local World3Btn = createWorldBtn("World 3", 87)
-    local World4Btn = createWorldBtn("World 4", 114)
+    -- Worlds originales intactos
+    local World5Btn      = createWorldBtn("World 5",      6)
+    local World1Btn      = createWorldBtn("World 1",     33)
+    local World2Btn      = createWorldBtn("World 2",     60)
+    local World3Btn      = createWorldBtn("World 3",     87)
+    local World4Btn      = createWorldBtn("World 4",    114)
+    -- Galaxy World añadido al final
+    local WorldGalaxyBtn = createWorldBtn("🌌 Galaxy World", 141)
 
     local menuOpen = false
     WorldsMenuBtn.MouseButton1Click:Connect(function()
@@ -447,11 +439,10 @@ local function loadMainHub()
         WorldsMenuBtn.Text = menuOpen and "   📖 Seleccionar Worlds ▴" or "   📖 Seleccionar Worlds ▾"
     end)
 
-    -- PANEL DE ESTADO Y COORDENADAS
     local StatusInfo = Instance.new("TextLabel")
     StatusInfo.Parent = MainContainer
     StatusInfo.BackgroundTransparency = 1
-    StatusInfo.Position = UDim2.new(0, 4, 0, 168)
+    StatusInfo.Position = UDim2.new(0, 4, 0, 196)
     StatusInfo.Size = UDim2.new(1, -12, 0, 18)
     StatusInfo.ZIndex = 5
     StatusInfo.Font = Enum.Font.GothamMedium
@@ -464,7 +455,7 @@ local function loadMainHub()
     CoordsBox.Parent = MainContainer
     CoordsBox.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
     CoordsBox.BackgroundTransparency = 0.25
-    CoordsBox.Position = UDim2.new(0, 0, 0, 190)
+    CoordsBox.Position = UDim2.new(0, 0, 0, 218)
     CoordsBox.Size = UDim2.new(1, -8, 0, 30)
     CoordsBox.ZIndex = 5
     CoordsBox.Font = Enum.Font.GothamBold
@@ -481,7 +472,7 @@ local function loadMainHub()
     CoordsStroke.Parent = CoordsBox
 
     ------------------------------------------------------------------
-    -- CONTENEDOR 2: VISUALS / ESP (LÍNEAS Y SHADER REALISTA LLUVIOSO)
+    -- VISUALS CONTAINER
     ------------------------------------------------------------------
     local VisualsContainer = Instance.new("ScrollingFrame")
     VisualsContainer.Parent = HubFrame
@@ -551,16 +542,43 @@ local function loadMainHub()
             end
             callback(active)
         end)
-
         return frame
     end
 
     ------------------------------------------------------------------
-    -- 💜 1. LÍNEAS ESP (Avatar + Enemigos con Nombres)
+    -- ESP: LÍNEAS + NOMBRES + CUERPOS ROSA
     ------------------------------------------------------------------
     local espActive = false
     local espFolder = Instance.new("Folder", Workspace)
     espFolder.Name = "FoxnameESPFolder"
+
+    -- Guarda los colores originales para restaurarlos al desactivar
+    local originalColors = {}
+
+    local function applyPinkBodies(state)
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr ~= player and plr.Character then
+                local char = plr.Character
+                for _, part in pairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                        if state then
+                            -- Guarda color original
+                            if not originalColors[part] then
+                                originalColors[part] = part.Color
+                            end
+                            part.Color = Color3.fromRGB(255, 182, 218)
+                        else
+                            -- Restaura color original
+                            if originalColors[part] then
+                                part.Color = originalColors[part]
+                                originalColors[part] = nil
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 
     local function updateESP()
         pcall(function()
@@ -572,8 +590,9 @@ local function loadMainHub()
                     local char = plr.Character
                     local root = char:FindFirstChild("HumanoidRootPart")
                     local head = char:FindFirstChild("Head")
-                    
+
                     if root and head and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        -- Línea ESP rosa
                         local linePart = Instance.new("Part")
                         linePart.Size = Vector3.new(0.25, 0.25, (player.Character.HumanoidRootPart.Position - root.Position).Magnitude)
                         linePart.CFrame = CFrame.new(player.Character.HumanoidRootPart.Position, root.Position) * CFrame.new(0, 0, -linePart.Size.Z / 2)
@@ -583,6 +602,7 @@ local function loadMainHub()
                         linePart.Color = Color3.fromRGB(255, 120, 245)
                         linePart.Parent = espFolder
 
+                        -- Nombre flotante
                         local billboard = Instance.new("BillboardGui")
                         billboard.Name = "ESPName"
                         billboard.Adornee = head
@@ -601,6 +621,16 @@ local function loadMainHub()
                         nameLabel.TextSize = 11.5
                         nameLabel.TextStrokeTransparency = 0.2
                         nameLabel.TextStrokeColor3 = Color3.fromRGB(120, 20, 160)
+
+                        -- Aplica cuerpo rosa en tiempo real
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                                if not originalColors[part] then
+                                    originalColors[part] = part.Color
+                                end
+                                part.Color = Color3.fromRGB(255, 182, 218)
+                            end
+                        end
                     end
                 end
             end
@@ -617,14 +647,15 @@ local function loadMainHub()
         espActive = state
         if not espActive then
             for _, v in pairs(espFolder:GetChildren()) do v:Destroy() end
+            applyPinkBodies(false)  -- restaura colores originales
             showFloatingMessage("ESP Desactivado")
         else
-            showFloatingMessage("ESP Activado (Líneas y Nombres) 💜")
+            showFloatingMessage("ESP Activado (Líneas, Nombres y Cuerpos Rosa) 💜")
         end
     end)
 
     ------------------------------------------------------------------
-    -- 💜 2. SHADER REALISTA LLUVIOSO
+    -- SHADER REALISTA LLUVIOSO
     ------------------------------------------------------------------
     local shaderActive = false
     local originalLighting = {}
@@ -636,23 +667,19 @@ local function loadMainHub()
                 originalLighting.Brightness = Lighting.Brightness
                 originalLighting.OutdoorAmbient = Lighting.OutdoorAmbient
                 originalLighting.GlobalShadows = Lighting.GlobalShadows
-
                 Lighting.Brightness = 1.8
                 Lighting.GlobalShadows = true
                 Lighting.OutdoorAmbient = Color3.fromRGB(90, 85, 110)
-
                 local bloom = Lighting:FindFirstChild("FoxnameRainBloom") or Instance.new("BloomEffect", Lighting)
                 bloom.Name = "FoxnameRainBloom"
                 bloom.Intensity = 0.85
                 bloom.Size = 24
                 bloom.Threshold = 0.4
-
                 local cc = Lighting:FindFirstChild("FoxnameRainCC") or Instance.new("ColorCorrectionEffect", Lighting)
                 cc.Name = "FoxnameRainCC"
                 cc.TintColor = Color3.fromRGB(225, 230, 255)
                 cc.Saturation = 0.05
                 cc.Contrast = 0.15
-
                 showFloatingMessage("🌧️ Realistic Rainy Shader [ON]")
             else
                 if originalLighting.Brightness then
@@ -664,35 +691,38 @@ local function loadMainHub()
                 if bloom then bloom:Destroy() end
                 local cc = Lighting:FindFirstChild("FoxnameRainCC")
                 if cc then cc:Destroy() end
-
                 showFloatingMessage("🌧️ Realistic Rainy Shader [OFF]")
             end
         end)
     end)
 
     ------------------------------------------------------------------
-    -- LÓGICA DE RUTA Y RECOLECCIÓN DE WINS (INCLUYENDO WORLD 5 ACTUALIZADO)
+    -- COORDENADAS DE TODOS LOS WORLDS (ORIGINALES INTACTAS)
     ------------------------------------------------------------------
-    -- Coordenadas basadas en las capturas provistas para World 5 (A: inicio, B: teletransporte, C: wins)
-    local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
+    local posA5 = Vector3.new(-439.1,  27.3,  7596.8)
     local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
     local posC5 = Vector3.new(-7600.6, 290.5, 8357.4)
 
-    local posA1 = Vector3.new(-435.6, 27.3, -224.1)
-    local posB1 = Vector3.new(-9460.4, 387.0, -237.8)
-    local posC1 = Vector3.new(-9460.5, 390.6, -257.9)
+    local posA1 = Vector3.new(-435.6,  27.3,  -224.1)
+    local posB1 = Vector3.new(-9460.4, 387.0,  -237.8)
+    local posC1 = Vector3.new(-9460.5, 390.6,  -257.9)
 
-    local posA2 = Vector3.new(-439.2, 27.4, -2532.3)
+    local posA2 = Vector3.new(-439.2,  27.4, -2532.3)
     local posB2 = Vector3.new(-3632.1, 153.2, -9379.6)
     local posC2 = Vector3.new(-3606.7, 157.3, -9378.7)
 
-    local posA3 = Vector3.new(-438.7, 27.3, 5776.5)
-    local posB3 = Vector3.new(-8076.4, 280.0, 2773.3)
-    local posC3 = Vector3.new(-8078.1, 283.1, 2741.1)
+    local posA3 = Vector3.new(-438.7,  27.3,  5776.5)
+    local posB3 = Vector3.new(-8076.4, 280.0,  2773.3)
+    local posC3 = Vector3.new(-8078.1, 283.1,  2741.1)
 
-    local posA4 = Vector3.new(-438.7, 27.3, 5776.5)
-    local posB4 = Vector3.new(-7758.6, 18.6, 5778.8)
-    local posC4 = Vector3.new(-7759.8, 22.1, 5742.2)
+    local posA4 = Vector3.new(-438.7,  27.3,  5776.5)
+    local posB4 = Vector3.new(-7758.6,  18.6,  5778.8)
+    local posC4 = Vector3.new(-7759.8,  22.1,  5742.2)
+
+    -- Galaxy World coordenadas
+    local posAG = Vector3.new(-438.2,  27.3,  -221.1)
+    local posBG = Vector3.new(-1664.9, 110.2,  -239.2)
+    local posCG = Vector3.new(-1663.4, 114.1,  -256.3)
 
     local beamFolder = Instance.new("Folder", Workspace)
     beamFolder.Name = "FoxnameBeamFolder"
@@ -712,7 +742,9 @@ local function loadMainHub()
     end
 
     local function clearNeonLine()
-        pcall(function() for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end end)
+        pcall(function()
+            for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end
+        end)
     end
 
     RunService.RenderStepped:Connect(function()
@@ -726,18 +758,22 @@ local function loadMainHub()
         end)
     end)
 
-    local world1Active = false
-    local world2Active = false
-    local world3Active = false
-    local world4Active = false
-    local world5Active = false
+    local world1Active  = false
+    local world2Active  = false
+    local world3Active  = false
+    local world4Active  = false
+    local world5Active  = false
+    local worldGalaxyActive = false
 
     local function resetAllWorlds()
-        world1Active = false
-        world2Active = false
-        world3Active = false
-        world4Active = false
-        world5Active = false
+        world1Active  = false
+        world2Active  = false
+        world3Active  = false
+        world4Active  = false
+        world5Active  = false
+        worldGalaxyActive = false
+        World5Btn.Text = "World 5 [OFF]"
+        World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
         World1Btn.Text = "World 1 [OFF]"
         World1Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
         World2Btn.Text = "World 2 [OFF]"
@@ -746,12 +782,13 @@ local function loadMainHub()
         World3Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
         World4Btn.Text = "World 4 [OFF]"
         World4Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World5Btn.Text = "World 5 [OFF]"
-        World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        WorldGalaxyBtn.Text = "🌌 Galaxy World [OFF]"
+        WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
         StatusInfo.Text = "Estado: Apagado"
         clearNeonLine()
     end
 
+    -- Clicks originales intactos
     World5Btn.MouseButton1Click:Connect(function()
         world5Active = not world5Active
         if world5Active then
@@ -760,9 +797,7 @@ local function loadMainHub()
             World5Btn.Text = "World 5 [ON]"
             World5Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
             StatusInfo.Text = "Estado: World 5 Activo 💜"
-        else
-            resetAllWorlds()
-        end
+        else resetAllWorlds() end
     end)
 
     World1Btn.MouseButton1Click:Connect(function()
@@ -773,9 +808,7 @@ local function loadMainHub()
             World1Btn.Text = "World 1 [ON]"
             World1Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
             StatusInfo.Text = "Estado: World 1 Activo 💜"
-        else
-            resetAllWorlds()
-        end
+        else resetAllWorlds() end
     end)
 
     World2Btn.MouseButton1Click:Connect(function()
@@ -786,9 +819,7 @@ local function loadMainHub()
             World2Btn.Text = "World 2 [ON]"
             World2Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
             StatusInfo.Text = "Estado: World 2 Activo 💜"
-        else
-            resetAllWorlds()
-        end
+        else resetAllWorlds() end
     end)
 
     World3Btn.MouseButton1Click:Connect(function()
@@ -799,9 +830,7 @@ local function loadMainHub()
             World3Btn.Text = "World 3 [ON]"
             World3Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
             StatusInfo.Text = "Estado: World 3 Activo 💜"
-        else
-            resetAllWorlds()
-        end
+        else resetAllWorlds() end
     end)
 
     World4Btn.MouseButton1Click:Connect(function()
@@ -812,9 +841,19 @@ local function loadMainHub()
             World4Btn.Text = "World 4 [ON]"
             World4Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
             StatusInfo.Text = "Estado: World 4 Activo 💜"
-        else
+        else resetAllWorlds() end
+    end)
+
+    -- Galaxy World click
+    WorldGalaxyBtn.MouseButton1Click:Connect(function()
+        worldGalaxyActive = not worldGalaxyActive
+        if worldGalaxyActive then
             resetAllWorlds()
-        end
+            worldGalaxyActive = true
+            WorldGalaxyBtn.Text = "🌌 Galaxy World [ON]"
+            WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+            StatusInfo.Text = "Estado: Galaxy World Activo 💜"
+        else resetAllWorlds() end
     end)
 
     local function runWorldLoop(isActiveRef, posA, posB, posC, worldName)
@@ -824,16 +863,13 @@ local function loadMainHub()
                     local char = player.Character
                     local root = char and char:FindFirstChild("HumanoidRootPart")
                     local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-                    
                     if root and humanoid then
                         root.CFrame = CFrame.new(posA)
                         task.wait(0.2)
                         if not isActiveRef() then break end
-
                         root.CFrame = CFrame.new(posB)
                         task.wait(0.2)
                         if not isActiveRef() then break end
-
                         local travelTime = 3.5
                         local elapsed = 0
                         StatusInfo.Text = "Estado: " .. worldName .. " - Recorriendo..."
@@ -845,10 +881,8 @@ local function loadMainHub()
                             root.CFrame = CFrame.new(posB:Lerp(posC, alpha))
                             drawNeonLine(root.Position, posC)
                         end
-
                         root.CFrame = CFrame.new(posC)
                         clearNeonLine()
-                        
                         local collected = false
                         pcall(function()
                             for _, obj in pairs(Workspace:GetDescendants()) do
@@ -862,13 +896,11 @@ local function loadMainHub()
                                 end
                             end
                         end)
-
                         if collected then
                             showFloatingMessage("¡Wins recogidas (" .. worldName .. ")! 💜")
                         else
                             showFloatingMessage("¡" .. worldName .. " alcanzado!")
                         end
-
                         StatusInfo.Text = "Estado: ¡Completado (" .. worldName .. ")! 💜"
                         task.wait(1.0)
                     else
@@ -881,14 +913,16 @@ local function loadMainHub()
         end)
     end
 
-    runWorldLoop(function() return world5Active end, posA5, posB5, posC5, "W5")
-    runWorldLoop(function() return world1Active end, posA1, posB1, posC1, "W1")
-    runWorldLoop(function() return world2Active end, posA2, posB2, posC2, "W2")
-    runWorldLoop(function() return world3Active end, posA3, posB3, posC3, "W3")
-    runWorldLoop(function() return world4Active end, posA4, posB4, posC4, "W4")
+    -- Loops originales intactos + Galaxy World al final
+    runWorldLoop(function() return world5Active end,      posA5, posB5, posC5, "W5")
+    runWorldLoop(function() return world1Active end,      posA1, posB1, posC1, "W1")
+    runWorldLoop(function() return world2Active end,      posA2, posB2, posC2, "W2")
+    runWorldLoop(function() return world3Active end,      posA3, posB3, posC3, "W3")
+    runWorldLoop(function() return world4Active end,      posA4, posB4, posC4, "W4")
+    runWorldLoop(function() return worldGalaxyActive end, posAG, posBG, posCG, "Galaxy")
 
     ------------------------------------------------------------------
-    -- PESTAÑA OWNER
+    -- OWNER CONTAINER
     ------------------------------------------------------------------
     local OwnerContainer = Instance.new("Frame")
     OwnerContainer.Name = "OwnerContainer"
@@ -941,7 +975,7 @@ local function loadMainHub()
     OwnerTextName.TextSize = 11
 
     ------------------------------------------------------------------
-    -- CONTROL DE NAVEGACIÓN ENTRE PESTAÑAS
+    -- NAVEGACIÓN ENTRE PESTAÑAS
     ------------------------------------------------------------------
     local function switchTab(activeBtn, targetContainer)
         for _, btn in pairs({TabMain, TabVisuals, TabOwner}) do
@@ -952,7 +986,6 @@ local function loadMainHub()
         for _, cont in pairs({MainContainer, VisualsContainer, OwnerContainer}) do
             cont.Visible = false
         end
-        
         activeBtn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
         activeBtn.BackgroundTransparency = 0.1
         activeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -964,7 +997,7 @@ local function loadMainHub()
     TabOwner.MouseButton1Click:Connect(function() switchTab(TabOwner, OwnerContainer) end)
 
     ------------------------------------------------------------------
-    -- MOVIMIENTO FLUIDO (DRAG & DROP)
+    -- DRAG & DROP
     ------------------------------------------------------------------
     local dragging, dragInput, dragStart, startPos
     HubFrame.InputBegan:Connect(function(input)
@@ -990,7 +1023,7 @@ local function loadMainHub()
     CircleButton.MouseButton1Click:Connect(function() HubFrame.Visible = not HubFrame.Visible end)
 end
 
--- Evento de verificación de key
+-- Verificación de Key
 VerifyBtn.MouseButton1Click:Connect(function()
     if KeyTextBox.Text == "Vip" then
         IntroStatus.TextColor3 = Color3.fromRGB(150, 255, 150)
