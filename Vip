@@ -1025,7 +1025,7 @@ end
 
 -- Verificación de Key
 VerifyBtn.MouseButton1Click:Connect(function()
-    if KeyTextBox.Text == "Vip" then
+    if KeyTextBox.Text == "UPDATE" then
         IntroStatus.TextColor3 = Color3.fromRGB(150, 255, 150)
         IntroStatus.Text = "¡Key correcta! Entrando..."
         task.wait(0.6)
@@ -1036,6 +1036,6 @@ VerifyBtn.MouseButton1Click:Connect(function()
         loadMainHub()
     else
         IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
-        IntroStatus.Text = "Key incorrecta. Prueba con: Vip"
+        IntroStatus.Text = "Key incorrecta. Prueba con: UPDATE"
     end
 end)
