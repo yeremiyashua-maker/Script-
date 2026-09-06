@@ -1,454 +1,476 @@
--- Servicios principales
+-- [[ XL HUB - ULTIMATE AUTO WINS SYSTEM (V3.7 - ELEGANT PURPLE EDITION) ]] --
+-- Owner: yeremi_ye2
+
+local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
--- Detección automática del ejecutor
-local executorName = "Desconocido"
-pcall(function()
-    if identifyexecutor then
-        executorName = identifyexecutor()
-    elseif syn then
-        executorName = "Synapse X"
-    elseif KRNL_LOADED then
-        executorName = "Krnl"
-    elseif Fluxus then
-        executorName = "Fluxus"
-    elseif Delta then
-        executorName = "Delta"
-    else
-        executorName = "Mobile Executor"
+local discordLink = "https://discord.gg/wCPVCw2pn"
+local function copyDiscord()
+    if setclipboard then
+        setclipboard(discordLink)
+    elseif syn and syn.write_clipboard then
+        syn.write_clipboard(discordLink)
     end
-end)
+end
 
--- Limpieza previa para evitar duplicados
-pcall(function()
-    if playerGui:FindFirstChild("OmegaHubGUI") then playerGui.OmegaHubGUI:Destroy() end
-    if playerGui:FindFirstChild("OmegaFloatingNotification") then playerGui.OmegaFloatingNotification:Destroy() end
-    if game:GetService("CoreGui"):FindFirstChild("OmegaHubGUI") then game:GetService("CoreGui").OmegaHubGUI:Destroy() end
-    if Workspace:FindFirstChild("OmegaBeamFolder") then Workspace.OmegaBeamFolder:Destroy() end
-end)
+if CoreGui:FindFirstChild("XLHub") then
+    CoreGui.XLHub:Destroy()
+end
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "OmegaHubGUI"
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.ResetOnSpawn = false
-ScreenGui.IgnoreGuiInset = true
-ScreenGui.Parent = playerGui
+local XLHub = Instance.new("ScreenGui")
+XLHub.Name            = "XLHub"
+XLHub.Parent          = CoreGui
+XLHub.ZIndexBehavior  = Enum.ZIndexBehavior.Sibling
+XLHub.ResetOnSpawn    = false
+XLHub.IgnoreGuiInset  = true
 
--- Notificación flotante externa (fuera del hub)
-local NotifGui = Instance.new("ScreenGui")
-NotifGui.Name = "OmegaFloatingNotification"
-NotifGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-NotifGui.ResetOnSpawn = false
-NotifGui.IgnoreGuiInset = true
-NotifGui.Parent = playerGui
-
-local FloatingNotif = Instance.new("TextLabel")
-FloatingNotif.Name = "FloatingNotif"
-FloatingNotif.Parent = NotifGui
-FloatingNotif.BackgroundColor3 = Color3.fromRGB(25, 6, 20)
-FloatingNotif.Position = UDim2.new(0.5, -130, 0.1, 0)
-FloatingNotif.Size = UDim2.new(0, 260, 0, 36)
-FloatingNotif.Visible = false
-FloatingNotif.ZIndex = 999
-FloatingNotif.Font = Enum.Font.GothamBold
-FloatingNotif.Text = ""
-FloatingNotif.TextColor3 = Color3.fromRGB(255, 210, 245)
-FloatingNotif.TextSize = 11
-Instance.new("UICorner", FloatingNotif).CornerRadius = UDim.new(0, 8)
-local NotifStroke = Instance.new("UIStroke")
-NotifStroke.Color = Color3.fromRGB(255, 130, 240)
-NotifStroke.Thickness = 2
-NotifStroke.Parent = FloatingNotif
-
-local function showFloatingMessage(text)
-    pcall(function()
-        FloatingNotif.Text = text
-        FloatingNotif.Visible = true
-        FloatingNotif.TextTransparency = 1
-        FloatingNotif.BackgroundTransparency = 1
-        NotifStroke.Transparency = 1
-        
-        TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 0, BackgroundTransparency = 0.1}):Play()
-        TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
-        
-        task.delay(1.5, function()
-            pcall(function()
-                TweenService:Create(FloatingNotif, TweenInfo.new(0.3), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
-                TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
-                task.wait(0.3)
-                FloatingNotif.Visible = false
-            end)
-        end)
+local function showNotification(text)
+    local notif = Instance.new("TextLabel")
+    notif.Parent           = XLHub
+    notif.BackgroundColor3 = Color3.fromRGB(20, 14, 28)
+    notif.Position         = UDim2.new(0.5, -130, 0.04, 0)
+    notif.Size             = UDim2.new(0, 260, 0, 32)
+    notif.Font             = Enum.Font.GothamBold
+    notif.Text             = text
+    notif.TextColor3       = Color3.fromRGB(235, 180, 255)
+    notif.TextSize         = 11
+    notif.ZIndex           = 999
+    Instance.new("UICorner", notif).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke")
+    stroke.Color     = Color3.fromRGB(180, 100, 240)
+    stroke.Thickness = 1.5
+    stroke.Parent    = notif
+    task.delay(2.5, function()
+        if notif and notif.Parent then notif:Destroy() end
     end)
 end
 
-------------------------------------------------------------------
--- 💜 CÍRCULO FLOTANTE ANIMADO
-------------------------------------------------------------------
+-- ============================================================
+-- MAIN FRAME (Elegante, compacto y sofisticado)
+-- ============================================================
+local MainFrame = Instance.new("Frame")
+MainFrame.Name              = "MainFrame"
+MainFrame.Parent            = XLHub
+MainFrame.BackgroundColor3  = Color3.fromRGB(14, 10, 20)
+MainFrame.Position          = UDim2.new(0.5, -165, 0.5, -125)
+MainFrame.Size              = UDim2.new(0, 330, 0, 250)
+MainFrame.Visible           = false
+MainFrame.ClipsDescendants  = true
+MainFrame.ZIndex            = 5
+
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+local UIStrokeMain = Instance.new("UIStroke")
+UIStrokeMain.Color     = Color3.fromRGB(160, 80, 230)
+UIStrokeMain.Thickness = 1.5
+UIStrokeMain.Parent    = MainFrame
+
+task.spawn(function()
+    local c1 = Color3.fromRGB(140, 70, 220)
+    local c2 = Color3.fromRGB(210, 130, 255)
+    while MainFrame and MainFrame.Parent do
+        UIStrokeMain.Color = c1:Lerp(c2, (math.sin(tick()*3)+1)/2)
+        task.wait(0.05)
+    end
+end)
+
+local mfDrag, mfOX, mfOY, mfStartPos = false, 0, 0, Vector2.zero
+MainFrame.InputBegan:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.Touch
+    or inp.UserInputType == Enum.UserInputType.MouseButton1 then
+        mfStartPos = Vector2.new(inp.Position.X, inp.Position.Y)
+        mfOX       = inp.Position.X - MainFrame.AbsolutePosition.X
+        mfOY       = inp.Position.Y - MainFrame.AbsolutePosition.Y
+    end
+end)
+MainFrame.InputChanged:Connect(function(inp)
+    if (inp.UserInputType == Enum.UserInputType.Touch
+    or inp.UserInputType == Enum.UserInputType.MouseMovement) and mfStartPos ~= Vector2.zero then
+        local currentPos = Vector2.new(inp.Position.X, inp.Position.Y)
+        if (currentPos - mfStartPos).Magnitude > 12 then
+            mfDrag = true
+        end
+        if mfDrag then
+            MainFrame.Position = UDim2.new(0, inp.Position.X - mfOX, 0, inp.Position.Y - mfOY)
+        end
+    end
+end)
+MainFrame.InputEnded:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.Touch
+    or inp.UserInputType == Enum.UserInputType.MouseButton1 then
+        mfDrag     = false
+        mfStartPos = Vector2.zero
+    end
+end)
+
+-- ============================================================
+-- CÍRCULO FLOTANTE (ESTÁTICO / ANCLADO EN EL BORDE IZQUIERDO)
+-- ============================================================
 local CircleButton = Instance.new("ImageButton")
 CircleButton.Name = "CircleButton"
-CircleButton.Parent = ScreenGui
-CircleButton.BackgroundColor3 = Color3.fromRGB(30, 8, 25)
-CircleButton.Position = UDim2.new(0.04, 0, 0.12, 0)
-CircleButton.Size = UDim2.new(0, 48, 0, 48)
+CircleButton.Parent = XLHub
+CircleButton.BackgroundColor3 = Color3.fromRGB(18, 12, 26)
+CircleButton.Position = UDim2.new(0, 12, 0.44, 0)
+CircleButton.Size = UDim2.new(0, 44, 0, 44)
 CircleButton.Image = "rbxassetid://84658427883904"
-CircleButton.Visible = true
+CircleButton.ZIndex = 10
 Instance.new("UICorner", CircleButton).CornerRadius = UDim.new(1, 0)
 
 local UIStrokeCircle = Instance.new("UIStroke")
-UIStrokeCircle.Color = Color3.fromRGB(255, 120, 240)
-UIStrokeCircle.Thickness = 3
+UIStrokeCircle.Color = Color3.fromRGB(180, 90, 240)
+UIStrokeCircle.Thickness = 2
 UIStrokeCircle.Parent = CircleButton
 
-CircleButton.MouseEnter:Connect(function()
-    TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 54, 0, 54)}):Play()
-end)
-CircleButton.MouseLeave:Connect(function()
-    TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 48, 0, 48)}):Play()
-end)
-
-------------------------------------------------------------------
--- 💜 VENTANA PRINCIPAL COMPACTA, ANIMADA Y ORDENADA
-------------------------------------------------------------------
-local HubFrame = Instance.new("Frame")
-HubFrame.Name = "HubFrame"
-HubFrame.Parent = ScreenGui
-HubFrame.BackgroundColor3 = Color3.fromRGB(18, 5, 15)
-HubFrame.Position = UDim2.new(0.5, -140, 0.5, -165)
-HubFrame.Size = UDim2.new(0, 280, 0, 350)
-HubFrame.ClipsDescendants = true
-HubFrame.Visible = true
-Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 12)
-
-local UIStrokeHub = Instance.new("UIStroke")
-UIStrokeHub.Color = Color3.fromRGB(255, 130, 240)
-UIStrokeHub.Thickness = 3
-UIStrokeHub.Parent = HubFrame
-
--- Animación de pétalos suaves cayendo
-local SnowContainer = Instance.new("Folder")
-SnowContainer.Name = "SnowContainer"
-SnowContainer.Parent = HubFrame
-
 task.spawn(function()
-    while ScreenGui and ScreenGui.Parent do
-        pcall(function()
-            local flake = Instance.new("Frame")
-            flake.Parent = SnowContainer
-            flake.BackgroundColor3 = Color3.fromRGB(255, 180, 245)
-            flake.BackgroundTransparency = 0.3
-            flake.BorderSizePixel = 0
-            
-            local size = math.random(3, 6)
-            flake.Size = UDim2.new(0, size, 0, size)
-            flake.Position = UDim2.new(math.random(2, 98) / 100, 0, -0.1, 0)
-            Instance.new("UICorner", flake).CornerRadius = UDim.new(1, 0)
-            
-            local fallTime = math.random(4, 7)
-            local tw = TweenService:Create(flake, TweenInfo.new(fallTime, Enum.EasingStyle.Linear), {Position = UDim2.new(flake.Position.X.Scale, 0, 1.1, 0)})
-            tw:Play()
-            tw.Completed:Connect(function() flake:Destroy() end)
-        end)
-        task.wait(0.3)
+    local c1 = Color3.fromRGB(140, 70, 220)
+    local c2 = Color3.fromRGB(220, 130, 255)
+    while CircleButton and CircleButton.Parent do
+        UIStrokeCircle.Color = c1:Lerp(c2, (math.sin(tick()*4)+1)/2)
+        task.wait(0.05)
     end
 end)
 
--- Cabecera con Avatar real y Datos
-local HeaderFrame = Instance.new("Frame")
-HeaderFrame.Parent = HubFrame
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(35, 10, 30)
-HeaderFrame.Size = UDim2.new(1, 0, 0, 56)
-HeaderFrame.ZIndex = 5
-Instance.new("UICorner", HeaderFrame).CornerRadius = UDim.new(0, 12)
+-- Al estar anclado, solo abre y cierra el menú al tocar (sin movimiento)
+CircleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+    if MainFrame.Visible then
+        MainFrame.Size     = UDim2.new(0, 330, 0, 250)
+        MainFrame.Position = UDim2.new(0.5, -165, 0.5, -125)
+    end
+end)
 
-local AvatarImg = Instance.new("ImageLabel")
-AvatarImg.Parent = HeaderFrame
-AvatarImg.BackgroundColor3 = Color3.fromRGB(50, 15, 40)
-AvatarImg.Position = UDim2.new(0, 8, 0.5, -20)
-AvatarImg.Size = UDim2.new(0, 40, 0, 40)
-AvatarImg.ZIndex = 6
-Instance.new("UICorner", AvatarImg).CornerRadius = UDim.new(1, 0)
+-- ============================================================
+-- DETALLES ESTÉTICOS DISCRETOS (Partículas suaves)
+-- ============================================================
+task.spawn(function()
+    while MainFrame and MainFrame.Parent do
+        pcall(function()
+            local particle = Instance.new("Frame")
+            particle.Parent              = MainFrame
+            particle.BackgroundColor3    = Color3.fromRGB(200, 140, 255)
+            particle.BorderSizePixel     = 0
+            particle.BackgroundTransparency = math.random(40, 70)/100
+            local sz = math.random(2, 4)
+            particle.Size     = UDim2.new(0, sz, 0, sz)
+            particle.Position = UDim2.new(math.random(0, 100)/100, 0, -0.05, 0)
+            Instance.new("UICorner", particle).CornerRadius = UDim.new(1, 0)
+            local ft = math.random(5, 8)
+            local tw = TweenService:Create(particle,
+                TweenInfo.new(ft, Enum.EasingStyle.Linear),
+                {Position = UDim2.new(particle.Position.X.Scale, 0, 1.05, 0)}
+            )
+            tw:Play()
+            tw.Completed:Connect(function() particle:Destroy() end)
+        end)
+        task.wait(0.6)
+    end
+end)
+
+-- ============================================================
+-- CABECERA ELEGANTE (Con Avatar, "Version FREE" y Datos)
+-- ============================================================
+local Header = Instance.new("Frame")
+Header.Parent              = MainFrame
+Header.BackgroundColor3    = Color3.fromRGB(18, 12, 26)
+Header.Size                = UDim2.new(1, 0, 0, 52)
+Header.ZIndex              = 6
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
+
+-- Contenedor del Avatar y Texto "Version FREE"
+local AvatarContainer = Instance.new("Frame")
+AvatarContainer.Parent = Header
+AvatarContainer.BackgroundTransparency = 1
+AvatarContainer.Position = UDim2.new(0.03, 0, 0.08, 0)
+AvatarContainer.Size = UDim2.new(0, 50, 0, 44)
+AvatarContainer.ZIndex = 7
+
+local AvatarCircle = Instance.new("ImageLabel")
+AvatarCircle.Parent             = AvatarContainer
+AvatarCircle.BackgroundColor3   = Color3.fromRGB(28, 16, 40)
+AvatarCircle.Position           = UDim2.new(0.5, -17, 0, 0)
+AvatarCircle.Size               = UDim2.new(0, 34, 0, 34)
+AvatarCircle.Image              = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+AvatarCircle.ZIndex             = 7
+Instance.new("UICorner", AvatarCircle).CornerRadius = UDim.new(1, 0)
+local StrokeAvatar = Instance.new("UIStroke")
+StrokeAvatar.Color = Color3.fromRGB(180, 100, 240)
+StrokeAvatar.Thickness = 1.2
+StrokeAvatar.Parent = AvatarCircle
+
+-- Texto Version FREE debajo del avatar
+local VersionFreeText = Instance.new("TextLabel")
+VersionFreeText.Parent             = AvatarContainer
+VersionFreeText.BackgroundTransparency = 1
+VersionFreeText.Position           = UDim2.new(0, 0, 0, 34)
+VersionFreeText.Size               = UDim2.new(0, 50, 0, 10)
+VersionFreeText.Font               = Enum.Font.GothamBold
+VersionFreeText.Text               = "Version FREE"
+VersionFreeText.TextColor3         = Color3.fromRGB(180, 130, 230)
+VersionFreeText.TextSize           = 7
+VersionFreeText.TextXAlignment     = Enum.TextXAlignment.Center
+VersionFreeText.ZIndex             = 7
+
+local Title = Instance.new("TextLabel")
+Title.Parent             = Header
+Title.BackgroundTransparency = 1
+Title.Position           = UDim2.new(0.22, 0, 0.12, 0)
+Title.Size               = UDim2.new(0, 130, 0, 15)
+Title.Font               = Enum.Font.GothamBold
+Title.Text               = "XL HUB"
+Title.TextColor3         = Color3.fromRGB(245, 210, 255)
+Title.TextSize           = 12
+Title.TextXAlignment     = Enum.TextXAlignment.Left
+Title.ZIndex             = 7
+
+local OwnerText = Instance.new("TextLabel")
+OwnerText.Parent             = Header
+OwnerText.BackgroundTransparency = 1
+OwnerText.Position           = UDim2.new(0.22, 0, 0.50, 0)
+OwnerText.Size               = UDim2.new(0, 150, 0, 14)
+OwnerText.Font               = Enum.Font.GothamMedium
+OwnerText.Text               = "Owner: yeremi_ye2"
+OwnerText.TextColor3         = Color3.fromRGB(190, 140, 225)
+OwnerText.TextSize           = 9
+OwnerText.TextXAlignment     = Enum.TextXAlignment.Left
+OwnerText.ZIndex             = 7
+
+local StatsLabel = Instance.new("TextLabel")
+StatsLabel.Parent             = Header
+StatsLabel.BackgroundTransparency = 1
+StatsLabel.Position           = UDim2.new(0.22, 0, 0.76, 0)
+StatsLabel.Size               = UDim2.new(0, 150, 0, 10)
+StatsLabel.Font               = Enum.Font.Gotham
+StatsLabel.Text               = "FPS: -- | Ping: --ms"
+StatsLabel.TextColor3         = Color3.fromRGB(150, 110, 190)
+StatsLabel.TextSize           = 8
+StatsLabel.TextXAlignment     = Enum.TextXAlignment.Left
+StatsLabel.ZIndex             = 7
 
 task.spawn(function()
-    pcall(function()
-        AvatarImg.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    local lastTick = tick()
+    local frameCount = 0
+    local fps = 0
+    RunService.RenderStepped:Connect(function()
+        frameCount = frameCount + 1
+        if tick() - lastTick >= 1 then
+            fps = frameCount
+            frameCount = 0
+            lastTick = tick()
+        end
+        local pingVal = 0
+        pcall(function()
+            pingVal = math.floor(LocalPlayer:GetNetworkPing() * 1000)
+        end)
+        StatsLabel.Text = string.format("FPS: %d | Ping: %dms", fps, pingVal)
     end)
 end)
 
-local AvatarStroke = Instance.new("UIStroke")
-AvatarStroke.Color = Color3.fromRGB(255, 150, 230)
-AvatarStroke.Thickness = 2
-AvatarStroke.Parent = AvatarImg
+local DiscordBtn = Instance.new("TextButton")
+DiscordBtn.Parent           = Header
+DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+DiscordBtn.Position         = UDim2.new(0.74, 0, 0.2, 0)
+DiscordBtn.Size             = UDim2.new(0, 28, 0, 28)
+DiscordBtn.Font             = Enum.Font.GothamBold
+DiscordBtn.Text             = "DC"
+DiscordBtn.TextColor3       = Color3.fromRGB(255, 255, 255)
+DiscordBtn.TextSize         = 9.5
+DiscordBtn.ZIndex           = 7
+Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(1, 0)
 
-local HubTitle = Instance.new("TextLabel")
-HubTitle.Parent = HeaderFrame
-HubTitle.BackgroundTransparency = 1
-HubTitle.Position = UDim2.new(0, 56, 0, 6)
-HubTitle.Size = UDim2.new(0, 180, 0, 16)
-HubTitle.ZIndex = 6
-HubTitle.Font = Enum.Font.GothamBold
-HubTitle.Text = "💜 OMEGA HUB 🦄"
-HubTitle.TextColor3 = Color3.fromRGB(255, 210, 245)
-HubTitle.TextSize = 11
-HubTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-local UserInfoLabel = Instance.new("TextLabel")
-UserInfoLabel.Parent = HeaderFrame
-UserInfoLabel.BackgroundTransparency = 1
-UserInfoLabel.Position = UDim2.new(0, 56, 0, 22)
-UserInfoLabel.Size = UDim2.new(0, 190, 0, 14)
-UserInfoLabel.ZIndex = 6
-UserInfoLabel.Font = Enum.Font.GothamMedium
-UserInfoLabel.Text = "ID: " .. player.UserId .. " | " .. player.Name
-UserInfoLabel.TextColor3 = Color3.fromRGB(240, 170, 220)
-UserInfoLabel.TextSize = 8
-UserInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local ExecInfoLabel = Instance.new("TextLabel")
-ExecInfoLabel.Parent = HeaderFrame
-ExecInfoLabel.BackgroundTransparency = 1
-ExecInfoLabel.Position = UDim2.new(0, 56, 0, 36)
-ExecInfoLabel.Size = UDim2.new(0, 190, 0, 14)
-ExecInfoLabel.ZIndex = 6
-ExecInfoLabel.Font = Enum.Font.GothamMedium
-ExecInfoLabel.Text = "Exec: " .. tostring(executorName) .. " | FPS: 60"
-ExecInfoLabel.TextColor3 = Color3.fromRGB(210, 140, 200)
-ExecInfoLabel.TextSize = 8
-ExecInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+DiscordBtn.MouseButton1Click:Connect(function()
+    copyDiscord()
+    showNotification("Discord copiado al portapapeles")
+end)
 
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Parent = HeaderFrame
-CloseBtn.BackgroundTransparency = 1
-CloseBtn.Position = UDim2.new(1, -26, 0, 4)
-CloseBtn.Size = UDim2.new(0, 20, 0, 20)
-CloseBtn.ZIndex = 6
-CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.Text = "✕"
-CloseBtn.TextColor3 = Color3.fromRGB(240, 170, 215)
-CloseBtn.TextSize = 11
+CloseBtn.Parent           = Header
+CloseBtn.BackgroundColor3 = Color3.fromRGB(35, 20, 50)
+CloseBtn.Position         = UDim2.new(0.87, 0, 0.2, 0)
+CloseBtn.Size             = UDim2.new(0, 28, 0, 28)
+CloseBtn.Font             = Enum.Font.GothamBold
+CloseBtn.Text             = "X"
+CloseBtn.TextColor3       = Color3.fromRGB(230, 170, 255)
+CloseBtn.TextSize           = 9.5
+CloseBtn.ZIndex             = 7
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(1, 0)
 
-------------------------------------------------------------------
--- MOVIMIENTO DE VENTANA
-------------------------------------------------------------------
-local dragging, dragInput, dragStart, startPos
-HeaderFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = HubFrame.Position
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-RunService.RenderStepped:Connect(function()
-    if dragging and dragInput then
-        local delta = dragInput.Position - dragStart
-        HubFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
+CloseBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
 end)
 
-------------------------------------------------------------------
--- PANEL DE CONTROLES
-------------------------------------------------------------------
-local ControlCard = Instance.new("Frame")
-ControlCard.Parent = HubFrame
-ControlCard.BackgroundColor3 = Color3.fromRGB(24, 7, 20)
-ControlCard.Position = UDim2.new(0, 8, 0, 62)
-ControlCard.Size = UDim2.new(1, -16, 0, 278)
-ControlCard.ZIndex = 4
-Instance.new("UICorner", ControlCard).CornerRadius = UDim.new(0, 8)
+-- ============================================================
+-- SECCIÓN WORLDS (Menú Desplegable Elegante)
+-- ============================================================
+local WorldsCard = Instance.new("Frame")
+WorldsCard.Parent            = MainFrame
+WorldsCard.BackgroundColor3  = Color3.fromRGB(16, 10, 22)
+WorldsCard.Position          = UDim2.new(0.04, 0, 0.24, 0)
+WorldsCard.Size              = UDim2.new(0, 303, 0, 36)
+WorldsCard.ZIndex            = 6
+Instance.new("UICorner", WorldsCard).CornerRadius = UDim.new(0, 8)
+local StrokeWorlds = Instance.new("UIStroke")
+StrokeWorlds.Color = Color3.fromRGB(140, 70, 210)
+StrokeWorlds.Thickness = 1
+StrokeWorlds.Parent = WorldsCard
 
--- BOTÓN MENÚ WORLDS
 local WorldsMenuBtn = Instance.new("TextButton")
-WorldsMenuBtn.Parent = ControlCard
-WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(55, 15, 45)
-WorldsMenuBtn.Position = UDim2.new(0, 8, 0, 8)
-WorldsMenuBtn.Size = UDim2.new(1, -16, 0, 26)
-WorldsMenuBtn.ZIndex = 5
+WorldsMenuBtn.Parent = WorldsCard
+WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+WorldsMenuBtn.Position = UDim2.new(0.03, 0, 0.14, 0)
+WorldsMenuBtn.Size = UDim2.new(0.94, 0, 0, 25)
+WorldsMenuBtn.ZIndex = 7
 WorldsMenuBtn.Font = Enum.Font.GothamBold
-WorldsMenuBtn.Text = "📖 Worlds ▾"
-WorldsMenuBtn.TextColor3 = Color3.fromRGB(255, 210, 245)
-WorldsMenuBtn.TextSize = 10.5
+WorldsMenuBtn.Text = "Worlds Menu ▾"
+WorldsMenuBtn.TextColor3 = Color3.fromRGB(230, 190, 255)
+WorldsMenuBtn.TextSize = 9.5
 Instance.new("UICorner", WorldsMenuBtn).CornerRadius = UDim.new(0, 6)
 
--- SUBVENTANA INTERNA COMPACTA
 local WorldDropdown = Instance.new("Frame")
-WorldDropdown.Parent = ControlCard
-WorldDropdown.BackgroundColor3 = Color3.fromRGB(38, 10, 30)
-WorldDropdown.Position = UDim2.new(0, 8, 0, 36)
-WorldDropdown.Size = UDim2.new(1, -16, 0, 110)
-WorldDropdown.ZIndex = 10
+WorldDropdown.Parent = MainFrame
+WorldDropdown.BackgroundColor3 = Color3.fromRGB(16, 10, 22)
+WorldDropdown.Position = UDim2.new(0.04, 0, 0.39, 0)
+WorldDropdown.Size = UDim2.new(0, 303, 0, 96)
+WorldDropdown.ZIndex = 12
 WorldDropdown.Visible = false
 Instance.new("UICorner", WorldDropdown).CornerRadius = UDim.new(0, 6)
 local UIStrokeDrop = Instance.new("UIStroke")
-UIStrokeDrop.Color = Color3.fromRGB(255, 140, 235)
-UIStrokeDrop.Thickness = 1.5
+UIStrokeDrop.Color = Color3.fromRGB(180, 90, 240)
+UIStrokeDrop.Thickness = 1.2
 UIStrokeDrop.Parent = WorldDropdown
 
 local World1Btn = Instance.new("TextButton")
 World1Btn.Parent = WorldDropdown
-World1Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
-World1Btn.Position = UDim2.new(0, 6, 0, 5)
-World1Btn.Size = UDim2.new(1, -12, 0, 22)
-World1Btn.ZIndex = 11
+World1Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+World1Btn.Position = UDim2.new(0.03, 0, 0.05, 0)
+World1Btn.Size = UDim2.new(0.94, 0, 0, 19)
+World1Btn.ZIndex = 13
 World1Btn.Font = Enum.Font.GothamBold
 World1Btn.Text = "World 1 [OFF]"
-World1Btn.TextColor3 = Color3.fromRGB(255, 170, 225)
-World1Btn.TextSize = 9.5
+World1Btn.TextColor3 = Color3.fromRGB(220, 170, 250)
+World1Btn.TextSize = 9
 Instance.new("UICorner", World1Btn).CornerRadius = UDim.new(0, 5)
 
 local World2Btn = Instance.new("TextButton")
 World2Btn.Parent = WorldDropdown
-World2Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
-World2Btn.Position = UDim2.new(0, 6, 0, 31)
-World2Btn.Size = UDim2.new(1, -12, 0, 22)
-World2Btn.ZIndex = 11
+World2Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+World2Btn.Position = UDim2.new(0.03, 0, 0.28, 0)
+World2Btn.Size = UDim2.new(0.94, 0, 0, 19)
+World2Btn.ZIndex = 13
 World2Btn.Font = Enum.Font.GothamBold
 World2Btn.Text = "World 2 [OFF]"
-World2Btn.TextColor3 = Color3.fromRGB(255, 170, 225)
-World2Btn.TextSize = 9.5
+World2Btn.TextColor3 = Color3.fromRGB(220, 170, 250)
+World2Btn.TextSize = 9
 Instance.new("UICorner", World2Btn).CornerRadius = UDim.new(0, 5)
 
 local World3Btn = Instance.new("TextButton")
 World3Btn.Parent = WorldDropdown
-World3Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
-World3Btn.Position = UDim2.new(0, 6, 0, 57)
-World3Btn.Size = UDim2.new(1, -12, 0, 22)
-World3Btn.ZIndex = 11
+World3Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+World3Btn.Position = UDim2.new(0.03, 0, 0.51, 0)
+World3Btn.Size = UDim2.new(0.94, 0, 0, 19)
+World3Btn.ZIndex = 13
 World3Btn.Font = Enum.Font.GothamBold
 World3Btn.Text = "World 3 [OFF]"
-World3Btn.TextColor3 = Color3.fromRGB(255, 170, 225)
-World3Btn.TextSize = 9.5
+World3Btn.TextColor3 = Color3.fromRGB(220, 170, 250)
+World3Btn.TextSize = 9
 Instance.new("UICorner", World3Btn).CornerRadius = UDim.new(0, 5)
 
 local World4Btn = Instance.new("TextButton")
 World4Btn.Parent = WorldDropdown
-World4Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
-World4Btn.Position = UDim2.new(0, 6, 0, 83)
-World4Btn.Size = UDim2.new(1, -12, 0, 22)
-World4Btn.ZIndex = 11
+World4Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+World4Btn.Position = UDim2.new(0.03, 0, 0.74, 0)
+World4Btn.Size = UDim2.new(0.94, 0, 0, 19)
+World4Btn.ZIndex = 13
 World4Btn.Font = Enum.Font.GothamBold
 World4Btn.Text = "World 4 [OFF]"
-World4Btn.TextColor3 = Color3.fromRGB(255, 170, 225)
-World4Btn.TextSize = 9.5
+World4Btn.TextColor3 = Color3.fromRGB(220, 170, 250)
+World4Btn.TextSize = 9
 Instance.new("UICorner", World4Btn).CornerRadius = UDim.new(0, 5)
-
--- COORDENADAS ACTUALES
-local CoordsTitle = Instance.new("TextLabel")
-CoordsTitle.Parent = ControlCard
-CoordsTitle.BackgroundTransparency = 1
-CoordsTitle.Position = UDim2.new(0, 8, 0, 42)
-CoordsTitle.Size = UDim2.new(1, -16, 0, 14)
-CoordsTitle.ZIndex = 5
-CoordsTitle.Font = Enum.Font.GothamBold
-CoordsTitle.Text = "Coordenadas Actuales (X, Y, Z):"
-CoordsTitle.TextColor3 = Color3.fromRGB(255, 190, 235)
-CoordsTitle.TextSize = 9
-CoordsTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-local CoordsBox = Instance.new("TextBox")
-CoordsBox.Parent = ControlCard
-CoordsBox.BackgroundColor3 = Color3.fromRGB(38, 10, 30)
-CoordsBox.Position = UDim2.new(0, 8, 0, 58)
-CoordsBox.Size = UDim2.new(1, -16, 0, 22)
-CoordsBox.ZIndex = 5
-CoordsBox.Font = Enum.Font.GothamBold
-CoordsBox.Text = "0, 0, 0"
-CoordsBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-CoordsBox.TextSize = 10
-CoordsBox.ClearTextOnFocus = false
-Instance.new("UICorner", CoordsBox).CornerRadius = UDim.new(0, 6)
-
-local StatusInfo = Instance.new("TextLabel")
-StatusInfo.Parent = ControlCard
-StatusInfo.BackgroundTransparency = 1
-StatusInfo.Position = UDim2.new(0, 8, 0, 86)
-StatusInfo.Size = UDim2.new(1, -16, 0, 16)
-StatusInfo.ZIndex = 5
-StatusInfo.Font = Enum.Font.GothamMedium
-StatusInfo.Text = "Estado: Esperando selección..."
-StatusInfo.TextColor3 = Color3.fromRGB(210, 140, 200)
-StatusInfo.TextSize = 8.5
-StatusInfo.TextXAlignment = Enum.TextXAlignment.Left
-
-local CopyCoordsBtn = Instance.new("TextButton")
-CopyCoordsBtn.Parent = ControlCard
-CopyCoordsBtn.BackgroundColor3 = Color3.fromRGB(38, 10, 30)
-CopyCoordsBtn.Position = UDim2.new(0, 8, 0, 108)
-CopyCoordsBtn.Size = UDim2.new(1, -16, 0, 24)
-CopyCoordsBtn.ZIndex = 5
-CopyCoordsBtn.Font = Enum.Font.GothamBold
-CopyCoordsBtn.Text = "📋 Copiar Coordenadas"
-CopyCoordsBtn.TextColor3 = Color3.fromRGB(255, 205, 245)
-CopyCoordsBtn.TextSize = 9
-Instance.new("UICorner", CopyCoordsBtn).CornerRadius = UDim.new(0, 6)
-
-local function animateClick(btn)
-    pcall(function()
-        local origSize = btn.Size
-        TweenService:Create(btn, TweenInfo.new(0.1), {Size = origSize - UDim2.new(0, 4, 0, 2)}):Play()
-        task.wait(0.1)
-        TweenService:Create(btn, TweenInfo.new(0.1), {Size = origSize}):Play()
-    end)
-end
 
 local menuOpen = false
 WorldsMenuBtn.MouseButton1Click:Connect(function()
-    animateClick(WorldsMenuBtn)
     menuOpen = not menuOpen
     WorldDropdown.Visible = menuOpen
     if menuOpen then
-        WorldsMenuBtn.Text = "📖 Worlds ▴"
+        WorldsMenuBtn.Text = "Worlds Menu ▴"
     else
-        WorldsMenuBtn.Text = "📖 Worlds ▾"
+        WorldsMenuBtn.Text = "Worlds Menu ▾"
     end
 end)
 
-------------------------------------------------------------------
--- LÓGICA DE RUTA Y RECOLECCIÓN DE WINS (WORLD 1, 2, 3 Y 4)
-------------------------------------------------------------------
--- Coordenadas World 1 (Intactas)
+-- ============================================================
+-- ESTADO Y MONITOREO COMPACTO
+-- ============================================================
+local StatusCard = Instance.new("Frame")
+StatusCard.Parent           = MainFrame
+StatusCard.BackgroundColor3 = Color3.fromRGB(16, 10, 22)
+StatusCard.Position         = UDim2.new(0.04, 0, 0.39, 0)
+StatusCard.Size             = UDim2.new(0, 303, 0, 58)
+StatusCard.ZIndex           = 6
+Instance.new("UICorner", StatusCard).CornerRadius = UDim.new(0, 8)
+local StrokeStatus = Instance.new("UIStroke")
+StrokeStatus.Color = Color3.fromRGB(140, 70, 210)
+StrokeStatus.Thickness = 1
+StrokeStatus.Parent = StatusCard
+
+local StatusTitle = Instance.new("TextLabel")
+StatusTitle.Parent             = StatusCard
+StatusTitle.BackgroundTransparency = 1
+StatusTitle.Position           = UDim2.new(0.04, 0, 0.12, 0)
+StatusTitle.Size               = UDim2.new(0, 280, 0, 15)
+StatusTitle.Font               = Enum.Font.GothamBold
+StatusTitle.Text               = "SYSTEM STATUS"
+StatusTitle.TextColor3         = Color3.fromRGB(230, 190, 255)
+StatusTitle.TextSize           = 9.5
+StatusTitle.TextXAlignment     = Enum.TextXAlignment.Left
+StatusTitle.ZIndex             = 7
+
+local StatusInfo = Instance.new("TextLabel")
+StatusInfo.Parent             = StatusCard
+StatusInfo.BackgroundTransparency = 1
+StatusInfo.Position           = UDim2.new(0.04, 0, 0.48, 0)
+StatusInfo.Size               = UDim2.new(0, 280, 0, 20)
+StatusInfo.Font               = Enum.Font.Gotham
+StatusInfo.Text               = "Status: Waiting for selection..."
+StatusInfo.TextColor3         = Color3.fromRGB(180, 130, 220)
+StatusInfo.TextSize           = 9
+StatusInfo.TextXAlignment     = Enum.TextXAlignment.Left
+StatusInfo.TextWrapped        = true
+StatusInfo.ZIndex             = 7
+
+-- ============================================================
+-- LÓGICA DE MUNDOS Y RUTAS (INALTERADA)
+-- ============================================================
 local posA1 = Vector3.new(-435.6, 27.3, -224.1)
 local posB1 = Vector3.new(-9460.4, 387.0, -237.8)
 local posC1 = Vector3.new(-9460.5, 390.6, -257.9)
 
--- Coordenadas World 2 (Actualizadas con las capturas A, B y C del World 2)
 local posA2 = Vector3.new(-439.2, 27.4, -2532.3)
 local posB2 = Vector3.new(-3632.1, 153.2, -9379.6)
 local posC2 = Vector3.new(-3606.7, 157.3, -9378.7)
 
--- Coordenadas World 3 (Intactas)
 local posA3 = Vector3.new(-438.7, 27.3, 5776.5)
 local posB3 = Vector3.new(-8076.4, 280.0, 2773.3)
 local posC3 = Vector3.new(-8078.1, 283.1, 2741.1)
 
--- Coordenadas World 4 (Intactas)
 local posA4 = Vector3.new(-438.7, 27.3, 5776.5)
 local posB4 = Vector3.new(-7758.6, 18.6, 5778.8)
 local posC4 = Vector3.new(-7759.8, 22.1, 5742.2)
 
 local beamFolder = Instance.new("Folder", Workspace)
-beamFolder.Name = "OmegaBeamFolder"
+beamFolder.Name = "XLBeamFolder"
 
 local function drawNeonLine(startPos, endPos)
     pcall(function()
         for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end
         local part = Instance.new("Part")
-        part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
+        part.Size = Vector3.new(0.3, 0.3, (startPos - endPos).Magnitude)
         part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
         part.Anchored = true
         part.CanCollide = false
         part.Material = Enum.Material.Neon
-        part.Color = Color3.fromRGB(255, 100, 215)
+        part.Color = Color3.fromRGB(180, 90, 240)
         part.Parent = beamFolder
     end)
 end
@@ -456,17 +478,6 @@ end
 local function clearNeonLine()
     pcall(function() for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end end)
 end
-
-RunService.RenderStepped:Connect(function()
-    pcall(function()
-        local char = player.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        if root then
-            local p = root.Position
-            CoordsBox.Text = string.format("%.1f, %.1f, %.1f", p.X, p.Y, p.Z)
-        end
-    end)
-end)
 
 local world1Active = false
 local world2Active = false
@@ -479,126 +490,114 @@ local function resetAllWorlds()
     world3Active = false
     world4Active = false
     World1Btn.Text = "World 1 [OFF]"
-    World1Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
+    World1Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
     World2Btn.Text = "World 2 [OFF]"
-    World2Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
+    World2Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
     World3Btn.Text = "World 3 [OFF]"
-    World3Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
+    World3Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
     World4Btn.Text = "World 4 [OFF]"
-    World4Btn.BackgroundColor3 = Color3.fromRGB(50, 14, 40)
-    StatusInfo.Text = "Estado: Apagado"
+    World4Btn.BackgroundColor3 = Color3.fromRGB(26, 16, 38)
+    StatusInfo.Text = "Status: Disabled"
     clearNeonLine()
 end
 
 World1Btn.MouseButton1Click:Connect(function()
-    animateClick(World1Btn)
     world1Active = not world1Active
     if world1Active then
         resetAllWorlds()
         world1Active = true
         World1Btn.Text = "World 1 [ON]"
-        World1Btn.BackgroundColor3 = Color3.fromRGB(80, 20, 70)
-        StatusInfo.Text = "Estado: World 1 Activo 💜"
+        World1Btn.BackgroundColor3 = Color3.fromRGB(65, 25, 95)
+        StatusInfo.Text = "Status: World 1 Running"
     else
         resetAllWorlds()
     end
 end)
 
 World2Btn.MouseButton1Click:Connect(function()
-    animateClick(World2Btn)
     world2Active = not world2Active
     if world2Active then
         resetAllWorlds()
         world2Active = true
         World2Btn.Text = "World 2 [ON]"
-        World2Btn.BackgroundColor3 = Color3.fromRGB(80, 20, 70)
-        StatusInfo.Text = "Estado: World 2 Activo 💜"
+        World2Btn.BackgroundColor3 = Color3.fromRGB(65, 25, 95)
+        StatusInfo.Text = "Status: World 2 Running"
     else
         resetAllWorlds()
     end
 end)
 
 World3Btn.MouseButton1Click:Connect(function()
-    animateClick(World3Btn)
     world3Active = not world3Active
     if world3Active then
         resetAllWorlds()
         world3Active = true
         World3Btn.Text = "World 3 [ON]"
-        World3Btn.BackgroundColor3 = Color3.fromRGB(80, 20, 70)
-        StatusInfo.Text = "Estado: World 3 Activo 💜"
+        World3Btn.BackgroundColor3 = Color3.fromRGB(65, 25, 95)
+        StatusInfo.Text = "Status: World 3 Running"
     else
         resetAllWorlds()
     end
 end)
 
 World4Btn.MouseButton1Click:Connect(function()
-    animateClick(World4Btn)
     world4Active = not world4Active
     if world4Active then
         resetAllWorlds()
         world4Active = true
         World4Btn.Text = "World 4 [ON]"
-        World4Btn.BackgroundColor3 = Color3.fromRGB(80, 20, 70)
-        StatusInfo.Text = "Estado: World 4 Activo 💜"
+        World4Btn.BackgroundColor3 = Color3.fromRGB(65, 25, 95)
+        StatusInfo.Text = "Status: World 4 Running"
     else
         resetAllWorlds()
     end
 end)
 
--- Bucle World 1
-task.spawn(function()
+local function runWorldRoutine(posA, posB, posC, worldName)
     while true do
-        if world1Active then
-            local char = player.Character
+        local checkActive = (worldName == "W1" and world1Active) or (worldName == "W2" and world2Active) or (worldName == "W3" and world3Active) or (worldName == "W4" and world4Active)
+        if checkActive then
+            local char = LocalPlayer.Character
             local root = char and char:FindFirstChild("HumanoidRootPart")
             local humanoid = char and char:FindFirstChildOfClass("Humanoid")
             
             if root and humanoid then
-                root.CFrame = CFrame.new(posA1)
+                root.CFrame = CFrame.new(posA)
                 task.wait(0.2)
-                if not world1Active then break end
+                if not ((worldName == "W1" and world1Active) or (worldName == "W2" and world2Active) or (worldName == "W3" and world3Active) or (worldName == "W4" and world4Active)) then break end
 
-                root.CFrame = CFrame.new(posB1)
+                root.CFrame = CFrame.new(posB)
                 task.wait(0.2)
-                if not world1Active then break end
+                if not ((worldName == "W1" and world1Active) or (worldName == "W2" and world2Active) or (worldName == "W3" and world3Active) or (worldName == "W4" and world4Active)) then break end
 
                 local travelTime = 3.5
                 local elapsed = 0
-                StatusInfo.Text = "Estado: W1 - Recorriendo camino..."
-                while world1Active and char and char.Parent and elapsed < travelTime do
+                StatusInfo.Text = "Status: " .. worldName .. " - Pathfinding..."
+                while ((worldName == "W1" and world1Active) or (worldName == "W2" and world2Active) or (worldName == "W3" and world3Active) or (worldName == "W4" and world4Active)) and char and char.Parent and elapsed < travelTime do
                     local dt = RunService.RenderStepped:Wait()
                     elapsed = elapsed + dt
                     local alpha = math.clamp(elapsed / travelTime, 0, 1)
                     if humanoid.Health <= 0 then break end
-                    root.CFrame = CFrame.new(posB1:Lerp(posC1, alpha))
-                    drawNeonLine(root.Position, posC1)
+                    root.CFrame = CFrame.new(posB:Lerp(posC, alpha))
+                    drawNeonLine(root.Position, posC)
                 end
 
-                root.CFrame = CFrame.new(posC1)
+                root.CFrame = CFrame.new(posC)
                 clearNeonLine()
                 
-                local collected = false
                 pcall(function()
                     for _, obj in pairs(Workspace:GetDescendants()) do
                         if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
                             local part = obj.Parent
-                            if part:IsA("BasePart") and (part.Position - posC1).Magnitude < 25 then
+                            if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
                                 firetouchinterest(root, part, 0)
                                 firetouchinterest(root, part, 1)
-                                collected = true
                             end
                         end
                     end
                 end)
 
-                if collected then
-                    showFloatingMessage("¡Se agarraron exitosamente (W1)! 💜")
-                else
-                    showFloatingMessage("¡W1 alcanzado! Verificando...")
-                end
-
-                StatusInfo.Text = "Estado: ¡Wins detectadas y recogidas (W1)! 💜"
+                StatusInfo.Text = "Status: Wins collected (" .. worldName .. ")"
                 task.wait(1.0)
             else
                 task.wait(1)
@@ -607,201 +606,9 @@ task.spawn(function()
             task.wait(0.4)
         end
     end
-end)
+end
 
--- Bucle World 2
-task.spawn(function()
-    while true do
-        if world2Active then
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-            
-            if root and humanoid then
-                root.CFrame = CFrame.new(posA2)
-                task.wait(0.2)
-                if not world2Active then break end
-
-                root.CFrame = CFrame.new(posB2)
-                task.wait(0.2)
-                if not world2Active then break end
-
-                local travelTime = 3.5
-                local elapsed = 0
-                StatusInfo.Text = "Estado: W2 - Recorriendo camino..."
-                while world2Active and char and char.Parent and elapsed < travelTime do
-                    local dt = RunService.RenderStepped:Wait()
-                    elapsed = elapsed + dt
-                    local alpha = math.clamp(elapsed / travelTime, 0, 1)
-                    if humanoid.Health <= 0 then break end
-                    root.CFrame = CFrame.new(posB2:Lerp(posC2, alpha))
-                    drawNeonLine(root.Position, posC2)
-                end
-
-                root.CFrame = CFrame.new(posC2)
-                clearNeonLine()
-                
-                local collected = false
-                pcall(function()
-                    for _, obj in pairs(Workspace:GetDescendants()) do
-                        if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                            local part = obj.Parent
-                            if part:IsA("BasePart") and (part.Position - posC2).Magnitude < 25 then
-                                firetouchinterest(root, part, 0)
-                                firetouchinterest(root, part, 1)
-                                collected = true
-                            end
-                        end
-                    end
-                end)
-
-                if collected then
-                    showFloatingMessage("¡Se agarraron exitosamente (W2)! 💜")
-                else
-                    showFloatingMessage("¡W2 alcanzado! Verificando...")
-                end
-
-                StatusInfo.Text = "Estado: ¡Wins detectadas y recogidas (W2)! 💜"
-                task.wait(1.0)
-            else
-                task.wait(1)
-            end
-        else
-            task.wait(0.4)
-        end
-    end
-end)
-
--- Bucle World 3
-task.spawn(function()
-    while true do
-        if world3Active then
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-            
-            if root and humanoid then
-                root.CFrame = CFrame.new(posA3)
-                task.wait(0.2)
-                if not world3Active then break end
-
-                root.CFrame = CFrame.new(posB3)
-                task.wait(0.2)
-                if not world3Active then break end
-
-                local travelTime = 3.5
-                local elapsed = 0
-                StatusInfo.Text = "Estado: W3 - Recorriendo camino..."
-                while world3Active and char and char.Parent and elapsed < travelTime do
-                    local dt = RunService.RenderStepped:Wait()
-                    elapsed = elapsed + dt
-                    local alpha = math.clamp(elapsed / travelTime, 0, 1)
-                    if humanoid.Health <= 0 then break end
-                    root.CFrame = CFrame.new(posB3:Lerp(posC3, alpha))
-                    drawNeonLine(root.Position, posC3)
-                end
-
-                root.CFrame = CFrame.new(posC3)
-                clearNeonLine()
-                
-                local collected = false
-                pcall(function()
-                    for _, obj in pairs(Workspace:GetDescendants()) do
-                        if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                            local part = obj.Parent
-                            if part:IsA("BasePart") and (part.Position - posC3).Magnitude < 25 then
-                                firetouchinterest(root, part, 0)
-                                firetouchinterest(root, part, 1)
-                                collected = true
-                            end
-                        end
-                    end
-                end)
-
-                if collected then
-                    showFloatingMessage("¡Se agarraron exitosamente (W3)! 💜")
-                else
-                    showFloatingMessage("¡W3 alcanzado! Verificando...")
-                end
-
-                StatusInfo.Text = "Estado: ¡Wins detectadas y recogidas (W3)! 💜"
-                task.wait(1.0)
-            else
-                task.wait(1)
-            end
-        else
-            task.wait(0.4)
-        end
-    end
-end)
-
--- Bucle World 4
-task.spawn(function()
-    while true do
-        if world4Active then
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-            
-            if root and humanoid then
-                root.CFrame = CFrame.new(posA4)
-                task.wait(0.2)
-                if not world4Active then break end
-
-                root.CFrame = CFrame.new(posB4)
-                task.wait(0.2)
-                if not world4Active then break end
-
-                local travelTime = 3.5
-                local elapsed = 0
-                StatusInfo.Text = "Estado: W4 - Recorriendo camino..."
-                while world4Active and char and char.Parent and elapsed < travelTime do
-                    local dt = RunService.RenderStepped:Wait()
-                    elapsed = elapsed + dt
-                    local alpha = math.clamp(elapsed / travelTime, 0, 1)
-                    if humanoid.Health <= 0 then break end
-                    root.CFrame = CFrame.new(posB4:Lerp(posC4, alpha))
-                    drawNeonLine(root.Position, posC4)
-                end
-
-                root.CFrame = CFrame.new(posC4)
-                clearNeonLine()
-                
-                local collected = false
-                pcall(function()
-                    for _, obj in pairs(Workspace:GetDescendants()) do
-                        if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                            local part = obj.Parent
-                            if part:IsA("BasePart") and (part.Position - posC4).Magnitude < 25 then
-                                firetouchinterest(root, part, 0)
-                                firetouchinterest(root, part, 1)
-                                collected = true
-                            end
-                        end
-                    end
-                end)
-
-                if collected then
-                    showFloatingMessage("¡Se agarraron exitosamente (W4)! 💜")
-                else
-                    showFloatingMessage("¡W4 alcanzado! Verificando...")
-                end
-
-                StatusInfo.Text = "Estado: ¡Wins detectadas y recogidas (W4)! 💜"
-                task.wait(1.0)
-            else
-                task.wait(1)
-            end
-        else
-            task.wait(0.4)
-        end
-    end
-end)
-
-CopyCoordsBtn.MouseButton1Click:Connect(function()
-    animateClick(CopyCoordsBtn)
-    pcall(function() setclipboard(CoordsBox.Text) end)
-end)
-
-CloseBtn.MouseButton1Click:Connect(function() HubFrame.Visible = false end)
-CircleButton.MouseButton1Click:Connect(function() HubFrame.Visible = not HubFrame.Visible end)
+task.spawn(function() runWorldRoutine(posA1, posB1, posC1, "W1") end)
+task.spawn(function() runWorldRoutine(posA2, posB2, posC2, "W2") end)
+task.spawn(function() runWorldRoutine(posA3, posB3, posC3, "W3") end)
+task.spawn(function() runWorldRoutine(posA4, posB4, posC4, "W4") end)
