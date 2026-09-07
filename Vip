@@ -445,7 +445,7 @@ local function loadMainHub()
     end
 
     ------------------------------------------------------------------
-    -- CÍRCULO FLOTANTE (CON MENOS SENSIBILIDAD Y ANIMACIÓN AVANZADA)
+    -- CÍRCULO FLOTANTE (ESTABLE PARA TTACTIL Y DRAG, SE ABRE CON CLIC LIMPIO)
     ------------------------------------------------------------------
     local CircleButton = Instance.new("ImageButton")
     CircleButton.Name = "CircleButton"
@@ -487,47 +487,58 @@ local function loadMainHub()
         TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 56, 0, 56)}):Play()
     end)
 
-    -- Sistema Drag & Drop con menor sensibilidad (Factor de amortiguación 0.6)
-    local circleDragging, circleDragInput, circleDragStart, circleStartPos
+    -- Sistema de arrastre robusto y detección de toque puro
+    local circleDragging = false
+    local circleDragStart = Vector2.zero
+    local circleStartPos = UDim2.new()
+    local hasMoved = false
+
     CircleButton.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             circleDragging = true
-            circleDragStart = input.Position
+            hasMoved = false
+            circleDragStart = Vector2.new(input.Position.X, input.Position.Y)
             circleStartPos = CircleButton.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    circleDragging = false
-                end
-            end)
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            circleDragInput = input
+        if circleDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local currentPos = Vector2.new(input.Position.X, input.Position.Y)
+            local delta = currentPos - circleDragStart
+            if delta.Magnitude > 6 then
+                hasMoved = true
+            end
+            CircleButton.Position = UDim2.new(
+                circleStartPos.X.Scale,
+                circleStartPos.X.Offset + delta.X,
+                circleStartPos.Y.Scale,
+                circleStartPos.Y.Offset + delta.Y
+            )
         end
     end)
 
-    RunService.RenderStepped:Connect(function()
-        if circleDragging and circleDragInput then
-            local delta = (circleDragInput.Position - circleDragStart) * 0.6
-            CircleButton.Position = UDim2.new(circleStartPos.X.Scale, circleStartPos.X.Offset + delta.X, circleStartPos.Y.Scale, circleStartPos.Y.Offset + delta.Y)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if circleDragging then
+                circleDragging = false
+            end
         end
     end)
 
     ------------------------------------------------------------------
-    -- VENTANA PRINCIPAL
+    -- VENTANA PRINCIPAL (ANCLADA FIJA EN EL CENTRO EXACTO)
     ------------------------------------------------------------------
     local HubFrame = Instance.new("Frame")
     HubFrame.Name = "HubFrame"
     HubFrame.Parent = ScreenGui
     HubFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
     HubFrame.BackgroundTransparency = 0.1
+    -- Anclada fija en el centro exacto de la pantalla
     HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
     HubFrame.Size = UDim2.new(0, 490, 0, 300)
     HubFrame.ClipsDescendants = true
-    HubFrame.Visible = false -- Inicia oculto para la animación avanzada de apertura
-    HubFrame.Size = UDim2.new(0, 0, 0, 0) -- Estado inicial para la animación de apertura
+    HubFrame.Visible = false 
     Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
 
     local UIStrokeHub = Instance.new("UIStroke")
@@ -816,7 +827,6 @@ local function loadMainHub()
     CoordsStroke.Thickness = 1.5
     CoordsStroke.Parent = CoordsBox
 
-    -- Añadido: Medidor de velocidad en World (sin tocar opciones lógicas anteriores)
     local WorldSpeedMeter = Instance.new("TextLabel")
     WorldSpeedMeter.Parent = MainContainer
     WorldSpeedMeter.BackgroundTransparency = 1
@@ -974,7 +984,7 @@ local function loadMainHub()
     TreadmillStatusInfo.TextXAlignment = Enum.TextXAlignment.Left
 
     ------------------------------------------------------------------
-    -- VISUALS CONTAINER (CON PROFIT TRACKER CONFIGURADO EN TIEMPO REAL)
+    -- VISUALS CONTAINER
     ------------------------------------------------------------------
     local VisualsContainer = Instance.new("ScrollingFrame")
     VisualsContainer.Parent = HubFrame
@@ -1107,7 +1117,6 @@ local function loadMainHub()
         end
     end
 
-    -- Tracker configurado estrictamente por lo que se gana en tiempo real
     task.spawn(function()
         local startTime = tick()
         local initialCups = nil
@@ -1318,7 +1327,7 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- COORDENADAS DE TODOS LOS WORLDS (INTACTO)
+    -- COORDENADAS DE TODOS LOS WORLDS
     ------------------------------------------------------------------
     local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
     local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
@@ -1344,9 +1353,6 @@ local function loadMainHub()
     local posBG = Vector3.new(-1664.9, 110.2, -239.2)
     local posCG = Vector3.new(-1663.4, 114.1, -256.3)
 
-    ------------------------------------------------------------------
-    -- CHECKPOINT INICIAL MORADO Y TREADMILLS (INTACTO)
-    ------------------------------------------------------------------
     local posPurpleTreadmill = Vector3.new(-437.4, 27.3, -221.4)
 
     local posTreadmillA = Vector3.new(-448.2, 26.8, -291.1)
@@ -1576,7 +1582,7 @@ local function loadMainHub()
     runWorldLoop(function() return worldGalaxyActive end, posAG, posBG, posCG, "Galaxy")
 
     ------------------------------------------------------------------
-    -- LOGICA DE AUTO CAMINADORA (INTACTO)
+    -- LOGICA DE AUTO CAMINADORA
     ------------------------------------------------------------------
     local treadmillBasicActive = false
     local treadmillGoldActive = false
@@ -1749,7 +1755,7 @@ local function loadMainHub()
     runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void (D)")
 
     ------------------------------------------------------------------
-    -- 👑 APARTADO: TITLES (CON REINICIO AL MORIR Y RE-EQUIPAR CORREGIDO)
+    -- 👑 APARTADO: TITLES
     ------------------------------------------------------------------
     local TitlesContainer = Instance.new("ScrollingFrame")
     TitlesContainer.Name = "TitlesContainer"
@@ -2002,7 +2008,7 @@ local function loadMainHub()
     updateHeadBillboard()
 
     ------------------------------------------------------------------
-    -- OWNER CONTAINER (Con Avatar del usuario que lo use, FPS, Ejecutor e ID)
+    -- OWNER CONTAINER
     ------------------------------------------------------------------
     local OwnerContainer = Instance.new("ScrollingFrame")
     OwnerContainer.Name = "OwnerContainer"
@@ -2153,30 +2159,8 @@ local function loadMainHub()
     TabOwner.MouseButton1Click:Connect(function() switchTab(TabOwner, OwnerContainer) end)
 
     ------------------------------------------------------------------
-    -- DRAG & DROP DE LA VENTANA
+    -- SE ELIMINÓ EL DRAG & DROP DE LA VENTANA PRINCIPAL PARA QUE NO SE MUEVA
     ------------------------------------------------------------------
-    local dragging, dragInput, dragStart, startPos
-
-    HubFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = HubFrame.Position
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    RunService.RenderStepped:Connect(function()
-        if dragging and dragInput then
-            local delta = dragInput.Position - dragStart
-            HubFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
 
     CloseBtn.MouseButton1Click:Connect(function()
         TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
@@ -2184,25 +2168,28 @@ local function loadMainHub()
         HubFrame.Visible = false
     end)
 
-    -- Animación de apertura increíble avanzada al hacer clic en el círculo flotante
+    -- Apertura / Cierre fluido del menú al tocar el círculo flotante (sin falsos arrastres)
     local hubOpened = false
     CircleButton.MouseButton1Click:Connect(function()
-        hubOpened = not hubOpened
-        if hubOpened then
-            HubFrame.Visible = true
-            HubFrame.Size = UDim2.new(0, 0, 0, 0)
-            -- Efecto de escala elástica suave (Pro Max)
-            TweenService:Create(HubFrame, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 490, 0, 300)}):Play()
-        else
-            TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
-            task.wait(0.25)
-            HubFrame.Visible = false
+        if not hasMoved then
+            hubOpened = not hubOpened
+            if hubOpened then
+                HubFrame.Visible = true
+                HubFrame.Size = UDim2.new(0, 0, 0, 0)
+                -- Anclado y abierto exactamente en el centro de la pantalla
+                HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
+                TweenService:Create(HubFrame, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 490, 0, 300)}):Play()
+            else
+                TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+                task.wait(0.25)
+                HubFrame.Visible = false
+            end
         end
     end)
 end
 
 ------------------------------------------------------------------
--- VERIFICACIÓN DE KEY (CON TRANSICIÓN A LA NUEVA CARGA RÁPIDA 1%-100%)
+-- VERIFICACIÓN DE KEY
 ------------------------------------------------------------------
 VerifyBtn.MouseButton1Click:Connect(function()
     if KeyTextBox.Text == "UPDATE" then
@@ -2213,16 +2200,15 @@ VerifyBtn.MouseButton1Click:Connect(function()
         TweenService:Create(IntroFrame, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
         TweenService:Create(IntroBoxFrame, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
         task.wait(0.4)
-
         IntroGui:Destroy()
-        
+
         showPostKeyIntro(function()
             showLoadingScreen(function()
                 loadMainHub()
             end)
         end)
     else
-        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
-        IntroStatus.Text = "Key incorrecta. Prueba con: UPDATE"
+        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
+        IntroStatus.Text = "Key incorrecta"
     end
 end)
