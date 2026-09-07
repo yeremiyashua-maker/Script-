@@ -42,6 +42,7 @@ pcall(function()
     if Workspace:FindFirstChild("FoxnameESPFolder") then Workspace.FoxnameESPFolder:Destroy() end
     if Workspace:FindFirstChild("FoxnameTreadmillBeamFolder") then Workspace.FoxnameTreadmillBeamFolder:Destroy() end
     if Workspace:FindFirstChild("FoxnameHeadTitlesFolder") then Workspace.FoxnameHeadTitlesFolder:Destroy() end
+    if playerGui:FindFirstChild("FoxnameStatusAnchorGUI") then playerGui.FoxnameStatusAnchorGUI:Destroy() end
 end)
 
 ------------------------------------------------------------------
@@ -143,6 +144,9 @@ IntroStatus.TextSize = 10.5
 ------------------------------------------------------------------
 -- NUEVA INTRO / PANTALLA DE CARGA DEL 1% AL 100% (POST-KEY)
 ------------------------------------------------------------------
+local showLoadingScreen
+local loadMainHub
+
 local function showPostKeyIntro(onComplete)
     local PostGui = Instance.new("ScreenGui")
     PostGui.Name = "FoxnamePostKeyLoadingGUI"
@@ -261,7 +265,7 @@ end
 ------------------------------------------------------------------
 -- ADVERTENCIA!! Y PANTALLA DE CARGA (1% AL 100% CON PÉTALOS)
 ------------------------------------------------------------------
-local function showLoadingScreen(onComplete)
+showLoadingScreen = function(onComplete)
     local LoadGui = Instance.new("ScreenGui")
     LoadGui.Name = "FoxnameLoadingGUI"
     LoadGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -388,13 +392,107 @@ local function showLoadingScreen(onComplete)
     end)
 end
 
-local function loadMainHub()
+-- Lógica de verificación de Key con "IOS"
+VerifyBtn.MouseButton1Click:Connect(function()
+    if KeyTextBox.Text == "IOS" then
+        IntroStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
+        IntroStatus.Text = "¡Key Correcta! Cargando..."
+        task.wait(0.5)
+        TweenService:Create(IntroFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        task.wait(0.3)
+        IntroGui:Destroy()
+        
+        showPostKeyIntro(function()
+            showLoadingScreen(function()
+                loadMainHub()
+            end)
+        end)
+    else
+        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
+        IntroStatus.Text = "Key incorrecta."
+    end
+end)
+
+------------------------------------------------------------------
+-- FUNCIÓN PRINCIPAL DEL HUB
+------------------------------------------------------------------
+loadMainHub = function()
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "FoxnameHubGUI"
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.ResetOnSpawn = false
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.Parent = playerGui
+
+    -- MENÚ PEQUEÑO ANCLADO EN UN LADO DE LA PANTALLA (Avatar, Executor, FPS, etc.)
+    local StatusAnchorGui = Instance.new("ScreenGui")
+    StatusAnchorGui.Name = "FoxnameStatusAnchorGUI"
+    StatusAnchorGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    StatusAnchorGui.ResetOnSpawn = false
+    StatusAnchorGui.IgnoreGuiInset = true
+    StatusAnchorGui.Parent = playerGui
+
+    local AnchorFrame = Instance.new("Frame")
+    AnchorFrame.Name = "AnchorFrame"
+    AnchorFrame.Parent = StatusAnchorGui
+    AnchorFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    AnchorFrame.BackgroundTransparency = 0.2
+    AnchorFrame.Position = UDim2.new(0, 10, 0.4, 0)
+    AnchorFrame.Size = UDim2.new(0, 160, 0, 55)
+    AnchorFrame.ZIndex = 500
+    Instance.new("UICorner", AnchorFrame).CornerRadius = UDim.new(0, 10)
+
+    local AnchorStroke = Instance.new("UIStroke")
+    AnchorStroke.Color = Color3.fromRGB(255, 150, 240)
+    AnchorStroke.Thickness = 2
+    AnchorStroke.Parent = AnchorFrame
+
+    local AnchorAvatar = Instance.new("ImageLabel")
+    AnchorAvatar.Parent = AnchorFrame
+    AnchorAvatar.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
+    AnchorAvatar.Position = UDim2.new(0, 6, 0.5, -20)
+    AnchorAvatar.Size = UDim2.new(0, 40, 0, 40)
+    AnchorAvatar.ZIndex = 501
+    pcall(function()
+        AnchorAvatar.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    end)
+    if AnchorAvatar.Image == "" then
+        AnchorAvatar.Image = "rbxassetid://104233303368529"
+    end
+    Instance.new("UICorner", AnchorAvatar).CornerRadius = UDim.new(1, 0)
+
+    local AnchorAvatarStroke = Instance.new("UIStroke")
+    AnchorAvatarStroke.Color = Color3.fromRGB(230, 130, 255)
+    AnchorAvatarStroke.Thickness = 1.2
+    AnchorAvatarStroke.Parent = AnchorAvatar
+
+    local AnchorInfoLabel = Instance.new("TextLabel")
+    AnchorInfoLabel.Parent = AnchorFrame
+    AnchorInfoLabel.BackgroundTransparency = 1
+    AnchorInfoLabel.Position = UDim2.new(0, 50, 0, 4)
+    AnchorInfoLabel.Size = UDim2.new(1, -54, 1, -8)
+    AnchorInfoLabel.ZIndex = 501
+    AnchorInfoLabel.Font = Enum.Font.GothamBold
+    AnchorInfoLabel.Text = "FPS: --\n" .. executorName .. "\nID: " .. player.UserId
+    AnchorInfoLabel.TextColor3 = Color3.fromRGB(255, 230, 255)
+    AnchorInfoLabel.TextSize = 9
+    AnchorInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    task.spawn(function()
+        local lastTick = tick()
+        local frames = 0
+        while AnchorFrame and AnchorFrame.Parent do
+            frames = frames + 1
+            local currentTick = tick()
+            if currentTick - lastTick >= 1 then
+                local fps = math.round(frames / (currentTick - lastTick))
+                AnchorInfoLabel.Text = "FPS: " .. fps .. "\n" .. executorName .. "\nID: " .. player.UserId
+                frames = 0
+                lastTick = currentTick
+            end
+            RunService.RenderStepped:Wait()
+        end
+    end)
 
     local NotifGui = Instance.new("ScreenGui")
     NotifGui.Name = "FoxnameFloatingNotification"
@@ -445,7 +543,7 @@ local function loadMainHub()
     end
 
     ------------------------------------------------------------------
-    -- CÍRCULO FLOTANTE (ESTABLE PARA TTACTIL Y DRAG, SE ABRE CON CLIC LIMPIO)
+    -- CÍRCULO FLOTANTE (ESTABLE PARA TÁCTIL Y DRAG, ABRE EL HUB)
     ------------------------------------------------------------------
     local CircleButton = Instance.new("ImageButton")
     CircleButton.Name = "CircleButton"
@@ -479,15 +577,30 @@ local function loadMainHub()
         end
     end)
 
-    CircleButton.MouseEnter:Connect(function()
-        TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 62, 0, 62)}):Play()
+    -- Ventana principal (Inicia visible)
+    local HubFrame = Instance.new("Frame")
+    HubFrame.Name = "HubFrame"
+    HubFrame.Parent = ScreenGui
+    HubFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    HubFrame.BackgroundTransparency = 0.1
+    HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
+    HubFrame.Size = UDim2.new(0, 490, 0, 300)
+    HubFrame.ClipsDescendants = true
+    HubFrame.Visible = true 
+    Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
+
+    local UIStrokeHub = Instance.new("UIStroke")
+    UIStrokeHub.Color = Color3.fromRGB(255, 150, 240)
+    UIStrokeHub.Thickness = 3
+    UIStrokeHub.Parent = HubFrame
+
+    -- Abrir/Cerrar con el círculo flotante
+    local hubVisible = true
+    CircleButton.MouseButton1Click:Connect(function()
+        hubVisible = not hubVisible
+        HubFrame.Visible = hubVisible
     end)
 
-    CircleButton.MouseLeave:Connect(function()
-        TweenService:Create(CircleButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 56, 0, 56)}):Play()
-    end)
-
-    -- Sistema de arrastre robusto y detección de toque puro
     local circleDragging = false
     local circleDragStart = Vector2.zero
     local circleStartPos = UDim2.new()
@@ -525,26 +638,6 @@ local function loadMainHub()
             end
         end
     end)
-
-    ------------------------------------------------------------------
-    -- VENTANA PRINCIPAL (ANCLADA FIJA EN EL CENTRO EXACTO)
-    ------------------------------------------------------------------
-    local HubFrame = Instance.new("Frame")
-    HubFrame.Name = "HubFrame"
-    HubFrame.Parent = ScreenGui
-    HubFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
-    HubFrame.BackgroundTransparency = 0.1
-    -- Anclada fija en el centro exacto de la pantalla
-    HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
-    HubFrame.Size = UDim2.new(0, 490, 0, 300)
-    HubFrame.ClipsDescendants = true
-    HubFrame.Visible = false 
-    Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
-
-    local UIStrokeHub = Instance.new("UIStroke")
-    UIStrokeHub.Color = Color3.fromRGB(255, 150, 240)
-    UIStrokeHub.Thickness = 3
-    UIStrokeHub.Parent = HubFrame
 
     local InnerBorder = Instance.new("Frame")
     InnerBorder.Parent = HubFrame
@@ -602,7 +695,7 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- BARRA SUPERIOR (CON AVATAR, FPS, EXECUTOR E ID DEL USUARIO)
+    -- BARRA SUPERIOR
     ------------------------------------------------------------------
     local TopBar = Instance.new("Frame")
     TopBar.Parent = HubFrame
@@ -611,7 +704,6 @@ local function loadMainHub()
     TopBar.Size = UDim2.new(1, -16, 0, 32)
     TopBar.ZIndex = 5
 
-    -- Avatar del usuario arriba en el nombre del script
     local UserAvatarTop = Instance.new("ImageLabel")
     UserAvatarTop.Parent = TopBar
     UserAvatarTop.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
@@ -642,7 +734,6 @@ local function loadMainHub()
     TitleLabel.TextSize = 9.5
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Actualizador dinámico de FPS en la barra superior
     task.spawn(function()
         local lastTick = tick()
         local frames = 0
@@ -670,8 +761,12 @@ local function loadMainHub()
     CloseBtn.TextColor3 = Color3.fromRGB(255, 200, 240)
     CloseBtn.TextSize = 15
 
+    CloseBtn.MouseButton1Click:Connect(function()
+        HubFrame.Visible = false
+    end)
+
     ------------------------------------------------------------------
-    -- SIDEBAR
+    -- SIDEBAR Y PESTAÑAS
     ------------------------------------------------------------------
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Parent = HubFrame
@@ -720,7 +815,7 @@ local function loadMainHub()
     local TabOwner = createTabButton("👑 Owner", 156, false)
 
     ------------------------------------------------------------------
-    -- MAIN CONTAINER
+    -- CONTENEDORES DE LAS PESTAÑAS
     ------------------------------------------------------------------
     local MainContainer = Instance.new("ScrollingFrame")
     MainContainer.Parent = HubFrame
@@ -731,6 +826,79 @@ local function loadMainHub()
     MainContainer.ScrollBarThickness = 3
     MainContainer.ZIndex = 4
 
+    local TreadmillsContainer = Instance.new("ScrollingFrame")
+    TreadmillsContainer.Parent = HubFrame
+    TreadmillsContainer.BackgroundTransparency = 1
+    TreadmillsContainer.Position = UDim2.new(0, 136, 0, 42)
+    TreadmillsContainer.Size = UDim2.new(1, -142, 1, -48)
+    TreadmillsContainer.CanvasSize = UDim2.new(0, 0, 0, 250)
+    TreadmillsContainer.ScrollBarThickness = 3
+    TreadmillsContainer.Visible = false
+    TreadmillsContainer.ZIndex = 4
+
+    local VisualsContainer = Instance.new("ScrollingFrame")
+    VisualsContainer.Parent = HubFrame
+    VisualsContainer.BackgroundTransparency = 1
+    VisualsContainer.Position = UDim2.new(0, 136, 0, 42)
+    VisualsContainer.Size = UDim2.new(1, -142, 1, -48)
+    VisualsContainer.CanvasSize = UDim2.new(0, 0, 0, 260)
+    VisualsContainer.ScrollBarThickness = 3
+    VisualsContainer.Visible = false
+    VisualsContainer.ZIndex = 4
+
+    local TitlesContainer = Instance.new("ScrollingFrame")
+    TitlesContainer.Name = "TitlesContainer"
+    TitlesContainer.Parent = HubFrame
+    TitlesContainer.BackgroundTransparency = 1
+    TitlesContainer.Position = UDim2.new(0, 136, 0, 42)
+    TitlesContainer.Size = UDim2.new(1, -142, 1, -48)
+    TitlesContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
+    TitlesContainer.ScrollBarThickness = 3
+    TitlesContainer.Visible = false
+    TitlesContainer.ZIndex = 4
+
+    local OwnerContainer = Instance.new("ScrollingFrame")
+    OwnerContainer.Name = "OwnerContainer"
+    OwnerContainer.Parent = HubFrame
+    OwnerContainer.BackgroundTransparency = 1
+    OwnerContainer.Position = UDim2.new(0, 136, 0, 42)
+    OwnerContainer.Size = UDim2.new(1, -142, 1, -48)
+    OwnerContainer.CanvasSize = UDim2.new(0, 0, 0, 220)
+    OwnerContainer.ScrollBarThickness = 3
+    OwnerContainer.Visible = false
+    OwnerContainer.ZIndex = 4
+
+    -- Cambio de pestañas
+    local function selectTab(tabIndex)
+        MainContainer.Visible = (tabIndex == 1)
+        TreadmillsContainer.Visible = (tabIndex == 2)
+        VisualsContainer.Visible = (tabIndex == 3)
+        TitlesContainer.Visible = (tabIndex == 4)
+        OwnerContainer.Visible = (tabIndex == 5)
+
+        local tabs = {TabMain, TabTreadmills, TabVisuals, TabTitles, TabOwner}
+        for i, btn in ipairs(tabs) do
+            if i == tabIndex then
+                btn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
+                btn.BackgroundTransparency = 0.1
+                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            else
+                btn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+                btn.BackgroundTransparency = 0.55
+                btn.TextColor3 = Color3.fromRGB(215, 190, 245)
+            end
+        end
+    end
+
+    TabMain.MouseButton1Click:Connect(function() selectTab(1) end)
+    TabTreadmills.MouseButton1Click:Connect(function() selectTab(2) end)
+    TabVisuals.MouseButton1Click:Connect(function() selectTab(3) end)
+    TabTitles.MouseButton1Click:Connect(function() selectTab(4) end)
+    TabOwner.MouseButton1Click:Connect(function() selectTab(5) end)
+
+    ------------------------------------------------------------------
+    -- 📖 WORLDS (INTACTO TAL Y COMO ESTABA)
+    ------------------------------------------------------------------
     local WorldsMenuBtn = Instance.new("TextButton")
     WorldsMenuBtn.Parent = MainContainer
     WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
@@ -858,18 +1026,8 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- TREADMILLS CONTAINER
+    -- 🏃 AUTO TREADMILLS (INTACTO TAL Y COMO ESTABA)
     ------------------------------------------------------------------
-    local TreadmillsContainer = Instance.new("ScrollingFrame")
-    TreadmillsContainer.Parent = HubFrame
-    TreadmillsContainer.BackgroundTransparency = 1
-    TreadmillsContainer.Position = UDim2.new(0, 136, 0, 42)
-    TreadmillsContainer.Size = UDim2.new(1, -142, 1, -48)
-    TreadmillsContainer.CanvasSize = UDim2.new(0, 0, 0, 250)
-    TreadmillsContainer.ScrollBarThickness = 3
-    TreadmillsContainer.Visible = false
-    TreadmillsContainer.ZIndex = 4
-
     local TreadmillsMenuBtn = Instance.new("TextButton")
     TreadmillsMenuBtn.Parent = TreadmillsContainer
     TreadmillsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
@@ -984,18 +1142,8 @@ local function loadMainHub()
     TreadmillStatusInfo.TextXAlignment = Enum.TextXAlignment.Left
 
     ------------------------------------------------------------------
-    -- VISUALS CONTAINER
+    -- 🎯 VISUALS / ESP & PROFIT TRACKER
     ------------------------------------------------------------------
-    local VisualsContainer = Instance.new("ScrollingFrame")
-    VisualsContainer.Parent = HubFrame
-    VisualsContainer.BackgroundTransparency = 1
-    VisualsContainer.Position = UDim2.new(0, 136, 0, 42)
-    VisualsContainer.Size = UDim2.new(1, -142, 1, -48)
-    VisualsContainer.CanvasSize = UDim2.new(0, 0, 0, 260)
-    VisualsContainer.ScrollBarThickness = 3
-    VisualsContainer.Visible = false
-    VisualsContainer.ZIndex = 4
-
     local function createToggleOption(name, yPos, callback)
         local frame = Instance.new("Frame")
         frame.Parent = VisualsContainer
@@ -1171,9 +1319,6 @@ local function loadMainHub()
         end
     end)
 
-    ------------------------------------------------------------------
-    -- ESP
-    ------------------------------------------------------------------
     local espActive = false
     local espFolder = Instance.new("Folder", Workspace)
     espFolder.Name = "FoxnameESPFolder"
@@ -1327,447 +1472,8 @@ local function loadMainHub()
     end)
 
     ------------------------------------------------------------------
-    -- COORDENADAS DE TODOS LOS WORLDS
+    -- 👑 APARTADO: TITLES (CON ANIMACIONES SÚPER AVANZADAS EN LA CABEZA)
     ------------------------------------------------------------------
-    local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
-    local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
-    local posC5 = Vector3.new(-7600.6, 290.5, 8357.4)
-
-    local posA1 = Vector3.new(-435.6, 27.3, -224.1)
-    local posB1 = Vector3.new(-9460.4, 387.0, -237.8)
-    local posC1 = Vector3.new(-9460.5, 390.6, -257.9)
-
-    local posA2 = Vector3.new(-439.2, 27.4, -2532.3)
-    local posB2 = Vector3.new(-3632.1, 153.2, -9379.6)
-    local posC2 = Vector3.new(-3606.7, 157.3, -9378.7)
-
-    local posA3 = Vector3.new(-438.7, 27.3, 5776.5)
-    local posB3 = Vector3.new(-8076.4, 280.0, 2773.3)
-    local posC3 = Vector3.new(-8078.1, 283.1, 2741.1)
-
-    local posA4 = Vector3.new(-438.7, 27.3, 5776.5)
-    local posB4 = Vector3.new(-7758.6, 18.6, 5778.8)
-    local posC4 = Vector3.new(-7759.8, 22.1, 5742.2)
-
-    local posAG = Vector3.new(-438.2, 27.3, -221.1)
-    local posBG = Vector3.new(-1664.9, 110.2, -239.2)
-    local posCG = Vector3.new(-1663.4, 114.1, -256.3)
-
-    local posPurpleTreadmill = Vector3.new(-437.4, 27.3, -221.4)
-
-    local posTreadmillA = Vector3.new(-448.2, 26.8, -291.1)
-    local posTreadmillB = Vector3.new(-412.1, 26.8, -289.5)
-    local posTreadmillC = Vector3.new(-395.4, 27.2, -285.9)
-    local posTreadmillD = Vector3.new(-371.6, 27.6, -287.3)
-
-    local beamFolder = Instance.new("Folder", Workspace)
-    beamFolder.Name = "FoxnameBeamFolder"
-
-    local function drawNeonLine(startPos, endPos)
-        pcall(function()
-            for _, v in pairs(beamFolder:GetChildren()) do
-                v:Destroy()
-            end
-            local part = Instance.new("Part")
-            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
-            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
-            part.Anchored = true
-            part.CanCollide = false
-            part.Material = Enum.Material.Neon
-            part.Color = Color3.fromRGB(180, 100, 255)
-            part.Parent = beamFolder
-        end)
-    end
-
-    local function clearNeonLine()
-        pcall(function()
-            for _, v in pairs(beamFolder:GetChildren()) do
-                v:Destroy()
-            end
-        end)
-    end
-
-    RunService.RenderStepped:Connect(function()
-        pcall(function()
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            if root then
-                local p = root.Position
-                CoordsBox.Text = string.format("%.1f, %.1f, %.1f", p.X, p.Y, p.Z)
-            end
-        end)
-    end)
-
-    local world1Active = false
-    local world2Active = false
-    local world3Active = false
-    local world4Active = false
-    local world5Active = false
-    local worldGalaxyActive = false
-
-    local function resetAllWorlds()
-        world1Active = false
-        world2Active = false
-        world3Active = false
-        world4Active = false
-        world5Active = false
-        worldGalaxyActive = false
-
-        World5Btn.Text = "World 5 [OFF]"
-        World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World1Btn.Text = "World 1 [OFF]"
-        World1Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World2Btn.Text = "World 2 [OFF]"
-        World2Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World3Btn.Text = "World 3 [OFF]"
-        World3Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World4Btn.Text = "World 4 [OFF]"
-        World4Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        WorldGalaxyBtn.Text = "🌌 Galaxy World [OFF]"
-        WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-
-        StatusInfo.Text = "Estado: Apagado"
-        clearNeonLine()
-    end
-
-    World5Btn.MouseButton1Click:Connect(function()
-        world5Active = not world5Active
-        if world5Active then
-            resetAllWorlds()
-            world5Active = true
-            World5Btn.Text = "World 5 [ON]"
-            World5Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: World 5 Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    World1Btn.MouseButton1Click:Connect(function()
-        world1Active = not world1Active
-        if world1Active then
-            resetAllWorlds()
-            world1Active = true
-            World1Btn.Text = "World 1 [ON]"
-            World1Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: World 1 Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    World2Btn.MouseButton1Click:Connect(function()
-        world2Active = not world2Active
-        if world2Active then
-            resetAllWorlds()
-            world2Active = true
-            World2Btn.Text = "World 2 [ON]"
-            World2Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: World 2 Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    World3Btn.MouseButton1Click:Connect(function()
-        world3Active = not world3Active
-        if world3Active then
-            resetAllWorlds()
-            world3Active = true
-            World3Btn.Text = "World 3 [ON]"
-            World3Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: World 3 Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    World4Btn.MouseButton1Click:Connect(function()
-        world4Active = not world4Active
-        if world4Active then
-            resetAllWorlds()
-            world4Active = true
-            World4Btn.Text = "World 4 [ON]"
-            World4Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: World 4 Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    WorldGalaxyBtn.MouseButton1Click:Connect(function()
-        worldGalaxyActive = not worldGalaxyActive
-        if worldGalaxyActive then
-            resetAllWorlds()
-            worldGalaxyActive = true
-            WorldGalaxyBtn.Text = "🌌 Galaxy World [ON]"
-            WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            StatusInfo.Text = "Estado: Galaxy World Activo 💜"
-        else
-            resetAllWorlds()
-        end
-    end)
-
-    local function runWorldLoop(isActiveRef, posA, posB, posC, worldName)
-        task.spawn(function()
-            while true do
-                if isActiveRef() then
-                    local char = player.Character
-                    local root = char and char:FindFirstChild("HumanoidRootPart")
-                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-
-                    if root and humanoid then
-                        root.CFrame = CFrame.new(posA)
-                        task.wait(0.2)
-                        if not isActiveRef() then break end
-
-                        root.CFrame = CFrame.new(posB)
-                        task.wait(0.2)
-                        if not isActiveRef() then break end
-
-                        local travelTime = 3.5
-                        local elapsed = 0
-                        StatusInfo.Text = "Estado: " .. worldName .. " - Recorriendo..."
-
-                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
-                            local dt = RunService.RenderStepped:Wait()
-                            elapsed = elapsed + dt
-                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
-
-                            if humanoid.Health <= 0 then break end
-                            root.CFrame = CFrame.new(posB:Lerp(posC, alpha))
-                            drawNeonLine(root.Position, posC)
-                        end
-
-                        root.CFrame = CFrame.new(posC)
-                        clearNeonLine()
-
-                        local collected = false
-                        pcall(function()
-                            for _, obj in pairs(Workspace:GetDescendants()) do
-                                if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                                    local part = obj.Parent
-                                    if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
-                                        firetouchinterest(root, part, 0)
-                                        firetouchinterest(root, part, 1)
-                                        collected = true
-                                    end
-                                end
-                            end
-                        end)
-
-                        if collected then
-                            showFloatingMessage("¡Wins recogidas (" .. worldName .. ")! 💜")
-                        else
-                            showFloatingMessage("¡" .. worldName .. " alcanzado!")
-                        end
-
-                        StatusInfo.Text = "Estado: ¡Completado (" .. worldName .. ")! 💜"
-                        task.wait(1.0)
-                    else
-                        task.wait(1)
-                    end
-                else
-                    task.wait(0.4)
-                end
-            end
-        end)
-    end
-
-    runWorldLoop(function() return world5Active end, posA5, posB5, posC5, "W5")
-    runWorldLoop(function() return world1Active end, posA1, posB1, posC1, "W1")
-    runWorldLoop(function() return world2Active end, posA2, posB2, posC2, "W2")
-    runWorldLoop(function() return world3Active end, posA3, posB3, posC3, "W3")
-    runWorldLoop(function() return world4Active end, posA4, posB4, posC4, "W4")
-    runWorldLoop(function() return worldGalaxyActive end, posAG, posBG, posCG, "Galaxy")
-
-    ------------------------------------------------------------------
-    -- LOGICA DE AUTO CAMINADORA
-    ------------------------------------------------------------------
-    local treadmillBasicActive = false
-    local treadmillGoldActive = false
-    local treadmillGalaxyActive = false
-    local treadmillVoidActive = false
-
-    local treadmillFolder = Instance.new("Folder", Workspace)
-    treadmillFolder.Name = "FoxnameTreadmillBeamFolder"
-
-    local function drawTreadmillBeam(startPos, endPos)
-        pcall(function()
-            for _, v in pairs(treadmillFolder:GetChildren()) do
-                v:Destroy()
-            end
-            local part = Instance.new("Part")
-            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
-            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
-            part.Anchored = true
-            part.CanCollide = false
-            part.Material = Enum.Material.Neon
-            part.Color = Color3.fromRGB(180, 100, 255)
-            part.Parent = treadmillFolder
-        end)
-    end
-
-    local function clearTreadmillBeam()
-        pcall(function()
-            for _, v in pairs(treadmillFolder:GetChildren()) do
-                v:Destroy()
-            end
-        end)
-    end
-
-    local function resetAllTreadmills()
-        treadmillBasicActive = false
-        treadmillGoldActive = false
-        treadmillGalaxyActive = false
-        treadmillVoidActive = false
-
-        TreadmillBasicBtn.Text = "A: Basic Treadmill [OFF]"
-        TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillGoldBtn.Text = "B: Gold Treadmill [OFF]"
-        TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [OFF]"
-        TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillVoidBtn.Text = "D: Void Treadmill [OFF]"
-        TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-
-        TreadmillStatusInfo.Text = "Estado: Apagado"
-        clearTreadmillBeam()
-    end
-
-    TreadmillBasicBtn.MouseButton1Click:Connect(function()
-        treadmillBasicActive = not treadmillBasicActive
-        if treadmillBasicActive then
-            resetAllTreadmills()
-            treadmillBasicActive = true
-            TreadmillBasicBtn.Text = "A: Basic Treadmill [ON]"
-            TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            TreadmillStatusInfo.Text = "Estado: A (Basic) Activo 🏃"
-        else
-            resetAllTreadmills()
-        end
-    end)
-
-    TreadmillGoldBtn.MouseButton1Click:Connect(function()
-        treadmillGoldActive = not treadmillGoldActive
-        if treadmillGoldActive then
-            resetAllTreadmills()
-            treadmillGoldActive = true
-            TreadmillGoldBtn.Text = "B: Gold Treadmill [ON]"
-            TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            TreadmillStatusInfo.Text = "Estado: B (Gold) Activo 🏃"
-        else
-            resetAllTreadmills()
-        end
-    end)
-
-    TreadmillGalaxyBtn.MouseButton1Click:Connect(function()
-        treadmillGalaxyActive = not treadmillGalaxyActive
-        if treadmillGalaxyActive then
-            resetAllTreadmills()
-            treadmillGalaxyActive = true
-            TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [ON]"
-            TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            TreadmillStatusInfo.Text = "Estado: C (Galaxy) Activo 🏃"
-        else
-            resetAllTreadmills()
-        end
-    end)
-
-    TreadmillVoidBtn.MouseButton1Click:Connect(function()
-        treadmillVoidActive = not treadmillVoidActive
-        if treadmillVoidActive then
-            resetAllTreadmills()
-            treadmillVoidActive = true
-            TreadmillVoidBtn.Text = "D: Void Treadmill [ON]"
-            TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
-            TreadmillStatusInfo.Text = "Estado: D (Void) Activo 🏃"
-        else
-            resetAllTreadmills()
-        end
-    end)
-
-    local function runTreadmillTeleguiado(isActiveRef, targetCoord, treadmillName)
-        task.spawn(function()
-            while true do
-                if isActiveRef() then
-                    local char = player.Character
-                    local root = char and char:FindFirstChild("HumanoidRootPart")
-                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-
-                    if root and humanoid then
-                        root.CFrame = CFrame.new(posPurpleTreadmill)
-                        task.wait(0.2)
-                        if not isActiveRef() then break end
-
-                        TreadmillStatusInfo.Text = "Estado: Teleguiando a " .. treadmillName .. "..."
-
-                        local customSpeed = tonumber(SpeedBox.Text) or 50
-                        local distance = (posPurpleTreadmill - targetCoord).Magnitude
-                        local travelTime = math.clamp(distance / customSpeed, 0.2, 5)
-                        local elapsed = 0
-
-                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
-                            local dt = RunService.RenderStepped:Wait()
-                            elapsed = elapsed + dt
-                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
-
-                            if humanoid.Health <= 0 then break end
-                            root.CFrame = CFrame.new(posPurpleTreadmill:Lerp(targetCoord, alpha))
-                            drawTreadmillBeam(root.Position, targetCoord)
-                        end
-
-                        if not isActiveRef() then break end
-                        root.CFrame = CFrame.new(targetCoord)
-                        clearTreadmillBeam()
-
-                        TreadmillStatusInfo.Text = "Estado: Tocando " .. treadmillName .. " [Fijo]"
-
-                        while isActiveRef() and char and char.Parent and humanoid.Health > 0 do
-                            root.CFrame = CFrame.new(targetCoord)
-                            pcall(function()
-                                for _, obj in pairs(Workspace:GetDescendants()) do
-                                    if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                                        local part = obj.Parent
-                                        if part:IsA("BasePart") and (part.Position - targetCoord).Magnitude < 15 then
-                                            firetouchinterest(root, part, 0)
-                                            firetouchinterest(root, part, 1)
-                                        end
-                                    end
-                                end
-                            end)
-                            task.wait(0.2)
-                        end
-                    else
-                        task.wait(1)
-                    end
-                else
-                    clearTreadmillBeam()
-                    task.wait(0.4)
-                end
-            end
-        end)
-    end
-
-    runTreadmillTeleguiado(function() return treadmillBasicActive end, posTreadmillA, "Basic (A)")
-    runTreadmillTeleguiado(function() return treadmillGoldActive end, posTreadmillB, "Gold (B)")
-    runTreadmillTeleguiado(function() return treadmillGalaxyActive end, posTreadmillC, "Galaxy (C)")
-    runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void (D)")
-
-    ------------------------------------------------------------------
-    -- 👑 APARTADO: TITLES
-    ------------------------------------------------------------------
-    local TitlesContainer = Instance.new("ScrollingFrame")
-    TitlesContainer.Name = "TitlesContainer"
-    TitlesContainer.Parent = HubFrame
-    TitlesContainer.BackgroundTransparency = 1
-    TitlesContainer.Position = UDim2.new(0, 136, 0, 42)
-    TitlesContainer.Size = UDim2.new(1, -142, 1, -48)
-    TitlesContainer.CanvasSize = UDim2.new(0, 0, 0, 320)
-    TitlesContainer.ScrollBarThickness = 3
-    TitlesContainer.Visible = false
-    TitlesContainer.ZIndex = 4
-
     local PlayTimeLabel = Instance.new("TextLabel")
     PlayTimeLabel.Parent = TitlesContainer
     PlayTimeLabel.BackgroundTransparency = 1
@@ -1856,8 +1562,8 @@ local function loadMainHub()
                 local bb = Instance.new("BillboardGui")
                 bb.Name = "HeadTitleGui"
                 bb.Adornee = head
-                bb.Size = UDim2.new(0, 200, 0, 50)
-                bb.StudsOffset = Vector3.new(0, 3.2, 0)
+                bb.Size = UDim2.new(0, 240, 0, 70)
+                bb.StudsOffset = Vector3.new(0, 3.4, 0)
                 bb.AlwaysOnTop = true
                 bb.Parent = HeadTitlesFolder
 
@@ -1868,17 +1574,24 @@ local function loadMainHub()
                 tLbl.Font = Enum.Font.GothamBold
                 tLbl.Text = "👑 " .. equippedTitleName .. " 👑"
                 tLbl.TextColor3 = Color3.fromRGB(255, 200, 255)
-                tLbl.TextSize = 14
-                tLbl.TextStrokeTransparency = 0.1
+                tLbl.TextSize = 15
+                tLbl.TextStrokeTransparency = 0.15
                 tLbl.TextStrokeColor3 = Color3.fromRGB(110, 20, 160)
 
+                -- Animación Pro Max súper avanzada (Color HSV fluido + Levitación + Pulso rítmico)
                 task.spawn(function()
                     local t = 0
                     while bb and bb.Parent do
-                        t = t + RunService.RenderStepped:Wait()
-                        local hue = (t % 5) / 5
-                        tLbl.TextColor3 = Color3.fromHSV(hue, 0.4, 1)
-                        bb.StudsOffset = Vector3.new(0, 3.2 + math.sin(t * 3) * 0.25, 0)
+                        local dt = RunService.RenderStepped:Wait()
+                        t = t + dt
+                        
+                        local hue = (t % 4) / 4
+                        tLbl.TextColor3 = Color3.fromHSV(hue, 0.5, 1)
+                        
+                        local floatOffset = 3.4 + math.sin(t * 3.5) * 0.3
+                        local pulseSize = 15 + math.sin(t * 5) * 1.5
+                        bb.StudsOffset = Vector3.new(0, floatOffset, 0)
+                        tLbl.TextSize = pulseSize
                     end
                 end)
             end
@@ -1972,7 +1685,7 @@ local function loadMainHub()
         tBtn.MouseButton1Click:Connect(function()
             if unlockedTitles[tData.name] then
                 equippedTitleName = tData.name
-                showFloatingMessage("✨ Título equipado en la cabeza: " .. tData.name)
+                showFloatingMessage("✨ Título equipado con animación pro max: " .. tData.name)
                 updateTitlesUI()
                 updateHeadBillboard()
                 saveTitlesData()
@@ -2008,19 +1721,8 @@ local function loadMainHub()
     updateHeadBillboard()
 
     ------------------------------------------------------------------
-    -- OWNER CONTAINER
+    -- 👑 OWNER CONTAINER
     ------------------------------------------------------------------
-    local OwnerContainer = Instance.new("ScrollingFrame")
-    OwnerContainer.Name = "OwnerContainer"
-    OwnerContainer.Parent = HubFrame
-    OwnerContainer.BackgroundTransparency = 1
-    OwnerContainer.Position = UDim2.new(0, 136, 0, 42)
-    OwnerContainer.Size = UDim2.new(1, -142, 1, -48)
-    OwnerContainer.CanvasSize = UDim2.new(0, 0, 0, 220)
-    OwnerContainer.ScrollBarThickness = 3
-    OwnerContainer.Visible = false
-    OwnerContainer.ZIndex = 4
-
     local OwnerAvatar = Instance.new("ImageLabel")
     OwnerAvatar.Parent = OwnerContainer
     OwnerAvatar.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
@@ -2050,165 +1752,288 @@ local function loadMainHub()
     OwnerTextTitle.Size = UDim2.new(1, 0, 0, 20)
     OwnerTextTitle.ZIndex = 5
     OwnerTextTitle.Font = Enum.Font.GothamBold
-    OwnerTextTitle.Text = "👑 AMI 👑"
-    OwnerTextTitle.TextColor3 = Color3.fromRGB(255, 225, 255)
-    OwnerTextTitle.TextSize = 12
-
-    local OwnerTextName = Instance.new("TextLabel")
-    OwnerTextName.Parent = OwnerContainer
-    OwnerTextName.BackgroundTransparency = 1
-    OwnerTextName.Position = UDim2.new(0, 0, 0, 96)
-    OwnerTextName.Size = UDim2.new(1, 0, 0, 18)
-    OwnerTextName.ZIndex = 5
-    OwnerTextName.Font = Enum.Font.GothamMedium
-    OwnerTextName.Text = player.Name
-    OwnerTextName.TextColor3 = Color3.fromRGB(230, 200, 255)
-    OwnerTextName.TextSize = 10.5
-
-    local StatsCard = Instance.new("Frame")
-    StatsCard.Parent = OwnerContainer
-    StatsCard.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
-    StatsCard.BackgroundTransparency = 0.25
-    StatsCard.Position = UDim2.new(0, 4, 0, 120)
-    StatsCard.Size = UDim2.new(1, -12, 0, 80)
-    StatsCard.ZIndex = 5
-    Instance.new("UICorner", StatsCard).CornerRadius = UDim.new(0, 8)
-
-    local StatsStroke = Instance.new("UIStroke")
-    StatsStroke.Color = Color3.fromRGB(200, 100, 250)
-    StatsStroke.Transparency = 0.3
-    StatsStroke.Thickness = 1.5
-    StatsStroke.Parent = StatsCard
-
-    local FpsLabel = Instance.new("TextLabel")
-    FpsLabel.Parent = StatsCard
-    FpsLabel.BackgroundTransparency = 1
-    FpsLabel.Position = UDim2.new(0, 10, 0, 8)
-    FpsLabel.Size = UDim2.new(1, -20, 0, 18)
-    FpsLabel.ZIndex = 6
-    FpsLabel.Font = Enum.Font.GothamBold
-    FpsLabel.Text = "⚡ FPS: Calculando..."
-    FpsLabel.TextColor3 = Color3.fromRGB(255, 220, 255)
-    FpsLabel.TextSize = 10
-    FpsLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    local ExecLabel = Instance.new("TextLabel")
-    ExecLabel.Parent = StatsCard
-    ExecLabel.BackgroundTransparency = 1
-    ExecLabel.Position = UDim2.new(0, 10, 0, 30)
-    ExecLabel.Size = UDim2.new(1, -20, 0, 18)
-    ExecLabel.ZIndex = 6
-    ExecLabel.Font = Enum.Font.GothamBold
-    ExecLabel.Text = "🛠️ Executor: " .. executorName
-    ExecLabel.TextColor3 = Color3.fromRGB(230, 180, 255)
-    ExecLabel.TextSize = 10
-    ExecLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    local IdLabel = Instance.new("TextLabel")
-    IdLabel.Parent = StatsCard
-    IdLabel.BackgroundTransparency = 1
-    IdLabel.Position = UDim2.new(0, 10, 0, 52)
-    IdLabel.Size = UDim2.new(1, -20, 0, 18)
-    IdLabel.ZIndex = 6
-    IdLabel.Font = Enum.Font.GothamBold
-    IdLabel.Text = "🆔 Roblox ID: " .. player.UserId
-    IdLabel.TextColor3 = Color3.fromRGB(210, 160, 245)
-    IdLabel.TextSize = 10
-    IdLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    task.spawn(function()
-        local lastTick = tick()
-        local frames = 0
-        while StatsCard and StatsCard.Parent do
-            frames = frames + 1
-            local currentTick = tick()
-            if currentTick - lastTick >= 1 then
-                local fps = math.round(frames / (currentTick - lastTick))
-                FpsLabel.Text = "⚡ FPS: " .. fps
-                frames = 0
-                lastTick = currentTick
-            end
-            RunService.RenderStepped:Wait()
-        end
-    end)
+    OwnerTextTitle.Text = "👑 Creador del Hub: " .. player.Name
+    OwnerTextTitle.TextColor3 = Color3.fromRGB(255, 220, 255)
+    OwnerTextTitle.TextSize = 11
+    OwnerTextTitle.TextXAlignment = Enum.TextXAlignment.Center
 
     ------------------------------------------------------------------
-    -- NAVEGACIÓN ENTRE PESTAÑAS
+    -- BUCLES DE FUNCIONAMIENTO DE WORLDS Y TREADMILLS
     ------------------------------------------------------------------
-    local function switchTab(activeBtn, targetContainer)
-        for _, btn in pairs({TabMain, TabTreadmills, TabVisuals, TabTitles, TabOwner}) do
-            btn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
-            btn.BackgroundTransparency = 0.55
-            btn.TextColor3 = Color3.fromRGB(215, 190, 245)
-        end
+    local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
+    local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
+    local posC5 = Vector3.new(-7600.6, 290.5, 8357.4)
 
-        for _, cont in pairs({MainContainer, TreadmillsContainer, VisualsContainer, TitlesContainer, OwnerContainer}) do
-            cont.Visible = false
-        end
+    local posA1 = Vector3.new(-435.6, 27.3, -224.1)
+    local posB1 = Vector3.new(-9460.4, 387.0, -237.8)
+    local posC1 = Vector3.new(-9460.5, 390.6, -257.9)
 
-        activeBtn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
-        activeBtn.BackgroundTransparency = 0.1
-        activeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        targetContainer.Visible = true
-    end
+    local posA2 = Vector3.new(-439.2, 27.4, -2532.3)
+    local posB2 = Vector3.new(-3632.1, 153.2, -9379.6)
+    local posC2 = Vector3.new(-3606.7, 157.3, -9378.7)
 
-    TabMain.MouseButton1Click:Connect(function() switchTab(TabMain, MainContainer) end)
-    TabTreadmills.MouseButton1Click:Connect(function() switchTab(TabTreadmills, TreadmillsContainer) end)
-    TabVisuals.MouseButton1Click:Connect(function() switchTab(TabVisuals, VisualsContainer) end)
-    TabTitles.MouseButton1Click:Connect(function() switchTab(TabTitles, TitlesContainer) end)
-    TabOwner.MouseButton1Click:Connect(function() switchTab(TabOwner, OwnerContainer) end)
+    local posA3 = Vector3.new(-438.7, 27.3, 5776.5)
+    local posB3 = Vector3.new(-8076.4, 280.0, 2773.3)
+    local posC3 = Vector3.new(-8078.1, 283.1, 2741.1)
 
-    ------------------------------------------------------------------
-    -- SE ELIMINÓ EL DRAG & DROP DE LA VENTANA PRINCIPAL PARA QUE NO SE MUEVA
-    ------------------------------------------------------------------
+    local posA4 = Vector3.new(-438.7, 27.3, 5776.5)
+    local posB4 = Vector3.new(-7758.6, 18.6, 5778.8)
+    local posC4 = Vector3.new(-7759.8, 22.1, 5742.2)
 
-    CloseBtn.MouseButton1Click:Connect(function()
-        TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
-        task.wait(0.25)
-        HubFrame.Visible = false
-    end)
+    local posAG = Vector3.new(-438.2, 27.3, -221.1)
+    local posBG = Vector3.new(-1664.9, 110.2, -239.2)
+    local posCG = Vector3.new(-1663.4, 114.1, -256.3)
 
-    -- Apertura / Cierre fluido del menú al tocar el círculo flotante (sin falsos arrastres)
-    local hubOpened = false
-    CircleButton.MouseButton1Click:Connect(function()
-        if not hasMoved then
-            hubOpened = not hubOpened
-            if hubOpened then
-                HubFrame.Visible = true
-                HubFrame.Size = UDim2.new(0, 0, 0, 0)
-                -- Anclado y abierto exactamente en el centro de la pantalla
-                HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
-                TweenService:Create(HubFrame, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 490, 0, 300)}):Play()
-            else
-                TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
-                task.wait(0.25)
-                HubFrame.Visible = false
-            end
-        end
-    end)
-end
+    local posPurpleTreadmill = Vector3.new(-437.4, 27.3, -221.4)
 
-------------------------------------------------------------------
--- VERIFICACIÓN DE KEY
-------------------------------------------------------------------
-VerifyBtn.MouseButton1Click:Connect(function()
-    if KeyTextBox.Text == "UPDATE" then
-        IntroStatus.TextColor3 = Color3.fromRGB(150, 255, 150)
-        IntroStatus.Text = "¡Key correcta!"
-        task.wait(0.4)
+    local posTreadmillA = Vector3.new(-448.2, 26.8, -291.1)
+    local posTreadmillB = Vector3.new(-412.1, 26.8, -289.5)
+    local posTreadmillC = Vector3.new(-395.4, 27.2, -285.9)
+    local posTreadmillD = Vector3.new(-371.6, 27.6, -287.3)
 
-        TweenService:Create(IntroFrame, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
-        TweenService:Create(IntroBoxFrame, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
-        task.wait(0.4)
-        IntroGui:Destroy()
+    local beamFolder = Instance.new("Folder", Workspace)
+    beamFolder.Name = "FoxnameBeamFolder"
 
-        showPostKeyIntro(function()
-            showLoadingScreen(function()
-                loadMainHub()
-            end)
+    local function drawNeonLine(startPos, endPos)
+        pcall(function()
+            for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
+            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Parent = beamFolder
         end)
-    else
-        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
-        IntroStatus.Text = "Key incorrecta"
     end
-end)
+
+    local function clearNeonLine()
+        pcall(function()
+            for _, v in pairs(beamFolder:GetChildren()) do v:Destroy() end
+        end)
+    end
+
+    local world1Active, world2Active, world3Active, world4Active, world5Active, worldGalaxyActive = false, false, false, false, false, false
+
+    local function resetAllWorlds()
+        world1Active, world2Active, world3Active, world4Active, world5Active, worldGalaxyActive = false, false, false, false, false, false
+        World5Btn.Text = "World 5 [OFF]"; World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World1Btn.Text = "World 1 [OFF]"; World1Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World2Btn.Text = "World 2 [OFF]"; World2Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World3Btn.Text = "World 3 [OFF]"; World3Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World4Btn.Text = "World 4 [OFF]"; World4Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        WorldGalaxyBtn.Text = "🌌 Galaxy World [OFF]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        StatusInfo.Text = "Estado: Apagado"
+        clearNeonLine()
+    end
+
+    World5Btn.MouseButton1Click:Connect(function()
+        world5Active = not world5Active
+        if world5Active then resetAllWorlds(); world5Active = true; World5Btn.Text = "World 5 [ON]"; World5Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 5 Activo 💜" else resetAllWorlds() end
+    end)
+    World1Btn.MouseButton1Click:Connect(function()
+        world1Active = not world1Active
+        if world1Active then resetAllWorlds(); world1Active = true; World1Btn.Text = "World 1 [ON]"; World1Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 1 Activo 💜" else resetAllWorlds() end
+    end)
+    World2Btn.MouseButton1Click:Connect(function()
+        world2Active = not world2Active
+        if world2Active then resetAllWorlds(); world2Active = true; World2Btn.Text = "World 2 [ON]"; World2Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 2 Activo 💜" else resetAllWorlds() end
+    end)
+    World3Btn.MouseButton1Click:Connect(function()
+        world3Active = not world3Active
+        if world3Active then resetAllWorlds(); world3Active = true; World3Btn.Text = "World 3 [ON]"; World3Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 3 Activo 💜" else resetAllWorlds() end
+    end)
+    World4Btn.MouseButton1Click:Connect(function()
+        world4Active = not world4Active
+        if world4Active then resetAllWorlds(); world4Active = true; World4Btn.Text = "World 4 [ON]"; World4Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 4 Activo 💜" else resetAllWorlds() end
+    end)
+    WorldGalaxyBtn.MouseButton1Click:Connect(function()
+        worldGalaxyActive = not worldGalaxyActive
+        if worldGalaxyActive then resetAllWorlds(); worldGalaxyActive = true; WorldGalaxyBtn.Text = "🌌 Galaxy World [ON]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: Galaxy World Activo 💜" else resetAllWorlds() end
+    end)
+
+    local function runWorldLoop(isActiveRef, posA, posB, posC, worldName)
+        task.spawn(function()
+            while true do
+                if isActiveRef() then
+                    local char = player.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+
+                    if root and humanoid then
+                        root.CFrame = CFrame.new(posA)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        root.CFrame = CFrame.new(posB)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        local travelTime = 3.5
+                        local elapsed = 0
+                        StatusInfo.Text = "Estado: " .. worldName .. " - Recorriendo..."
+
+                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
+                            local dt = RunService.RenderStepped:Wait()
+                            elapsed = elapsed + dt
+                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
+
+                            if humanoid.Health <= 0 then break end
+                            root.CFrame = CFrame.new(posB:Lerp(posC, alpha))
+                            drawNeonLine(root.Position, posC)
+                        end
+
+                        root.CFrame = CFrame.new(posC)
+                        clearNeonLine()
+
+                        pcall(function()
+                            for _, obj in pairs(Workspace:GetDescendants()) do
+                                if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
+                                    local part = obj.Parent
+                                    if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
+                                        firetouchinterest(root, part, 0)
+                                        firetouchinterest(root, part, 1)
+                                    end
+                                end
+                            end
+                        end)
+
+                        StatusInfo.Text = "Estado: ¡Completado (" .. worldName .. ")! 💜"
+                        task.wait(1.0)
+                    else
+                        task.wait(1)
+                    end
+                else
+                    task.wait(0.4)
+                end
+            end
+        end)
+    end
+
+    runWorldLoop(function() return world5Active end, posA5, posB5, posC5, "W5")
+    runWorldLoop(function() return world1Active end, posA1, posB1, posC1, "W1")
+    runWorldLoop(function() return world2Active end, posA2, posB2, posC2, "W2")
+    runWorldLoop(function() return world3Active end, posA3, posB3, posC3, "W3")
+    runWorldLoop(function() return world4Active end, posA4, posB4, posC4, "W4")
+    runWorldLoop(function() return worldGalaxyActive end, posAG, posBG, posCG, "Galaxy")
+
+    -- Treadmills
+    local treadmillBasicActive, treadmillGoldActive, treadmillGalaxyActive, treadmillVoidActive = false, false, false, false
+    local treadmillFolder = Instance.new("Folder", Workspace)
+    treadmillFolder.Name = "FoxnameTreadmillBeamFolder"
+
+    local function drawTreadmillBeam(startPos, endPos)
+        pcall(function()
+            for _, v in pairs(treadmillFolder:GetChildren()) do v:Destroy() end
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(0.35, 0.35, (startPos - endPos).Magnitude)
+            part.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -(startPos - endPos).Magnitude / 2)
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Parent = treadmillFolder
+        end)
+    end
+
+    local function clearTreadmillBeam()
+        pcall(function()
+            for _, v in pairs(treadmillFolder:GetChildren()) do v:Destroy() end
+        end)
+    end
+
+    local function resetAllTreadmills()
+        treadmillBasicActive, treadmillGoldActive, treadmillGalaxyActive, treadmillVoidActive = false, false, false, false
+        TreadmillBasicBtn.Text = "A: Basic Treadmill [OFF]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillGoldBtn.Text = "B: Gold Treadmill [OFF]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [OFF]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillVoidBtn.Text = "D: Void Treadmill [OFF]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillStatusInfo.Text = "Estado: Apagado"
+        clearTreadmillBeam()
+    end
+
+    TreadmillBasicBtn.MouseButton1Click:Connect(function()
+        treadmillBasicActive = not treadmillBasicActive
+        if treadmillBasicActive then resetAllTreadmills(); treadmillBasicActive = true; TreadmillBasicBtn.Text = "A: Basic Treadmill [ON]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: A (Basic) Activo 🏃" else resetAllTreadmills() end
+    end)
+    TreadmillGoldBtn.MouseButton1Click:Connect(function()
+        treadmillGoldActive = not treadmillGoldActive
+        if treadmillGoldActive then resetAllTreadmills(); treadmillGoldActive = true; TreadmillGoldBtn.Text = "B: Gold Treadmill [ON]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: B (Gold) Activo 🏃" else resetAllTreadmills() end
+    end)
+    TreadmillGalaxyBtn.MouseButton1Click:Connect(function()
+        treadmillGalaxyActive = not treadmillGalaxyActive
+        if treadmillGalaxyActive then resetAllTreadmills(); treadmillGalaxyActive = true; TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [ON]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: C (Galaxy) Activo 🏃" else resetAllTreadmills() end
+    end)
+    TreadmillVoidBtn.MouseButton1Click:Connect(function()
+        treadmillVoidActive = not treadmillVoidActive
+        if treadmillVoidActive then resetAllTreadmills(); treadmillVoidActive = true; TreadmillVoidBtn.Text = "D: Void Treadmill [ON]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: D (Void) Activo 🏃" else resetAllTreadmills() end
+    end)
+
+    local function runTreadmillTeleguiado(isActiveRef, targetCoord, treadmillName)
+        task.spawn(function()
+            while true do
+                if isActiveRef() then
+                    local char = player.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+
+                    if root and humanoid then
+                        root.CFrame = CFrame.new(posPurpleTreadmill)
+                        task.wait(0.2)
+                        if not isActiveRef() then break end
+
+                        TreadmillStatusInfo.Text = "Estado: Teleguiando a " .. treadmillName .. "..."
+
+                        local customSpeed = tonumber(SpeedBox.Text) or 50
+                        local distance = (posPurpleTreadmill - targetCoord).Magnitude
+                        local travelTime = math.clamp(distance / customSpeed, 0.2, 5)
+                        local elapsed = 0
+
+                        while isActiveRef() and char and char.Parent and elapsed < travelTime do
+                            local dt = RunService.RenderStepped:Wait()
+                            elapsed = elapsed + dt
+                            local alpha = math.clamp(elapsed / travelTime, 0, 1)
+
+                            if humanoid.Health <= 0 then break end
+                            root.CFrame = CFrame.new(posPurpleTreadmill:Lerp(targetCoord, alpha))
+                            drawTreadmillBeam(root.Position, targetCoord)
+                        end
+
+                        if not isActiveRef() then break end
+                        root.CFrame = CFrame.new(targetCoord)
+                        clearTreadmillBeam()
+
+                        TreadmillStatusInfo.Text = "Estado: Tocando " .. treadmillName .. " [Fijo]"
+
+                        while isActiveRef() and char and char.Parent and humanoid.Health > 0 do
+                            root.CFrame = CFrame.new(targetCoord)
+                            pcall(function()
+                                for _, obj in pairs(Workspace:GetDescendants()) do
+                                    if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
+                                        local part = obj.Parent
+                                        if part:IsA("BasePart") and (part.Position - targetCoord).Magnitude < 15 then
+                                            firetouchinterest(root, part, 0)
+                                            firetouchinterest(root, part, 1)
+                                        end
+                                    end
+                                end
+                            end)
+                            task.wait(0.2)
+                        end
+                    else
+                        task.wait(1)
+                    end
+                else
+                    clearTreadmillBeam()
+                    task.wait(0.4)
+                end
+            end
+        end)
+    end
+
+    runTreadmillTeleguiado(function() return treadmillBasicActive end, posTreadmillA, "Basic (A)")
+    runTreadmillTeleguiado(function() return treadmillGoldActive end, posTreadmillB, "Gold (B)")
+    runTreadmillTeleguiado(function() return treadmillGalaxyActive end, posTreadmillC, "Galaxy (C)")
+    runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void (D)")
+end
