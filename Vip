@@ -34,6 +34,7 @@ pcall(function()
     if playerGui:FindFirstChild("FoxnameFloatingNotification") then playerGui.FoxnameFloatingNotification:Destroy() end
     if playerGui:FindFirstChild("FoxnameLoadingGUI") then playerGui.FoxnameLoadingGUI:Destroy() end
     if playerGui:FindFirstChild("FoxnamePostKeyLoadingGUI") then playerGui.FoxnamePostKeyLoadingGUI:Destroy() end
+    if playerGui:FindFirstChild("FoxnameTeleportAnchorGUI") then playerGui.FoxnameTeleportAnchorGUI:Destroy() end
     if game:GetService("CoreGui"):FindFirstChild("FoxnameHubGUI") then game:GetService("CoreGui").FoxnameHubGUI:Destroy() end
     if game:GetService("CoreGui"):FindFirstChild("FoxnameIntroGUI") then game:GetService("CoreGui").FoxnameIntroGUI:Destroy() end
     if game:GetService("CoreGui"):FindFirstChild("FoxnameLoadingGUI") then game:GetService("CoreGui").FoxnameLoadingGUI:Destroy() end
@@ -46,7 +47,7 @@ pcall(function()
 end)
 
 ------------------------------------------------------------------
--- PANTALLA DE INTRODUCCIÓN (KEY SYSTEM & ANIME BACKGROUND)
+-- PANTALLA DE INTRODUCCIÓN (KEY SYSTEM & COLOR ROJO BIEN BONITO)
 ------------------------------------------------------------------
 local IntroGui = Instance.new("ScreenGui")
 IntroGui.Name = "FoxnameIntroGUI"
@@ -58,7 +59,7 @@ IntroGui.Parent = playerGui
 local IntroFrame = Instance.new("Frame")
 IntroFrame.Name = "IntroFrame"
 IntroFrame.Parent = IntroGui
-IntroFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+IntroFrame.BackgroundColor3 = Color3.fromRGB(18, 5, 5)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
 IntroFrame.ZIndex = 100
 
@@ -66,15 +67,15 @@ local IntroBg = Instance.new("ImageLabel")
 IntroBg.Parent = IntroFrame
 IntroBg.BackgroundTransparency = 1
 IntroBg.Size = UDim2.new(1, 0, 1, 0)
-IntroBg.Image = "rbxassetid://111426981648607"
-IntroBg.ImageTransparency = 0.3
+IntroBg.Image = "rbxassetid://131232429463966"
+IntroBg.ImageTransparency = 0.25
 IntroBg.ScaleType = Enum.ScaleType.Crop
 IntroBg.ZIndex = 101
 
 local IntroBoxFrame = Instance.new("Frame")
 IntroBoxFrame.Name = "IntroBoxFrame"
 IntroBoxFrame.Parent = IntroFrame
-IntroBoxFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+IntroBoxFrame.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
 IntroBoxFrame.BackgroundTransparency = 0.15
 IntroBoxFrame.Position = UDim2.new(0.5, -160, 0.5, -110)
 IntroBoxFrame.Size = UDim2.new(0, 320, 0, 220)
@@ -82,7 +83,7 @@ IntroBoxFrame.ZIndex = 102
 Instance.new("UICorner", IntroBoxFrame).CornerRadius = UDim.new(0, 14)
 
 local IntroStroke = Instance.new("UIStroke")
-IntroStroke.Color = Color3.fromRGB(255, 150, 240)
+IntroStroke.Color = Color3.fromRGB(255, 70, 90)
 IntroStroke.Thickness = 2.5
 IntroStroke.Parent = IntroBoxFrame
 
@@ -93,20 +94,20 @@ IntroTitle.Position = UDim2.new(0, 0, 0, 20)
 IntroTitle.Size = UDim2.new(1, 0, 0, 30)
 IntroTitle.ZIndex = 103
 IntroTitle.Font = Enum.Font.GothamBold
-IntroTitle.Text = "🌸 Foxname Hub - Key System 🌸"
-IntroTitle.TextColor3 = Color3.fromRGB(255, 230, 255)
+IntroTitle.Text = "🌹 Foxname Hub - Key System 🌹"
+IntroTitle.TextColor3 = Color3.fromRGB(255, 200, 205)
 IntroTitle.TextSize = 13
 
 local KeyTextBox = Instance.new("TextBox")
 KeyTextBox.Parent = IntroBoxFrame
-KeyTextBox.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+KeyTextBox.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
 KeyTextBox.BackgroundTransparency = 0.25
 KeyTextBox.Position = UDim2.new(0.5, -120, 0, 75)
 KeyTextBox.Size = UDim2.new(0, 240, 0, 38)
 KeyTextBox.ZIndex = 103
 KeyTextBox.Font = Enum.Font.GothamBold
 KeyTextBox.PlaceholderText = "Ingresa la Key..."
-KeyTextBox.PlaceholderColor3 = Color3.fromRGB(200, 160, 220)
+KeyTextBox.PlaceholderColor3 = Color3.fromRGB(220, 150, 160)
 KeyTextBox.Text = ""
 KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 KeyTextBox.TextSize = 12
@@ -114,13 +115,13 @@ KeyTextBox.ClearTextOnFocus = false
 Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 8)
 
 local KeyBoxStroke = Instance.new("UIStroke")
-KeyBoxStroke.Color = Color3.fromRGB(200, 100, 250)
+KeyBoxStroke.Color = Color3.fromRGB(255, 90, 110)
 KeyBoxStroke.Thickness = 1.5
 KeyBoxStroke.Parent = KeyTextBox
 
 local VerifyBtn = Instance.new("TextButton")
 VerifyBtn.Parent = IntroBoxFrame
-VerifyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+VerifyBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55)
 VerifyBtn.Position = UDim2.new(0.5, -120, 0, 130)
 VerifyBtn.Size = UDim2.new(0, 240, 0, 38)
 VerifyBtn.ZIndex = 103
@@ -138,7 +139,7 @@ IntroStatus.Size = UDim2.new(1, 0, 0, 20)
 IntroStatus.ZIndex = 103
 IntroStatus.Font = Enum.Font.GothamMedium
 IntroStatus.Text = ""
-IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
+IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 120)
 IntroStatus.TextSize = 10.5
 
 ------------------------------------------------------------------
@@ -157,7 +158,7 @@ local function showPostKeyIntro(onComplete)
 
     local PostFrame = Instance.new("Frame")
     PostFrame.Parent = PostGui
-    PostFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+    PostFrame.BackgroundColor3 = Color3.fromRGB(18, 5, 5)
     PostFrame.Size = UDim2.new(1, 0, 1, 0)
     PostFrame.ZIndex = 300
 
@@ -165,8 +166,8 @@ local function showPostKeyIntro(onComplete)
     PostBg.Parent = PostFrame
     PostBg.BackgroundTransparency = 1
     PostBg.Size = UDim2.new(1, 0, 1, 0)
-    PostBg.Image = "rbxassetid://111426981648607"
-    PostBg.ImageTransparency = 0.3
+    PostBg.Image = "rbxassetid://131232429463966"
+    PostBg.ImageTransparency = 0.25
     PostBg.ScaleType = Enum.ScaleType.Crop
     PostBg.ZIndex = 301
 
@@ -177,7 +178,7 @@ local function showPostKeyIntro(onComplete)
             pcall(function()
                 local petal = Instance.new("Frame")
                 petal.Parent = PetalFolder
-                petal.BackgroundColor3 = Color3.fromRGB(255, 180, 220)
+                petal.BackgroundColor3 = Color3.fromRGB(255, 150, 170)
                 petal.BackgroundTransparency = 0.2
                 petal.BorderSizePixel = 0
                 local pSize = math.random(5, 10)
@@ -199,7 +200,7 @@ local function showPostKeyIntro(onComplete)
 
     local PostBox = Instance.new("Frame")
     PostBox.Parent = PostFrame
-    PostBox.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    PostBox.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
     PostBox.BackgroundTransparency = 0.2
     PostBox.Position = UDim2.new(0.5, -160, 0.5, -75)
     PostBox.Size = UDim2.new(0, 320, 0, 150)
@@ -207,7 +208,7 @@ local function showPostKeyIntro(onComplete)
     Instance.new("UICorner", PostBox).CornerRadius = UDim.new(0, 14)
 
     local PostStroke = Instance.new("UIStroke")
-    PostStroke.Color = Color3.fromRGB(255, 150, 240)
+    PostStroke.Color = Color3.fromRGB(255, 70, 90)
     PostStroke.Thickness = 2.5
     PostStroke.Parent = PostBox
 
@@ -218,13 +219,13 @@ local function showPostKeyIntro(onComplete)
     PostTitle.Size = UDim2.new(1, 0, 0, 24)
     PostTitle.ZIndex = 303
     PostTitle.Font = Enum.Font.GothamBold
-    PostTitle.Text = "🌸 Foxname Hub - Inicializando 🌸"
-    PostTitle.TextColor3 = Color3.fromRGB(255, 100, 180)
+    PostTitle.Text = "🌹 Foxname Hub - Inicializando 🌹"
+    PostTitle.TextColor3 = Color3.fromRGB(255, 100, 130)
     PostTitle.TextSize = 12
 
     local PostBarBg = Instance.new("Frame")
     PostBarBg.Parent = PostBox
-    PostBarBg.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    PostBarBg.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
     PostBarBg.Position = UDim2.new(0.5, -130, 0, 60)
     PostBarBg.Size = UDim2.new(0, 260, 0, 18)
     PostBarBg.ZIndex = 303
@@ -232,7 +233,7 @@ local function showPostKeyIntro(onComplete)
 
     local PostBarFill = Instance.new("Frame")
     PostBarFill.Parent = PostBarBg
-    PostBarFill.BackgroundColor3 = Color3.fromRGB(180, 50, 240)
+    PostBarFill.BackgroundColor3 = Color3.fromRGB(230, 40, 70)
     PostBarFill.Size = UDim2.new(0, 0, 1, 0)
     PostBarFill.ZIndex = 304
     Instance.new("UICorner", PostBarFill).CornerRadius = UDim.new(1, 0)
@@ -245,7 +246,7 @@ local function showPostKeyIntro(onComplete)
     PostPercentLbl.ZIndex = 303
     PostPercentLbl.Font = Enum.Font.GothamBold
     PostPercentLbl.Text = "1%"
-    PostPercentLbl.TextColor3 = Color3.fromRGB(255, 230, 255)
+    PostPercentLbl.TextColor3 = Color3.fromRGB(255, 200, 205)
     PostPercentLbl.TextSize = 12
 
     task.spawn(function()
@@ -275,7 +276,7 @@ showLoadingScreen = function(onComplete)
 
     local LoadFrame = Instance.new("Frame")
     LoadFrame.Parent = LoadGui
-    LoadFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+    LoadFrame.BackgroundColor3 = Color3.fromRGB(18, 5, 5)
     LoadFrame.Size = UDim2.new(1, 0, 1, 0)
     LoadFrame.ZIndex = 200
 
@@ -283,8 +284,8 @@ showLoadingScreen = function(onComplete)
     LoadBg.Parent = LoadFrame
     LoadBg.BackgroundTransparency = 1
     LoadBg.Size = UDim2.new(1, 0, 1, 0)
-    LoadBg.Image = "rbxassetid://111426981648607"
-    LoadBg.ImageTransparency = 0.3
+    LoadBg.Image = "rbxassetid://131232429463966"
+    LoadBg.ImageTransparency = 0.25
     LoadBg.ScaleType = Enum.ScaleType.Crop
     LoadBg.ZIndex = 201
 
@@ -295,7 +296,7 @@ showLoadingScreen = function(onComplete)
             pcall(function()
                 local petal = Instance.new("Frame")
                 petal.Parent = PetalFolder
-                petal.BackgroundColor3 = Color3.fromRGB(255, 180, 220)
+                petal.BackgroundColor3 = Color3.fromRGB(255, 150, 170)
                 petal.BackgroundTransparency = 0.2
                 petal.BorderSizePixel = 0
                 local pSize = math.random(5, 10)
@@ -317,7 +318,7 @@ showLoadingScreen = function(onComplete)
 
     local Box = Instance.new("Frame")
     Box.Parent = LoadFrame
-    Box.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    Box.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
     Box.BackgroundTransparency = 0.2
     Box.Position = UDim2.new(0.5, -160, 0.5, -80)
     Box.Size = UDim2.new(0, 320, 0, 160)
@@ -325,7 +326,7 @@ showLoadingScreen = function(onComplete)
     Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 14)
 
     local Stroke = Instance.new("UIStroke")
-    Stroke.Color = Color3.fromRGB(255, 150, 240)
+    Stroke.Color = Color3.fromRGB(255, 70, 90)
     Stroke.Thickness = 2.5
     Stroke.Parent = Box
 
@@ -336,8 +337,8 @@ showLoadingScreen = function(onComplete)
     Title.Size = UDim2.new(1, 0, 0, 24)
     Title.ZIndex = 203
     Title.Font = Enum.Font.GothamBold
-    Title.Text = "🌸 ADVERTENCIA!! 🌸"
-    Title.TextColor3 = Color3.fromRGB(255, 100, 180)
+    Title.Text = "🌹 ADVERTENCIA!! 🌹"
+    Title.TextColor3 = Color3.fromRGB(255, 100, 130)
     Title.TextSize = 13
 
     local Sub = Instance.new("TextLabel")
@@ -348,13 +349,13 @@ showLoadingScreen = function(onComplete)
     Sub.ZIndex = 203
     Sub.Font = Enum.Font.GothamMedium
     Sub.Text = "Cargando componentes privilegiados y animaciones pro max..."
-    Sub.TextColor3 = Color3.fromRGB(230, 200, 255)
+    Sub.TextColor3 = Color3.fromRGB(255, 200, 205)
     Sub.TextSize = 10
     Sub.TextWrapped = true
 
     local BarBg = Instance.new("Frame")
     BarBg.Parent = Box
-    BarBg.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    BarBg.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
     BarBg.Position = UDim2.new(0.5, -130, 0, 95)
     BarBg.Size = UDim2.new(0, 260, 0, 18)
     BarBg.ZIndex = 203
@@ -362,7 +363,7 @@ showLoadingScreen = function(onComplete)
 
     local BarFill = Instance.new("Frame")
     BarFill.Parent = BarBg
-    BarFill.BackgroundColor3 = Color3.fromRGB(180, 50, 240)
+    BarFill.BackgroundColor3 = Color3.fromRGB(230, 40, 70)
     BarFill.Size = UDim2.new(0, 0, 1, 0)
     BarFill.ZIndex = 204
     Instance.new("UICorner", BarFill).CornerRadius = UDim.new(1, 0)
@@ -375,7 +376,7 @@ showLoadingScreen = function(onComplete)
     PercentLbl.ZIndex = 203
     PercentLbl.Font = Enum.Font.GothamBold
     PercentLbl.Text = "1%"
-    PercentLbl.TextColor3 = Color3.fromRGB(255, 230, 255)
+    PercentLbl.TextColor3 = Color3.fromRGB(255, 200, 205)
     PercentLbl.TextSize = 11
 
     task.spawn(function()
@@ -408,7 +409,7 @@ VerifyBtn.MouseButton1Click:Connect(function()
             end)
         end)
     else
-        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 150)
+        IntroStatus.TextColor3 = Color3.fromRGB(255, 100, 120)
         IntroStatus.Text = "Key incorrecta."
     end
 end)
@@ -435,7 +436,7 @@ loadMainHub = function()
     local AnchorFrame = Instance.new("Frame")
     AnchorFrame.Name = "AnchorFrame"
     AnchorFrame.Parent = StatusAnchorGui
-    AnchorFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    AnchorFrame.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
     AnchorFrame.BackgroundTransparency = 0.2
     AnchorFrame.Position = UDim2.new(0, 10, 0.4, 0)
     AnchorFrame.Size = UDim2.new(0, 160, 0, 55)
@@ -443,13 +444,13 @@ loadMainHub = function()
     Instance.new("UICorner", AnchorFrame).CornerRadius = UDim.new(0, 10)
 
     local AnchorStroke = Instance.new("UIStroke")
-    AnchorStroke.Color = Color3.fromRGB(255, 150, 240)
+    AnchorStroke.Color = Color3.fromRGB(255, 70, 90)
     AnchorStroke.Thickness = 2
     AnchorStroke.Parent = AnchorFrame
 
     local AnchorAvatar = Instance.new("ImageLabel")
     AnchorAvatar.Parent = AnchorFrame
-    AnchorAvatar.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
+    AnchorAvatar.BackgroundColor3 = Color3.fromRGB(60, 20, 25)
     AnchorAvatar.Position = UDim2.new(0, 6, 0.5, -20)
     AnchorAvatar.Size = UDim2.new(0, 40, 0, 40)
     AnchorAvatar.ZIndex = 501
@@ -462,7 +463,7 @@ loadMainHub = function()
     Instance.new("UICorner", AnchorAvatar).CornerRadius = UDim.new(1, 0)
 
     local AnchorAvatarStroke = Instance.new("UIStroke")
-    AnchorAvatarStroke.Color = Color3.fromRGB(230, 130, 255)
+    AnchorAvatarStroke.Color = Color3.fromRGB(255, 120, 140)
     AnchorAvatarStroke.Thickness = 1.2
     AnchorAvatarStroke.Parent = AnchorAvatar
 
@@ -474,7 +475,7 @@ loadMainHub = function()
     AnchorInfoLabel.ZIndex = 501
     AnchorInfoLabel.Font = Enum.Font.GothamBold
     AnchorInfoLabel.Text = "FPS: --\n" .. executorName .. "\nID: " .. player.UserId
-    AnchorInfoLabel.TextColor3 = Color3.fromRGB(255, 230, 255)
+    AnchorInfoLabel.TextColor3 = Color3.fromRGB(255, 200, 205)
     AnchorInfoLabel.TextSize = 9
     AnchorInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -494,6 +495,95 @@ loadMainHub = function()
         end
     end)
 
+    ------------------------------------------------------------------
+    -- BOTÓN FLOTANTE DE TELETRANSPORTE (CON BUCLE DE 3 SEGUNDOS VOLANDO)
+    ------------------------------------------------------------------
+    local TeleportAnchorGui = Instance.new("ScreenGui")
+    TeleportAnchorGui.Name = "FoxnameTeleportAnchorGUI"
+    TeleportAnchorGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    TeleportAnchorGui.ResetOnSpawn = false
+    TeleportAnchorGui.IgnoreGuiInset = true
+    TeleportAnchorGui.Parent = playerGui
+
+    local TpButton = Instance.new("TextButton")
+    TpButton.Name = "TpButton"
+    TpButton.Parent = TeleportAnchorGui
+    TpButton.BackgroundColor3 = Color3.fromRGB(180, 35, 55)
+    TpButton.BackgroundTransparency = 0.2
+    TpButton.Position = UDim2.new(0.04, 0, 0.22, 0)
+    TpButton.Size = UDim2.new(0, 130, 0, 34)
+    TpButton.ZIndex = 600
+    TpButton.Font = Enum.Font.GothamBold
+    TpButton.Text = "🚀 Volar Adelante"
+    TpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TpButton.TextSize = 10
+    Instance.new("UICorner", TpButton).CornerRadius = UDim.new(0, 8)
+
+    local TpStroke = Instance.new("UIStroke")
+    TpStroke.Color = Color3.fromRGB(255, 120, 140)
+    TpStroke.Thickness = 2
+    TpStroke.Parent = TpButton
+
+    local flightCoroutine = nil
+    TpButton.MouseButton1Click:Connect(function()
+        pcall(function()
+            local char = player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if root and hum then
+                if flightCoroutine then
+                    task.cancel(flightCoroutine)
+                end
+                
+                -- Teletransporte inicial hacia adelante
+                root.CFrame = root.CFrame + (root.CFrame.LookVector * 15) + Vector3.new(0, 3, 0)
+                hum.PlatformStand = true
+
+                flightCoroutine = task.spawn(function()
+                    local startTime = tick()
+                    while tick() - startTime < 3 do
+                        if not char or not char.Parent or hum.Health <= 0 then break end
+                        root.Velocity = Vector3.new(0, 2, 0)
+                        RunService.RenderStepped:Wait()
+                    end
+                    hum.PlatformStand = false
+                end)
+            end
+        end)
+    end)
+
+    -- Permitir mover el botón de TP arrastrándolo
+    local tpDragging = false
+    local tpDragStart = Vector2.zero
+    local tpStartPos = UDim2.new()
+
+    TpButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            tpDragging = true
+            tpDragStart = Vector2.new(input.Position.X, input.Position.Y)
+            tpStartPos = TpButton.Position
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if tpDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local currentPos = Vector2.new(input.Position.X, input.Position.Y)
+            local delta = currentPos - tpDragStart
+            TpButton.Position = UDim2.new(
+                tpStartPos.X.Scale,
+                tpStartPos.X.Offset + delta.X,
+                tpStartPos.Y.Scale,
+                tpStartPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            tpDragging = false
+        end
+    end)
+
     local NotifGui = Instance.new("ScreenGui")
     NotifGui.Name = "FoxnameFloatingNotification"
     NotifGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -504,19 +594,19 @@ loadMainHub = function()
     local FloatingNotif = Instance.new("TextLabel")
     FloatingNotif.Name = "FloatingNotif"
     FloatingNotif.Parent = NotifGui
-    FloatingNotif.BackgroundColor3 = Color3.fromRGB(15, 8, 25)
+    FloatingNotif.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
     FloatingNotif.Position = UDim2.new(0.5, -140, 0.1, 0)
     FloatingNotif.Size = UDim2.new(0, 280, 0, 38)
     FloatingNotif.Visible = false
     FloatingNotif.ZIndex = 999
     FloatingNotif.Font = Enum.Font.GothamBold
     FloatingNotif.Text = ""
-    FloatingNotif.TextColor3 = Color3.fromRGB(255, 225, 245)
+    FloatingNotif.TextColor3 = Color3.fromRGB(255, 200, 205)
     FloatingNotif.TextSize = 11.5
     Instance.new("UICorner", FloatingNotif).CornerRadius = UDim.new(0, 10)
 
     local NotifStroke = Instance.new("UIStroke")
-    NotifStroke.Color = Color3.fromRGB(255, 140, 230)
+    NotifStroke.Color = Color3.fromRGB(255, 70, 90)
     NotifStroke.Thickness = 2.5
     NotifStroke.Parent = FloatingNotif
 
@@ -543,25 +633,25 @@ loadMainHub = function()
     end
 
     ------------------------------------------------------------------
-    -- CÍRCULO FLOTANTE (ESTABLE PARA TÁCTIL Y DRAG, ABRE EL HUB)
+    -- CÍRCULO FLOTANTE (CON EL ID SOLICITADO)
     ------------------------------------------------------------------
     local CircleButton = Instance.new("ImageButton")
     CircleButton.Name = "CircleButton"
     CircleButton.Parent = ScreenGui
-    CircleButton.BackgroundColor3 = Color3.fromRGB(20, 10, 35)
+    CircleButton.BackgroundColor3 = Color3.fromRGB(30, 10, 12)
     CircleButton.Position = UDim2.new(0.04, 0, 0.12, 0)
     CircleButton.Size = UDim2.new(0, 56, 0, 56)
-    CircleButton.Image = "rbxassetid://111426981648607"
+    CircleButton.Image = "rbxassetid://131232429463966"
     CircleButton.Visible = true
     Instance.new("UICorner", CircleButton).CornerRadius = UDim.new(1, 0)
 
     local UIStrokeCircle = Instance.new("UIStroke")
-    UIStrokeCircle.Color = Color3.fromRGB(255, 130, 245)
+    UIStrokeCircle.Color = Color3.fromRGB(255, 70, 90)
     UIStrokeCircle.Thickness = 3.5
     UIStrokeCircle.Parent = CircleButton
 
     local CircleGlow = Instance.new("UIStroke")
-    CircleGlow.Color = Color3.fromRGB(180, 50, 220)
+    CircleGlow.Color = Color3.fromRGB(220, 30, 50)
     CircleGlow.Thickness = 6
     CircleGlow.Transparency = 0.4
     CircleGlow.Parent = CircleButton
@@ -569,10 +659,10 @@ loadMainHub = function()
     task.spawn(function()
         while CircleButton and CircleButton.Parent do
             TweenService:Create(CircleGlow, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Transparency = 0.1}):Play()
-            TweenService:Create(UIStrokeCircle, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(255, 180, 255)}):Play()
+            TweenService:Create(UIStrokeCircle, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(255, 130, 145)}):Play()
             task.wait(1)
             TweenService:Create(CircleGlow, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Transparency = 0.6}):Play()
-            TweenService:Create(UIStrokeCircle, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(255, 130, 245)}):Play()
+            TweenService:Create(UIStrokeCircle, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(255, 70, 90)}):Play()
             task.wait(1)
         end
     end)
@@ -581,7 +671,7 @@ loadMainHub = function()
     local HubFrame = Instance.new("Frame")
     HubFrame.Name = "HubFrame"
     HubFrame.Parent = ScreenGui
-    HubFrame.BackgroundColor3 = Color3.fromRGB(14, 7, 25)
+    HubFrame.BackgroundColor3 = Color3.fromRGB(25, 8, 8)
     HubFrame.BackgroundTransparency = 0.1
     HubFrame.Position = UDim2.new(0.5, -245, 0.5, -150)
     HubFrame.Size = UDim2.new(0, 490, 0, 300)
@@ -590,7 +680,7 @@ loadMainHub = function()
     Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
 
     local UIStrokeHub = Instance.new("UIStroke")
-    UIStrokeHub.Color = Color3.fromRGB(255, 150, 240)
+    UIStrokeHub.Color = Color3.fromRGB(255, 70, 90)
     UIStrokeHub.Thickness = 3
     UIStrokeHub.Parent = HubFrame
 
@@ -647,7 +737,7 @@ loadMainHub = function()
     InnerBorder.ZIndex = 2
 
     local InnerStroke = Instance.new("UIStroke")
-    InnerStroke.Color = Color3.fromRGB(200, 100, 255)
+    InnerStroke.Color = Color3.fromRGB(255, 110, 130)
     InnerStroke.Transparency = 0.5
     InnerStroke.Thickness = 1.2
     InnerStroke.Parent = InnerBorder
@@ -657,7 +747,7 @@ loadMainHub = function()
     BgAnimeImg.Parent = HubFrame
     BgAnimeImg.BackgroundTransparency = 1
     BgAnimeImg.Size = UDim2.new(1, 0, 1, 0)
-    BgAnimeImg.Image = "rbxassetid://111426981648607"
+    BgAnimeImg.Image = "rbxassetid://131232429463966"
     BgAnimeImg.ImageTransparency = 0.5
     BgAnimeImg.ScaleType = Enum.ScaleType.Crop
     BgAnimeImg.ZIndex = 1
@@ -671,7 +761,7 @@ loadMainHub = function()
             pcall(function()
                 local flake = Instance.new("Frame")
                 flake.Parent = SnowContainer
-                flake.BackgroundColor3 = Color3.fromRGB(255, 200, 250)
+                flake.BackgroundColor3 = Color3.fromRGB(255, 180, 190)
                 flake.BackgroundTransparency = 0.25
                 flake.BorderSizePixel = 0
 
@@ -706,7 +796,7 @@ loadMainHub = function()
 
     local UserAvatarTop = Instance.new("ImageLabel")
     UserAvatarTop.Parent = TopBar
-    UserAvatarTop.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
+    UserAvatarTop.BackgroundColor3 = Color3.fromRGB(60, 20, 25)
     UserAvatarTop.Position = UDim2.new(0, 0, 0.5, -13)
     UserAvatarTop.Size = UDim2.new(0, 26, 0, 26)
     UserAvatarTop.ZIndex = 6
@@ -718,7 +808,7 @@ loadMainHub = function()
     end
     Instance.new("UICorner", UserAvatarTop).CornerRadius = UDim.new(1, 0)
     local TopAvatarStroke = Instance.new("UIStroke")
-    TopAvatarStroke.Color = Color3.fromRGB(230, 130, 255)
+    TopAvatarStroke.Color = Color3.fromRGB(255, 120, 140)
     TopAvatarStroke.Thickness = 1.5
     TopAvatarStroke.Parent = UserAvatarTop
 
@@ -730,7 +820,7 @@ loadMainHub = function()
     TitleLabel.ZIndex = 6
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Text = "Foxname | FPS: -- | " .. executorName .. " | ID: " .. player.UserId
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 230, 255)
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 200, 205)
     TitleLabel.TextSize = 9.5
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -758,7 +848,7 @@ loadMainHub = function()
     CloseBtn.ZIndex = 10
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Text = "✕"
-    CloseBtn.TextColor3 = Color3.fromRGB(255, 200, 240)
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 180, 195)
     CloseBtn.TextSize = 15
 
     CloseBtn.MouseButton1Click:Connect(function()
@@ -770,7 +860,7 @@ loadMainHub = function()
     ------------------------------------------------------------------
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Parent = HubFrame
-    Sidebar.BackgroundColor3 = Color3.fromRGB(10, 5, 18)
+    Sidebar.BackgroundColor3 = Color3.fromRGB(18, 5, 5)
     Sidebar.BackgroundTransparency = 0.25
     Sidebar.Position = UDim2.new(0, 6, 0, 42)
     Sidebar.Size = UDim2.new(0, 125, 1, -48)
@@ -787,21 +877,21 @@ loadMainHub = function()
     SubtitleTop.ZIndex = 5
     SubtitleTop.Font = Enum.Font.GothamMedium
     SubtitleTop.Text = "💎 foxname.top"
-    SubtitleTop.TextColor3 = Color3.fromRGB(210, 160, 245)
+    SubtitleTop.TextColor3 = Color3.fromRGB(255, 160, 175)
     SubtitleTop.TextSize = 9.5
     SubtitleTop.TextXAlignment = Enum.TextXAlignment.Left
 
     local function createTabButton(name, yPos, active)
         local btn = Instance.new("TextButton")
         btn.Parent = Sidebar
-        btn.BackgroundColor3 = active and Color3.fromRGB(105, 35, 170) or Color3.fromRGB(22, 10, 38)
+        btn.BackgroundColor3 = active and Color3.fromRGB(180, 35, 55) or Color3.fromRGB(38, 10, 12)
         btn.BackgroundTransparency = active and 0.1 or 0.55
         btn.Position = UDim2.new(0, 6, 0, yPos)
         btn.Size = UDim2.new(1, -12, 0, 28)
         btn.ZIndex = 5
         btn.Font = Enum.Font.GothamBold
         btn.Text = "  " .. name
-        btn.TextColor3 = active and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(215, 190, 245)
+        btn.TextColor3 = active and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(240, 190, 200)
         btn.TextSize = 10.5
         btn.TextXAlignment = Enum.TextXAlignment.Left
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
@@ -879,13 +969,13 @@ loadMainHub = function()
         local tabs = {TabMain, TabTreadmills, TabVisuals, TabTitles, TabOwner}
         for i, btn in ipairs(tabs) do
             if i == tabIndex then
-                btn.BackgroundColor3 = Color3.fromRGB(105, 35, 170)
+                btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55)
                 btn.BackgroundTransparency = 0.1
                 btn.TextColor3 = Color3.fromRGB(255, 255, 255)
             else
-                btn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+                btn.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
                 btn.BackgroundTransparency = 0.55
-                btn.TextColor3 = Color3.fromRGB(215, 190, 245)
+                btn.TextColor3 = Color3.fromRGB(240, 190, 200)
             end
         end
     end
@@ -897,31 +987,31 @@ loadMainHub = function()
     TabOwner.MouseButton1Click:Connect(function() selectTab(5) end)
 
     ------------------------------------------------------------------
-    -- 📖 WORLDS (INTACTO TAL Y COMO ESTABA)
+    -- 📖 WORLDS (TELETRANSPORTE A -> B Y TELEGUIADO B -> C)
     ------------------------------------------------------------------
     local WorldsMenuBtn = Instance.new("TextButton")
     WorldsMenuBtn.Parent = MainContainer
-    WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    WorldsMenuBtn.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
     WorldsMenuBtn.BackgroundTransparency = 0.25
     WorldsMenuBtn.Position = UDim2.new(0, 0, 0, 4)
     WorldsMenuBtn.Size = UDim2.new(1, -8, 0, 36)
     WorldsMenuBtn.ZIndex = 5
     WorldsMenuBtn.Font = Enum.Font.GothamBold
     WorldsMenuBtn.Text = "   📖 Seleccionar Worlds ▾"
-    WorldsMenuBtn.TextColor3 = Color3.fromRGB(255, 220, 255)
+    WorldsMenuBtn.TextColor3 = Color3.fromRGB(255, 200, 205)
     WorldsMenuBtn.TextSize = 10.5
     WorldsMenuBtn.TextXAlignment = Enum.TextXAlignment.Left
     Instance.new("UICorner", WorldsMenuBtn).CornerRadius = UDim.new(0, 8)
 
     local WorldsStroke = Instance.new("UIStroke")
-    WorldsStroke.Color = Color3.fromRGB(200, 100, 250)
+    WorldsStroke.Color = Color3.fromRGB(255, 70, 90)
     WorldsStroke.Transparency = 0.3
     WorldsStroke.Thickness = 1.5
     WorldsStroke.Parent = WorldsMenuBtn
 
     local WorldDropdown = Instance.new("Frame")
     WorldDropdown.Parent = MainContainer
-    WorldDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
+    WorldDropdown.BackgroundColor3 = Color3.fromRGB(25, 8, 10)
     WorldDropdown.BackgroundTransparency = 0.1
     WorldDropdown.Position = UDim2.new(0, 0, 0, 44)
     WorldDropdown.Size = UDim2.new(1, -8, 0, 206)
@@ -930,20 +1020,20 @@ loadMainHub = function()
     Instance.new("UICorner", WorldDropdown).CornerRadius = UDim.new(0, 8)
 
     local UIStrokeDrop = Instance.new("UIStroke")
-    UIStrokeDrop.Color = Color3.fromRGB(230, 130, 255)
+    UIStrokeDrop.Color = Color3.fromRGB(255, 110, 130)
     UIStrokeDrop.Thickness = 2
     UIStrokeDrop.Parent = WorldDropdown
 
     local function createWorldBtn(name, yPos)
         local btn = Instance.new("TextButton")
         btn.Parent = WorldDropdown
-        btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
         btn.Position = UDim2.new(0, 8, 0, yPos)
         btn.Size = UDim2.new(1, -16, 0, 24)
         btn.ZIndex = 11
         btn.Font = Enum.Font.GothamBold
         btn.Text = name .. " [OFF]"
-        btn.TextColor3 = Color3.fromRGB(255, 210, 255)
+        btn.TextColor3 = Color3.fromRGB(255, 200, 205)
         btn.TextSize = 10
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
         return btn
@@ -971,34 +1061,53 @@ loadMainHub = function()
     StatusInfo.ZIndex = 5
     StatusInfo.Font = Enum.Font.GothamMedium
     StatusInfo.Text = "Estado: Esperando selección..."
-    StatusInfo.TextColor3 = Color3.fromRGB(230, 170, 255)
+    StatusInfo.TextColor3 = Color3.fromRGB(255, 180, 195)
     StatusInfo.TextSize = 9.5
     StatusInfo.TextXAlignment = Enum.TextXAlignment.Left
 
-    local CoordsBox = Instance.new("TextBox")
-    CoordsBox.Parent = MainContainer
-    CoordsBox.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
-    CoordsBox.BackgroundTransparency = 0.25
-    CoordsBox.Position = UDim2.new(0, 0, 0, 218)
-    CoordsBox.Size = UDim2.new(1, -8, 0, 30)
-    CoordsBox.ZIndex = 5
-    CoordsBox.Font = Enum.Font.GothamBold
-    CoordsBox.Text = "0, 0, 0"
-    CoordsBox.TextColor3 = Color3.fromRGB(255, 230, 255)
-    CoordsBox.TextSize = 10.5
-    CoordsBox.ClearTextOnFocus = false
-    Instance.new("UICorner", CoordsBox).CornerRadius = UDim.new(0, 8)
+    local WorldSpeedContainer = Instance.new("Frame")
+    WorldSpeedContainer.Parent = MainContainer
+    WorldSpeedContainer.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
+    WorldSpeedContainer.BackgroundTransparency = 0.25
+    WorldSpeedContainer.Position = UDim2.new(0, 0, 0, 218)
+    WorldSpeedContainer.Size = UDim2.new(1, -8, 0, 42)
+    WorldSpeedContainer.ZIndex = 5
+    Instance.new("UICorner", WorldSpeedContainer).CornerRadius = UDim.new(0, 8)
 
-    local CoordsStroke = Instance.new("UIStroke")
-    CoordsStroke.Color = Color3.fromRGB(200, 100, 250)
-    CoordsStroke.Transparency = 0.3
-    CoordsStroke.Thickness = 1.5
-    CoordsStroke.Parent = CoordsBox
+    local WorldSpeedStroke = Instance.new("UIStroke")
+    WorldSpeedStroke.Color = Color3.fromRGB(255, 70, 90)
+    WorldSpeedStroke.Transparency = 0.3
+    WorldSpeedStroke.Thickness = 1.5
+    WorldSpeedStroke.Parent = WorldSpeedContainer
+
+    local WorldSpeedLabel = Instance.new("TextLabel")
+    WorldSpeedLabel.Parent = WorldSpeedContainer
+    WorldSpeedLabel.BackgroundTransparency = 1
+    WorldSpeedLabel.Position = UDim2.new(0, 10, 0, 2)
+    WorldSpeedLabel.Size = UDim2.new(0, 140, 0, 18)
+    WorldSpeedLabel.ZIndex = 6
+    WorldSpeedLabel.Font = Enum.Font.GothamBold
+    WorldSpeedLabel.Text = "⚡ Velocidad Teleguiado:"
+    WorldSpeedLabel.TextColor3 = Color3.fromRGB(255, 200, 205)
+    WorldSpeedLabel.TextSize = 10
+    WorldSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local WorldSpeedBox = Instance.new("TextBox")
+    WorldSpeedBox.Parent = WorldSpeedContainer
+    WorldSpeedBox.BackgroundColor3 = Color3.fromRGB(55, 15, 20)
+    WorldSpeedBox.Position = UDim2.new(1, -75, 0, 6)
+    WorldSpeedBox.Size = UDim2.new(0, 65, 0, 28)
+    WorldSpeedBox.ZIndex = 6
+    WorldSpeedBox.Font = Enum.Font.GothamBold
+    WorldSpeedBox.Text = "50"
+    WorldSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    WorldSpeedBox.TextSize = 11
+    Instance.new("UICorner", WorldSpeedBox).CornerRadius = UDim.new(0, 6)
 
     local WorldSpeedMeter = Instance.new("TextLabel")
     WorldSpeedMeter.Parent = MainContainer
     WorldSpeedMeter.BackgroundTransparency = 1
-    WorldSpeedMeter.Position = UDim2.new(0, 4, 0, 254)
+    WorldSpeedMeter.Position = UDim2.new(0, 4, 0, 264)
     WorldSpeedMeter.Size = UDim2.new(1, -12, 0, 20)
     WorldSpeedMeter.ZIndex = 5
     WorldSpeedMeter.Font = Enum.Font.GothamBold
@@ -1026,31 +1135,31 @@ loadMainHub = function()
     end)
 
     ------------------------------------------------------------------
-    -- 🏃 AUTO TREADMILLS (INTACTO TAL Y COMO ESTABA)
+    -- 🏃 AUTO TREADMILLS
     ------------------------------------------------------------------
     local TreadmillsMenuBtn = Instance.new("TextButton")
     TreadmillsMenuBtn.Parent = TreadmillsContainer
-    TreadmillsMenuBtn.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    TreadmillsMenuBtn.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
     TreadmillsMenuBtn.BackgroundTransparency = 0.25
     TreadmillsMenuBtn.Position = UDim2.new(0, 0, 0, 4)
     TreadmillsMenuBtn.Size = UDim2.new(1, -8, 0, 36)
     TreadmillsMenuBtn.ZIndex = 5
     TreadmillsMenuBtn.Font = Enum.Font.GothamBold
     TreadmillsMenuBtn.Text = "   🏃 Auto Treadmills ▾"
-    TreadmillsMenuBtn.TextColor3 = Color3.fromRGB(255, 220, 255)
+    TreadmillsMenuBtn.TextColor3 = Color3.fromRGB(255, 200, 205)
     TreadmillsMenuBtn.TextSize = 10.5
     TreadmillsMenuBtn.TextXAlignment = Enum.TextXAlignment.Left
     Instance.new("UICorner", TreadmillsMenuBtn).CornerRadius = UDim.new(0, 8)
 
     local TreadmillsStroke = Instance.new("UIStroke")
-    TreadmillsStroke.Color = Color3.fromRGB(200, 100, 250)
+    TreadmillsStroke.Color = Color3.fromRGB(255, 70, 90)
     TreadmillsStroke.Transparency = 0.3
     TreadmillsStroke.Thickness = 1.5
     TreadmillsStroke.Parent = TreadmillsMenuBtn
 
     local TreadmillsDropdown = Instance.new("Frame")
     TreadmillsDropdown.Parent = TreadmillsContainer
-    TreadmillsDropdown.BackgroundColor3 = Color3.fromRGB(18, 7, 30)
+    TreadmillsDropdown.BackgroundColor3 = Color3.fromRGB(25, 8, 10)
     TreadmillsDropdown.BackgroundTransparency = 0.1
     TreadmillsDropdown.Position = UDim2.new(0, 0, 0, 44)
     TreadmillsDropdown.Size = UDim2.new(1, -8, 0, 115)
@@ -1059,20 +1168,20 @@ loadMainHub = function()
     Instance.new("UICorner", TreadmillsDropdown).CornerRadius = UDim.new(0, 8)
 
     local UIStrokeTreadDrop = Instance.new("UIStroke")
-    UIStrokeTreadDrop.Color = Color3.fromRGB(230, 130, 255)
+    UIStrokeTreadDrop.Color = Color3.fromRGB(255, 110, 130)
     UIStrokeTreadDrop.Thickness = 2
     UIStrokeTreadDrop.Parent = TreadmillsDropdown
 
     local function createTreadmillBtn(name, yPos)
         local btn = Instance.new("TextButton")
         btn.Parent = TreadmillsDropdown
-        btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
         btn.Position = UDim2.new(0, 8, 0, yPos)
         btn.Size = UDim2.new(1, -16, 0, 24)
         btn.ZIndex = 11
         btn.Font = Enum.Font.GothamBold
         btn.Text = name .. " [OFF]"
-        btn.TextColor3 = Color3.fromRGB(255, 210, 255)
+        btn.TextColor3 = Color3.fromRGB(255, 200, 205)
         btn.TextSize = 10
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
         return btn
@@ -1092,7 +1201,7 @@ loadMainHub = function()
 
     local SpeedContainer = Instance.new("Frame")
     SpeedContainer.Parent = TreadmillsContainer
-    SpeedContainer.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+    SpeedContainer.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
     SpeedContainer.BackgroundTransparency = 0.25
     SpeedContainer.Position = UDim2.new(0, 0, 0, 166)
     SpeedContainer.Size = UDim2.new(1, -8, 0, 42)
@@ -1100,7 +1209,7 @@ loadMainHub = function()
     Instance.new("UICorner", SpeedContainer).CornerRadius = UDim.new(0, 8)
 
     local SpeedStroke = Instance.new("UIStroke")
-    SpeedStroke.Color = Color3.fromRGB(200, 100, 250)
+    SpeedStroke.Color = Color3.fromRGB(255, 70, 90)
     SpeedStroke.Transparency = 0.3
     SpeedStroke.Thickness = 1.5
     SpeedStroke.Parent = SpeedContainer
@@ -1113,13 +1222,13 @@ loadMainHub = function()
     SpeedLabel.ZIndex = 6
     SpeedLabel.Font = Enum.Font.GothamBold
     SpeedLabel.Text = "⚡ Velocidad Teleguiado:"
-    SpeedLabel.TextColor3 = Color3.fromRGB(255, 220, 255)
+    SpeedLabel.TextColor3 = Color3.fromRGB(255, 200, 205)
     SpeedLabel.TextSize = 10
     SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     local SpeedBox = Instance.new("TextBox")
     SpeedBox.Parent = SpeedContainer
-    SpeedBox.BackgroundColor3 = Color3.fromRGB(35, 15, 55)
+    SpeedBox.BackgroundColor3 = Color3.fromRGB(55, 15, 20)
     SpeedBox.Position = UDim2.new(1, -75, 0, 6)
     SpeedBox.Size = UDim2.new(0, 65, 0, 28)
     SpeedBox.ZIndex = 6
@@ -1137,7 +1246,7 @@ loadMainHub = function()
     TreadmillStatusInfo.ZIndex = 5
     TreadmillStatusInfo.Font = Enum.Font.GothamMedium
     TreadmillStatusInfo.Text = "Estado: Selecciona caminadora..."
-    TreadmillStatusInfo.TextColor3 = Color3.fromRGB(230, 170, 255)
+    TreadmillStatusInfo.TextColor3 = Color3.fromRGB(255, 180, 195)
     TreadmillStatusInfo.TextSize = 9.5
     TreadmillStatusInfo.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1147,7 +1256,7 @@ loadMainHub = function()
     local function createToggleOption(name, yPos, callback)
         local frame = Instance.new("Frame")
         frame.Parent = VisualsContainer
-        frame.BackgroundColor3 = Color3.fromRGB(22, 10, 38)
+        frame.BackgroundColor3 = Color3.fromRGB(38, 10, 12)
         frame.BackgroundTransparency = 0.25
         frame.Position = UDim2.new(0, 0, 0, yPos)
         frame.Size = UDim2.new(1, -8, 0, 36)
@@ -1155,7 +1264,7 @@ loadMainHub = function()
         Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(200, 100, 250)
+        stroke.Color = Color3.fromRGB(255, 70, 90)
         stroke.Transparency = 0.3
         stroke.Thickness = 1.5
         stroke.Parent = frame
@@ -1168,13 +1277,13 @@ loadMainHub = function()
         label.ZIndex = 6
         label.Font = Enum.Font.GothamBold
         label.Text = name
-        label.TextColor3 = Color3.fromRGB(255, 220, 255)
+        label.TextColor3 = Color3.fromRGB(255, 200, 205)
         label.TextSize = 10.5
         label.TextXAlignment = Enum.TextXAlignment.Left
 
         local toggleBg = Instance.new("TextButton")
         toggleBg.Parent = frame
-        toggleBg.BackgroundColor3 = Color3.fromRGB(55, 25, 80)
+        toggleBg.BackgroundColor3 = Color3.fromRGB(80, 25, 35)
         toggleBg.Position = UDim2.new(1, -48, 0.5, -11)
         toggleBg.Size = UDim2.new(0, 40, 0, 22)
         toggleBg.AutoButtonColor = false
@@ -1194,10 +1303,10 @@ loadMainHub = function()
         toggleBg.MouseButton1Click:Connect(function()
             active = not active
             if active then
-                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(180, 50, 240)}):Play()
+                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(230, 40, 70)}):Play()
                 TweenService:Create(circle, TweenInfo.new(0.15), {Position = UDim2.new(1, -19, 0.5, -8)}):Play()
             else
-                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(55, 25, 80)}):Play()
+                TweenService:Create(toggleBg, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(80, 25, 35)}):Play()
                 TweenService:Create(circle, TweenInfo.new(0.15), {Position = UDim2.new(0, 3, 0.5, -8)}):Play()
             end
             callback(active)
@@ -1207,7 +1316,7 @@ loadMainHub = function()
 
     local ProfitCard = Instance.new("Frame")
     ProfitCard.Parent = VisualsContainer
-    ProfitCard.BackgroundColor3 = Color3.fromRGB(18, 8, 30)
+    ProfitCard.BackgroundColor3 = Color3.fromRGB(25, 8, 10)
     ProfitCard.BackgroundTransparency = 0.2
     ProfitCard.Position = UDim2.new(0, 0, 0, 92)
     ProfitCard.Size = UDim2.new(1, -8, 0, 155)
@@ -1215,7 +1324,7 @@ loadMainHub = function()
     Instance.new("UICorner", ProfitCard).CornerRadius = UDim.new(0, 10)
 
     local ProfitStroke = Instance.new("UIStroke")
-    ProfitStroke.Color = Color3.fromRGB(255, 140, 240)
+    ProfitStroke.Color = Color3.fromRGB(255, 70, 90)
     ProfitStroke.Thickness = 1.8
     ProfitStroke.Parent = ProfitCard
 
@@ -1227,7 +1336,7 @@ loadMainHub = function()
     ProfitTitle.ZIndex = 6
     ProfitTitle.Font = Enum.Font.GothamBold
     ProfitTitle.Text = "📊 Profit Tracker (Real-Time)"
-    ProfitTitle.TextColor3 = Color3.fromRGB(255, 210, 255)
+    ProfitTitle.TextColor3 = Color3.fromRGB(255, 200, 205)
     ProfitTitle.TextSize = 11
     ProfitTitle.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1240,7 +1349,7 @@ loadMainHub = function()
         lbl.ZIndex = 6
         lbl.Font = Enum.Font.GothamMedium
         lbl.Text = name .. ": Calculando en tiempo real..."
-        lbl.TextColor3 = Color3.fromRGB(230, 190, 255)
+        lbl.TextColor3 = Color3.fromRGB(255, 180, 195)
         lbl.TextSize = 10
         lbl.TextXAlignment = Enum.TextXAlignment.Left
         return lbl
@@ -1334,7 +1443,7 @@ loadMainHub = function()
                             if not originalColors[part] then
                                 originalColors[part] = part.Color
                             end
-                            part.Color = Color3.fromRGB(255, 182, 218)
+                            part.Color = Color3.fromRGB(255, 130, 150)
                         else
                             if originalColors[part] then
                                 part.Color = originalColors[part]
@@ -1367,7 +1476,7 @@ loadMainHub = function()
                         linePart.Anchored = true
                         linePart.CanCollide = false
                         linePart.Material = Enum.Material.Neon
-                        linePart.Color = Color3.fromRGB(255, 120, 245)
+                        linePart.Color = Color3.fromRGB(255, 70, 90)
                         linePart.Parent = espFolder
 
                         local billboard = Instance.new("BillboardGui")
@@ -1384,17 +1493,17 @@ loadMainHub = function()
                         nameLabel.Size = UDim2.new(1, 0, 1, 0)
                         nameLabel.Font = Enum.Font.GothamBold
                         nameLabel.Text = "🎯 " .. plr.Name
-                        nameLabel.TextColor3 = Color3.fromRGB(255, 190, 255)
+                        nameLabel.TextColor3 = Color3.fromRGB(255, 180, 195)
                         nameLabel.TextSize = 11.5
                         nameLabel.TextStrokeTransparency = 0.2
-                        nameLabel.TextStrokeColor3 = Color3.fromRGB(120, 20, 160)
+                        nameLabel.TextStrokeColor3 = Color3.fromRGB(120, 20, 30)
 
                         for _, part in pairs(char:GetDescendants()) do
                             if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                                 if not originalColors[part] then
                                     originalColors[part] = part.Color
                                 end
-                                part.Color = Color3.fromRGB(255, 182, 218)
+                                part.Color = Color3.fromRGB(255, 130, 150)
                             end
                         end
                     end
@@ -1418,7 +1527,7 @@ loadMainHub = function()
             applyPinkBodies(false)
             showFloatingMessage("ESP Desactivado")
         else
-            showFloatingMessage("ESP Activado (Líneas, Nombres y Cuerpos Rosa) 💜")
+            showFloatingMessage("ESP Activado (Líneas, Nombres y Cuerpos Rojos) 🌹")
         end
     end)
 
@@ -1438,7 +1547,7 @@ loadMainHub = function()
 
                 Lighting.Brightness = 1.8
                 Lighting.GlobalShadows = true
-                Lighting.OutdoorAmbient = Color3.fromRGB(90, 85, 110)
+                Lighting.OutdoorAmbient = Color3.fromRGB(110, 85, 90)
 
                 local bloom = Lighting:FindFirstChild("FoxnameRainBloom") or Instance.new("BloomEffect", Lighting)
                 bloom.Name = "FoxnameRainBloom"
@@ -1448,7 +1557,7 @@ loadMainHub = function()
 
                 local cc = Lighting:FindFirstChild("FoxnameRainCC") or Instance.new("ColorCorrectionEffect", Lighting)
                 cc.Name = "FoxnameRainCC"
-                cc.TintColor = Color3.fromRGB(225, 230, 255)
+                cc.TintColor = Color3.fromRGB(255, 225, 230)
                 cc.Saturation = 0.05
                 cc.Contrast = 0.15
 
@@ -1472,7 +1581,7 @@ loadMainHub = function()
     end)
 
     ------------------------------------------------------------------
-    -- 👑 APARTADO: TITLES (CON ANIMACIONES SÚPER AVANZADAS EN LA CABEZA)
+    -- 👑 APARTADO: TITLES
     ------------------------------------------------------------------
     local PlayTimeLabel = Instance.new("TextLabel")
     PlayTimeLabel.Parent = TitlesContainer
@@ -1482,7 +1591,7 @@ loadMainHub = function()
     PlayTimeLabel.ZIndex = 5
     PlayTimeLabel.Font = Enum.Font.GothamBold
     PlayTimeLabel.Text = "⏳ Tiempo Jugado: 00:00:00"
-    PlayTimeLabel.TextColor3 = Color3.fromRGB(255, 220, 255)
+    PlayTimeLabel.TextColor3 = Color3.fromRGB(255, 200, 205)
     PlayTimeLabel.TextSize = 10.5
     PlayTimeLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1494,7 +1603,7 @@ loadMainHub = function()
     EquippedTitleLabel.ZIndex = 5
     EquippedTitleLabel.Font = Enum.Font.GothamMedium
     EquippedTitleLabel.Text = "🏷️ Título Equipado: Ninguno"
-    EquippedTitleLabel.TextColor3 = Color3.fromRGB(230, 170, 255)
+    EquippedTitleLabel.TextColor3 = Color3.fromRGB(255, 180, 195)
     EquippedTitleLabel.TextSize = 10
     EquippedTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1573,12 +1682,11 @@ loadMainHub = function()
                 tLbl.Size = UDim2.new(1, 0, 1, 0)
                 tLbl.Font = Enum.Font.GothamBold
                 tLbl.Text = "👑 " .. equippedTitleName .. " 👑"
-                tLbl.TextColor3 = Color3.fromRGB(255, 200, 255)
+                tLbl.TextColor3 = Color3.fromRGB(255, 180, 195)
                 tLbl.TextSize = 15
                 tLbl.TextStrokeTransparency = 0.15
-                tLbl.TextStrokeColor3 = Color3.fromRGB(110, 20, 160)
+                tLbl.TextStrokeColor3 = Color3.fromRGB(110, 20, 30)
 
-                -- Animación Pro Max súper avanzada (Color HSV fluido + Levitación + Pulso rítmico)
                 task.spawn(function()
                     local t = 0
                     while bb and bb.Parent do
@@ -1609,15 +1717,15 @@ loadMainHub = function()
 
                 if isEquipped then
                     btn.Text = "👑 " .. tData.name .. " [EQUIPADO]"
-                    btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160)
+                    btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55)
                 elseif isUnlocked then
                     btn.Text = "✨ " .. tData.name .. " [DESBLOQUEADO]"
-                    btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+                    btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
                 else
                     local leftSec = tData.req - savedPlayedTime
                     local leftMin = math.ceil(leftSec / 60)
                     btn.Text = "🔒 " .. tData.name .. " (Faltan " .. leftMin .. "m)"
-                    btn.BackgroundColor3 = Color3.fromRGB(20, 10, 35)
+                    btn.BackgroundColor3 = Color3.fromRGB(30, 10, 12)
                 end
             end
         end
@@ -1664,18 +1772,18 @@ loadMainHub = function()
         local yPos = (idx - 1) * 34
         local tBtn = Instance.new("TextButton")
         tBtn.Parent = TitlesListFrame
-        tBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        tBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
         tBtn.Position = UDim2.new(0, 8, 0, yPos)
         tBtn.Size = UDim2.new(1, -16, 0, 28)
         tBtn.ZIndex = 6
         tBtn.Font = Enum.Font.GothamBold
         tBtn.Text = tData.name
-        tBtn.TextColor3 = Color3.fromRGB(255, 210, 255)
+        tBtn.TextColor3 = Color3.fromRGB(255, 200, 205)
         tBtn.TextSize = 10
         Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 6)
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(230, 130, 255)
+        stroke.Color = Color3.fromRGB(255, 110, 130)
         stroke.Transparency = 0.3
         stroke.Thickness = 1.2
         stroke.Parent = tBtn
@@ -1721,27 +1829,21 @@ loadMainHub = function()
     updateHeadBillboard()
 
     ------------------------------------------------------------------
-    -- 👑 OWNER CONTAINER
+    -- 👑 OWNER CONTAINER (CON ID 131232429463966)
     ------------------------------------------------------------------
     local OwnerAvatar = Instance.new("ImageLabel")
     OwnerAvatar.Parent = OwnerContainer
-    OwnerAvatar.BackgroundColor3 = Color3.fromRGB(40, 20, 60)
+    OwnerAvatar.BackgroundColor3 = Color3.fromRGB(60, 20, 25)
     OwnerAvatar.Position = UDim2.new(0.5, -30, 0, 10)
     OwnerAvatar.Size = UDim2.new(0, 60, 0, 60)
     OwnerAvatar.ZIndex = 5
-
-    pcall(function()
-        OwnerAvatar.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-    end)
-
-    if OwnerAvatar.Image == "" then
-        OwnerAvatar.Image = "rbxassetid://104233303368529"
-    end
+    OwnerAvatar.Image = "rbxassetid://131232429463966"
+    OwnerAvatar.ScaleType = Enum.ScaleType.Crop
 
     Instance.new("UICorner", OwnerAvatar).CornerRadius = UDim.new(1, 0)
 
     local OwnerStroke = Instance.new("UIStroke")
-    OwnerStroke.Color = Color3.fromRGB(230, 130, 255)
+    OwnerStroke.Color = Color3.fromRGB(255, 110, 130)
     OwnerStroke.Thickness = 2.5
     OwnerStroke.Parent = OwnerAvatar
 
@@ -1752,13 +1854,13 @@ loadMainHub = function()
     OwnerTextTitle.Size = UDim2.new(1, 0, 0, 20)
     OwnerTextTitle.ZIndex = 5
     OwnerTextTitle.Font = Enum.Font.GothamBold
-    OwnerTextTitle.Text = "👑 Creador del Hub: " .. player.Name
-    OwnerTextTitle.TextColor3 = Color3.fromRGB(255, 220, 255)
+    OwnerTextTitle.Text = "👑 Creador del Hub: Foxname"
+    OwnerTextTitle.TextColor3 = Color3.fromRGB(255, 200, 205)
     OwnerTextTitle.TextSize = 11
     OwnerTextTitle.TextXAlignment = Enum.TextXAlignment.Center
 
     ------------------------------------------------------------------
-    -- BUCLES DE FUNCIONAMIENTO DE WORLDS Y TREADMILLS
+    -- BUCLES DE FUNCIONAMIENTO DE WORLDS (TELETRANSPORTE A -> B Y TELEGUIADO B -> C)
     ------------------------------------------------------------------
     local posA5 = Vector3.new(-439.1, 27.3, 7596.8)
     local posB5 = Vector3.new(-7599.7, 284.7, 8388.9)
@@ -1803,7 +1905,7 @@ loadMainHub = function()
             part.Anchored = true
             part.CanCollide = false
             part.Material = Enum.Material.Neon
-            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Color = Color3.fromRGB(255, 70, 90)
             part.Parent = beamFolder
         end)
     end
@@ -1818,39 +1920,39 @@ loadMainHub = function()
 
     local function resetAllWorlds()
         world1Active, world2Active, world3Active, world4Active, world5Active, worldGalaxyActive = false, false, false, false, false, false
-        World5Btn.Text = "World 5 [OFF]"; World5Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World1Btn.Text = "World 1 [OFF]"; World1Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World2Btn.Text = "World 2 [OFF]"; World2Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World3Btn.Text = "World 3 [OFF]"; World3Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        World4Btn.Text = "World 4 [OFF]"; World4Btn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        WorldGalaxyBtn.Text = "🌌 Galaxy World [OFF]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        World5Btn.Text = "World 5 [OFF]"; World5Btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        World1Btn.Text = "World 1 [OFF]"; World1Btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        World2Btn.Text = "World 2 [OFF]"; World2Btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        World3Btn.Text = "World 3 [OFF]"; World3Btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        World4Btn.Text = "World 4 [OFF]"; World4Btn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        WorldGalaxyBtn.Text = "🌌 Galaxy World [OFF]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
         StatusInfo.Text = "Estado: Apagado"
         clearNeonLine()
     end
 
     World5Btn.MouseButton1Click:Connect(function()
         world5Active = not world5Active
-        if world5Active then resetAllWorlds(); world5Active = true; World5Btn.Text = "World 5 [ON]"; World5Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 5 Activo 💜" else resetAllWorlds() end
+        if world5Active then resetAllWorlds(); world5Active = true; World5Btn.Text = "World 5 [ON]"; World5Btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: World 5 Activo 🌹" else resetAllWorlds() end
     end)
     World1Btn.MouseButton1Click:Connect(function()
         world1Active = not world1Active
-        if world1Active then resetAllWorlds(); world1Active = true; World1Btn.Text = "World 1 [ON]"; World1Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 1 Activo 💜" else resetAllWorlds() end
+        if world1Active then resetAllWorlds(); world1Active = true; World1Btn.Text = "World 1 [ON]"; World1Btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: World 1 Activo 🌹" else resetAllWorlds() end
     end)
     World2Btn.MouseButton1Click:Connect(function()
         world2Active = not world2Active
-        if world2Active then resetAllWorlds(); world2Active = true; World2Btn.Text = "World 2 [ON]"; World2Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 2 Activo 💜" else resetAllWorlds() end
+        if world2Active then resetAllWorlds(); world2Active = true; World2Btn.Text = "World 2 [ON]"; World2Btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: World 2 Activo 🌹" else resetAllWorlds() end
     end)
     World3Btn.MouseButton1Click:Connect(function()
         world3Active = not world3Active
-        if world3Active then resetAllWorlds(); world3Active = true; World3Btn.Text = "World 3 [ON]"; World3Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 3 Activo 💜" else resetAllWorlds() end
+        if world3Active then resetAllWorlds(); world3Active = true; World3Btn.Text = "World 3 [ON]"; World3Btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: World 3 Activo 🌹" else resetAllWorlds() end
     end)
     World4Btn.MouseButton1Click:Connect(function()
         world4Active = not world4Active
-        if world4Active then resetAllWorlds(); world4Active = true; World4Btn.Text = "World 4 [ON]"; World4Btn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: World 4 Activo 💜" else resetAllWorlds() end
+        if world4Active then resetAllWorlds(); world4Active = true; World4Btn.Text = "World 4 [ON]"; World4Btn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: World 4 Activo 🌹" else resetAllWorlds() end
     end)
     WorldGalaxyBtn.MouseButton1Click:Connect(function()
         worldGalaxyActive = not worldGalaxyActive
-        if worldGalaxyActive then resetAllWorlds(); worldGalaxyActive = true; WorldGalaxyBtn.Text = "🌌 Galaxy World [ON]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); StatusInfo.Text = "Estado: Galaxy World Activo 💜" else resetAllWorlds() end
+        if worldGalaxyActive then resetAllWorlds(); worldGalaxyActive = true; WorldGalaxyBtn.Text = "🌌 Galaxy World [ON]"; WorldGalaxyBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); StatusInfo.Text = "Estado: Galaxy World Activo 🌹" else resetAllWorlds() end
     end)
 
     local function runWorldLoop(isActiveRef, posA, posB, posC, worldName)
@@ -1862,17 +1964,22 @@ loadMainHub = function()
                     local humanoid = char and char:FindFirstChildOfClass("Humanoid")
 
                     if root and humanoid then
+                        -- 1. Teletransporte de A hacia B
                         root.CFrame = CFrame.new(posA)
-                        task.wait(0.2)
+                        task.wait(0.1)
                         if not isActiveRef() then break end
 
                         root.CFrame = CFrame.new(posB)
-                        task.wait(0.2)
+                        task.wait(0.1)
                         if not isActiveRef() then break end
 
-                        local travelTime = 3.5
+                        StatusInfo.Text = "Estado: " .. worldName  .. " - Teleguiando de B hacia C..."
+
+                        -- 2. Teleguiado de B hacia C usando la velocidad configurada
+                        local customSpeed = tonumber(WorldSpeedBox.Text) or 50
+                        local distance = (posB - posC).Magnitude
+                        local travelTime = math.clamp(distance / customSpeed, 0.2, 10)
                         local elapsed = 0
-                        StatusInfo.Text = "Estado: " .. worldName .. " - Recorriendo..."
 
                         while isActiveRef() and char and char.Parent and elapsed < travelTime do
                             local dt = RunService.RenderStepped:Wait()
@@ -1884,23 +1991,58 @@ loadMainHub = function()
                             drawNeonLine(root.Position, posC)
                         end
 
+                        if not isActiveRef() then break end
                         root.CFrame = CFrame.new(posC)
                         clearNeonLine()
 
+                        -- 3. Bucle en C hasta detectar win
+                        local initialWins = 0
                         pcall(function()
-                            for _, obj in pairs(Workspace:GetDescendants()) do
-                                if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
-                                    local part = obj.Parent
-                                    if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
-                                        firetouchinterest(root, part, 0)
-                                        firetouchinterest(root, part, 1)
+                            local leaderstats = player:FindFirstChild("leaderstats")
+                            if leaderstats then
+                                for _, stat in pairs(leaderstats:GetChildren()) do
+                                    if string.find(string.lower(stat.Name), "win") or string.find(string.lower(stat.Name), "copa") then
+                                        initialWins = stat.Value
                                     end
                                 end
                             end
                         end)
 
-                        StatusInfo.Text = "Estado: ¡Completado (" .. worldName .. ")! 💜"
-                        task.wait(1.0)
+                        local winDetected = false
+                        while isActiveRef() and char and char.Parent and not winDetected do
+                            if humanoid.Health <= 0 then break end
+                            root.CFrame = CFrame.new(posC)
+
+                            pcall(function()
+                                for _, obj in pairs(Workspace:GetDescendants()) do
+                                    if obj and obj.Parent and (obj:IsA("TouchTransmitter") or obj.ClassName == "TouchTransmitter") then
+                                        local part = obj.Parent
+                                        if part:IsA("BasePart") and (part.Position - posC).Magnitude < 25 then
+                                            firetouchinterest(root, part, 0)
+                                            firetouchinterest(root, part, 1)
+                                        end
+                                    end
+                                end
+
+                                local leaderstats = player:FindFirstChild("leaderstats")
+                                if leaderstats then
+                                    for _, stat in pairs(leaderstats:GetChildren()) do
+                                        if string.find(string.lower(stat.Name), "win") or string.find(string.lower(stat.Name), "copa") then
+                                            if stat.Value > initialWins then
+                                                winDetected = true
+                                            end
+                                        end
+                                    end
+                                end
+                            end)
+
+                            if not winDetected and task.wait(0.15) then
+                                -- Bucle continúa hasta agarrar win
+                            end
+                        end
+
+                        StatusInfo.Text = "Estado: ¡Win detectada (" .. worldName .. ")! Reiniciando bucle..."
+                        task.wait(0.2)
                     else
                         task.wait(1)
                     end
@@ -1932,7 +2074,7 @@ loadMainHub = function()
             part.Anchored = true
             part.CanCollide = false
             part.Material = Enum.Material.Neon
-            part.Color = Color3.fromRGB(180, 100, 255)
+            part.Color = Color3.fromRGB(255, 70, 90)
             part.Parent = treadmillFolder
         end)
     end
@@ -1945,29 +2087,29 @@ loadMainHub = function()
 
     local function resetAllTreadmills()
         treadmillBasicActive, treadmillGoldActive, treadmillGalaxyActive, treadmillVoidActive = false, false, false, false
-        TreadmillBasicBtn.Text = "A: Basic Treadmill [OFF]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillGoldBtn.Text = "B: Gold Treadmill [OFF]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [OFF]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
-        TreadmillVoidBtn.Text = "D: Void Treadmill [OFF]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(55, 20, 85)
+        TreadmillBasicBtn.Text = "A: Basic Treadmill [OFF]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        TreadmillGoldBtn.Text = "B: Gold Treadmill [OFF]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [OFF]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
+        TreadmillVoidBtn.Text = "D: Void Treadmill [OFF]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(90, 20, 35)
         TreadmillStatusInfo.Text = "Estado: Apagado"
         clearTreadmillBeam()
     end
 
     TreadmillBasicBtn.MouseButton1Click:Connect(function()
         treadmillBasicActive = not treadmillBasicActive
-        if treadmillBasicActive then resetAllTreadmills(); treadmillBasicActive = true; TreadmillBasicBtn.Text = "A: Basic Treadmill [ON]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: A (Basic) Activo 🏃" else resetAllTreadmills() end
+        if treadmillBasicActive then resetAllTreadmills(); treadmillBasicActive = true; TreadmillBasicBtn.Text = "A: Basic Treadmill [ON]"; TreadmillBasicBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); TreadmillStatusInfo.Text = "Estado: A (Basic) Activo 🏃" else resetAllTreadmills() end
     end)
     TreadmillGoldBtn.MouseButton1Click:Connect(function()
         treadmillGoldActive = not treadmillGoldActive
-        if treadmillGoldActive then resetAllTreadmills(); treadmillGoldActive = true; TreadmillGoldBtn.Text = "B: Gold Treadmill [ON]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: B (Gold) Activo 🏃" else resetAllTreadmills() end
+        if treadmillGoldActive then resetAllTreadmills(); treadmillGoldActive = true; TreadmillGoldBtn.Text = "B: Gold Treadmill [ON]"; TreadmillGoldBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); TreadmillStatusInfo.Text = "Estado: B (Gold) Activo 🏃" else resetAllTreadmills() end
     end)
     TreadmillGalaxyBtn.MouseButton1Click:Connect(function()
         treadmillGalaxyActive = not treadmillGalaxyActive
-        if treadmillGalaxyActive then resetAllTreadmills(); treadmillGalaxyActive = true; TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [ON]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: C (Galaxy) Activo 🏃" else resetAllTreadmills() end
+        if treadmillGalaxyActive then resetAllTreadmills(); treadmillGalaxyActive = true; TreadmillGalaxyBtn.Text = "C: Galaxy Treadmill [ON]"; TreadmillGalaxyBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); TreadmillStatusInfo.Text = "Estado: C (Galaxy) Activo 🏃" else resetAllTreadmills() end
     end)
     TreadmillVoidBtn.MouseButton1Click:Connect(function()
         treadmillVoidActive = not treadmillVoidActive
-        if treadmillVoidActive then resetAllTreadmills(); treadmillVoidActive = true; TreadmillVoidBtn.Text = "D: Void Treadmill [ON]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(110, 40, 160); TreadmillStatusInfo.Text = "Estado: D (Void) Activo 🏃" else resetAllTreadmills() end
+        if treadmillVoidActive then resetAllTreadmills(); treadmillVoidActive = true; TreadmillVoidBtn.Text = "D: Void Treadmill [ON]"; TreadmillVoidBtn.BackgroundColor3 = Color3.fromRGB(180, 35, 55); TreadmillStatusInfo.Text = "Estado: D (Void) Activo 🏃" else resetAllTreadmills() end
     end)
 
     local function runTreadmillTeleguiado(isActiveRef, targetCoord, treadmillName)
@@ -2032,8 +2174,8 @@ loadMainHub = function()
         end)
     end
 
-    runTreadmillTeleguiado(function() return treadmillBasicActive end, posTreadmillA, "Basic (A)")
-    runTreadmillTeleguiado(function() return treadmillGoldActive end, posTreadmillB, "Gold (B)")
-    runTreadmillTeleguiado(function() return treadmillGalaxyActive end, posTreadmillC, "Galaxy (C)")
-    runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void (D)")
+    runTreadmillTeleguiado(function() return treadmillBasicActive end, posTreadmillA, "Basic Treadmill")
+    runTreadmillTeleguiado(function() return treadmillGoldActive end, posTreadmillB, "Gold Treadmill")
+    runTreadmillTeleguiado(function() return treadmillGalaxyActive end, posTreadmillC, "Galaxy Treadmill")
+    runTreadmillTeleguiado(function() return treadmillVoidActive end, posTreadmillD, "Void Treadmill")
 end
