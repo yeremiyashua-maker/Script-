@@ -1,0 +1,636 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+
+local LocalPlayer = Players.LocalPlayer
+local AssetId = "rbxassetid://128503599478671"
+
+-- Coordenadas
+local COORD_C = Vector3.new(16.1, 11.7, -33.9)
+local COORD_A = Vector3.new(909.9, 9027.9, -55.7)
+local COORD_B = Vector3.new(909.7, 9031.1, -41.7)
+
+-- Limpiar instancias previas
+if CoreGui:FindFirstChild("JujutsuHub_V2") then
+    CoreGui.JujutsuHub_V2:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "JujutsuHub_V2"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- Pantalla Completa (Welcome / Bye)
+local function showFullScreenMessage(titleText, subText, duration)
+    local FullFrame = Instance.new("Frame")
+    FullFrame.Size = UDim2.new(1, 0, 1, 0)
+    FullFrame.Position = UDim2.new(0, 0, 0, 0)
+    FullFrame.BackgroundColor3 = Color3.fromRGB(5, 10, 20)
+    FullFrame.BackgroundTransparency = 0.2
+    FullFrame.ZIndex = 100
+    FullFrame.Parent = ScreenGui
+
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(0, 320, 0, 180)
+    Container.Position = UDim2.new(0.5, -160, 0.5, -90)
+    Container.BackgroundColor3 = Color3.fromRGB(10, 18, 32)
+    Container.ZIndex = 101
+    Container.Parent = FullFrame
+    Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 14)
+
+    local Stroke = Instance.new("UIStroke", Container)
+    Stroke.Color = Color3.fromRGB(0, 170, 255)
+    Stroke.Thickness = 2
+
+    local Icon = Instance.new("ImageLabel")
+    Icon.Size = UDim2.new(0, 60, 0, 60)
+    Icon.Position = UDim2.new(0.5, -30, 0, 15)
+    Icon.Image = AssetId
+    Icon.BackgroundTransparency = 1
+    Icon.ZIndex = 102
+    Icon.Parent = Container
+
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, -20, 0, 30)
+    Title.Position = UDim2.new(0, 10, 0, 85)
+    Title.Text = titleText
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 16
+    Title.TextColor3 = Color3.fromRGB(0, 200, 255)
+    Title.BackgroundTransparency = 1
+    Title.ZIndex = 102
+    Title.Parent = Container
+
+    local Sub = Instance.new("TextLabel")
+    Sub.Size = UDim2.new(1, -20, 0, 25)
+    Sub.Position = UDim2.new(0, 10, 0, 120)
+    Sub.Text = subText or ""
+    Sub.Font = Enum.Font.GothamMedium
+    Sub.TextSize = 12
+    Sub.TextColor3 = Color3.fromRGB(200, 230, 255)
+    Sub.BackgroundTransparency = 1
+    Sub.ZIndex = 102
+    Sub.Parent = Container
+
+    task.delay(duration or 2.5, function()
+        if FullFrame and FullFrame.Parent then
+            local tween = TweenService:Create(FullFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+            TweenService:Create(Container, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+            tween:Play()
+            tween.Completed:Connect(function() FullFrame:Destroy() end)
+        end
+    end)
+end
+
+-- Mensaje de Bienvenida al Ejecutar
+showFullScreenMessage("Welcome to Jujutsu Hub ✨", "Cargando componentes...", 2.5)
+
+-- Overhead Title Animado sobre la Cabeza
+local function setupOverhead(character)
+    if not character then return end
+    local head = character:WaitForChild("Head", 5)
+    if not head then return end
+    
+    if head:FindFirstChild("JujutsuTag") then head.JujutsuTag:Destroy() end
+
+    local bbGui = Instance.new("BillboardGui")
+    bbGui.Name = "JujutsuTag"
+    bbGui.Size = UDim2.new(0, 160, 0, 42)
+    bbGui.StudsOffset = Vector3.new(0, 2.5, 0)
+    bbGui.AlwaysOnTop = true
+    bbGui.Parent = head
+
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(1, 0, 1, 0)
+    Container.BackgroundColor3 = Color3.fromRGB(8, 15, 28)
+    Container.BackgroundTransparency = 0.15
+    Container.Parent = bbGui
+    Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 😎
+    
+    local TagStroke = Instance.new("UIStroke", Container)
+    TagStroke.Color = Color3.fromRGB(0, 160, 255)
+
+    local TagImg = Instance.new("ImageLabel")
+    TagImg.Size = UDim2.new(0, 26, 0, 26)
+    TagImg.Position = UDim2.new(0, 6, 0.5, -13)
+    TagImg.Image = AssetId
+    TagImg.BackgroundTransparency = 1
+    TagImg.Parent = Container
+
+    local TagText = Instance.new("TextLabel")
+    TagText.Size = UDim2.new(1, -38, 1, 0)
+    TagText.Position = UDim2.new(0, 34, 0, 0)
+    TagText.Text = "Jujutsu Hub"
+    TagText.Font = Enum.Font.GothamBold
+    TagText.TextSize = 12
+    TagText.TextColor3 = Color3.fromRGB(0, 200, 255)
+    TagText.TextXAlignment = Enum.TextXAlignment.Left
+    TagText.BackgroundTransparency = 1
+    TagText.Parent = Container
+
+    task.spawn(function()
+        while bbGui and bbGui.Parent do
+            TweenService:Create(bbGui, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {StudsOffset = Vector3.new(0, 3.1, 0)}):Play()
+            task.wait(1.2)
+            TweenService:Create(bbGui, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {StudsOffset = Vector3.new(0, 2.3, 0)}):Play()
+            task.wait(1.2)
+        end
+    end)
+end
+
+if LocalPlayer.Character then setupOverhead(LocalPlayer.Character) end
+LocalPlayer.CharacterAdded:Connect(setupOverhead)
+
+-- TopBar Principal
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(0, 390, 0, 38)
+TopBar.Position = UDim2.new(0.5, -195, 0.12, 0)
+TopBar.BackgroundColor3 = Color3.fromRGB(10, 16, 26)
+TopBar.ZIndex = 10
+TopBar.Parent = ScreenGui
+
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 19)
+local TopBarStroke = Instance.new("UIStroke", TopBar)
+TopBarStroke.Color = Color3.fromRGB(0, 120, 220)
+
+-- Movimiento de la UI
+local dragging, dragInput, dragStart, startPos
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = TopBar.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+TopBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        TopBar.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Logo
+local Logo = Instance.new("ImageLabel")
+Logo.Size = UDim2.new(0, 28, 0, 28)
+Logo.Position = UDim2.new(0, 6, 0.5, -14)
+Logo.Image = AssetId
+Logo.BackgroundTransparency = 1
+Logo.ZIndex = 12
+Logo.Parent = TopBar
+
+-- Título
+local Title = Instance.new("TextLabel")
+Title.Text = "Jujutsu Hub"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 13
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Position = UDim2.new(0, 40, 0.5, -8)
+Title.Size = UDim2.new(0, 80, 0, 16)
+Title.BackgroundTransparency = 1
+Title.ZIndex = 12
+Title.Parent = TopBar
+
+-- Avatar del usuario
+local UserAvatar = Instance.new("ImageLabel")
+UserAvatar.Size = UDim2.new(0, 24, 0, 24)
+UserAvatar.Position = UDim2.new(0, 126, 0.5, -12)
+UserAvatar.BackgroundTransparency = 1
+UserAvatar.ZIndex = 12
+UserAvatar.Parent = TopBar
+Instance.new("UICorner", UserAvatar).CornerRadius = UDim.new(1, 0)
+
+pcall(function()
+    UserAvatar.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+end)
+
+-- FPS Info
+local UserInfo = Instance.new("TextLabel")
+UserInfo.Size = UDim2.new(0, 150, 0, 22)
+UserInfo.Position = UDim2.new(0, 154, 0.5, -11)
+UserInfo.Font = Enum.Font.GothamMedium
+UserInfo.TextSize = 10
+UserInfo.TextColor3 = Color3.fromRGB(150, 200, 255)
+UserInfo.BackgroundTransparency = 1
+UserInfo.TextXAlignment = Enum.TextXAlignment.Left
+UserInfo.ZIndex = 12
+UserInfo.Parent = TopBar
+
+local frameCount, lastUpdate = 0, os.clock()
+RunService.RenderStepped:Connect(function()
+    frameCount = frameCount + 1
+    local now = os.clock()
+    if now - lastUpdate >= 0.5 then
+        UserInfo.Text = LocalPlayer.Name .. " | " .. math.floor(frameCount / (now - lastUpdate)) .. " FPS"
+        frameCount = 0
+        lastUpdate = now
+    end
+end)
+
+-- Botones (+ y ×)
+local PlusBtn = Instance.new("TextButton")
+PlusBtn.Text = "+"
+PlusBtn.Font = Enum.Font.GothamBold
+PlusBtn.TextSize = 20
+PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlusBtn.Size = UDim2.new(0, 26, 0, 26)
+PlusBtn.Position = UDim2.new(1, -64, 0.5, -13)
+PlusBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 160)
+PlusBtn.ZIndex = 15
+PlusBtn.Parent = TopBar
+Instance.new("UICorner", PlusBtn).CornerRadius = UDim.new(0, 😎
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Text = "×"
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 18
+CloseBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.Position = UDim2.new(1, -32, 0.5, -13)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 15, 25)
+CloseBtn.ZIndex = 15
+CloseBtn.Parent = TopBar
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 😎
+
+-- Menú Principal Contenedor Azul
+local MenuContainer = Instance.new("Frame")
+MenuContainer.Size = UDim2.new(1, 0, 0, 0)
+MenuContainer.Position = UDim2.new(0, 0, 1, 6)
+MenuContainer.BackgroundColor3 = Color3.fromRGB(8, 12, 20)
+MenuContainer.ClipsDescendants = true
+MenuContainer.Visible = false
+MenuContainer.ZIndex = 9
+MenuContainer.Parent = TopBar
+Instance.new("UICorner", MenuContainer).CornerRadius = UDim.new(0, 12)
+
+local MenuStroke = Instance.new("UIStroke", MenuContainer)
+MenuStroke.Color = Color3.fromRGB(0, 100, 200)
+
+-- Sidebar
+local Sidebar = Instance.new("Frame")
+Sidebar.Size = UDim2.new(0, 105, 1, 0)
+Sidebar.BackgroundColor3 = Color3.fromRGB(12, 18, 30)
+Sidebar.ZIndex = 10
+Sidebar.Parent = MenuContainer
+
+local SidebarList = Instance.new("UIListLayout", Sidebar)
+SidebarList.Padding = UDim.new(0, 5)
+SidebarList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+local ContentArea = Instance.new("Frame")
+ContentArea.Size = UDim2.new(1, -112, 1, -10)
+ContentArea.Position = UDim2.new(0, 110, 0, 5)
+ContentArea.BackgroundTransparency = 1
+ContentArea.ZIndex = 10
+ContentArea.Parent = MenuContainer
+
+local Pages = {}
+local function createTab(name)
+    local TabBtn = Instance.new("TextButton")
+    TabBtn.Size = UDim2.new(0, 95, 0, 26)
+    TabBtn.Text = name
+    TabBtn.Font = Enum.Font.GothamMedium
+    TabBtn.TextSize = 11
+    TabBtn.TextColor3 = Color3.fromRGB(150, 190, 240)
+    TabBtn.BackgroundColor3 = Color3.fromRGB(15, 25, 42)
+    TabBtn.ZIndex = 11
+    TabBtn.Parent = Sidebar
+    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
+
+    local Page = Instance.new("Frame")
+    Page.Size = UDim2.new(1, 0, 1, 0)
+    Page.BackgroundTransparency = 1
+    Page.Visible = false
+    Page.ZIndex = 10
+    Page.Parent = ContentArea
+
+    Pages[name] = {Page = Page, Button = TabBtn}
+
+    TabBtn.MouseButton1Click:Connect(function()
+        for _, p in pairs(Pages) do
+            p.Page.Visible = false
+            p.Button.BackgroundColor3 = Color3.fromRGB(15, 25, 42)
+            p.Button.TextColor3 = Color3.fromRGB(150, 190, 240)
+        end
+        Page.Visible = true
+        TabBtn.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+    return Page
+end
+
+local MainPage = createTab("Main")
+local AutoFarmPage = createTab("Auto Farm")
+local CoordPage = createTab("Coordenada")
+local OwnerPage = createTab("Owner")
+
+Pages["Main"].Page.Visible = true
+Pages["Main"].Button.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
+
+-- ==================== PESTAÑA MAIN (ESP CON LÍNEAS + SHADERS FPS) ====================
+local EspBtn = Instance.new("TextButton")
+EspBtn.Size = UDim2.new(1, -10, 0, 28)
+EspBtn.Position = UDim2.new(0, 5, 0, 5)
+EspBtn.Text = "ESP Jugadores (Líneas): OFF"
+EspBtn.Font = Enum.Font.GothamBold
+EspBtn.TextSize = 10
+EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EspBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+EspBtn.ZIndex = 11
+EspBtn.Parent = MainPage
+Instance.new("UICorner", EspBtn).CornerRadius = UDim.new(0, 6)
+
+local espActive = false
+local function applyESP(player)
+    if player == LocalPlayer then return end
+    
+    local function addESPToChar(char)
+        if not espActive then return end
+        
+        -- Highlight
+        if not char:FindFirstChild("BlueHighlightESP") then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "BlueHighlightESP"
+            highlight.FillColor = Color3.fromRGB(0, 140, 255)
+            highlight.OutlineColor = Color3.fromRGB(0, 230, 255)
+            highlight.FillTransparency = 0.4
+            highlight.Parent = char
+        end
+
+        -- Línea Tracer (Beam)
+        local hrp = char:WaitForChild("HumanoidRootPart", 5)
+        local myHrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if hrp and myHrp then
+            if char:FindFirstChild("EspTracerBeam") then char.EspTracerBeam:Destroy() end
+            
+            local att0 = Instance.new("Attachment", myHrp)
+            att0.Name = "EspAtt0"
+            local att1 = Instance.new("Attachment", hrp)
+            att1.Name = "EspAtt1"
+
+            local beam = Instance.new("Beam")
+            beam.Name = "EspTracerBeam"
+            beam.Attachment0 = att0
+            beam.Attachment1 = att1
+            beam.Color = ColorSequence.new(Color3.fromRGB(0, 170, 255))
+            beam.Width0 = 0.1
+            beam.Width1 = 0.1
+            beam.AlwaysOnTop = true
+            beam.Parent = char
+        end
+    end
+
+    player.CharacterAdded:Connect(addESPToChar)
+    if player.Character then addESPToChar(player.Character) end
+end
+
+EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    if espActive then
+        EspBtn.Text = "ESP Jugadores (Líneas): ON"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
+        for _, p in pairs(Players:GetPlayers()) do applyESP(p) end
+    else
+        EspBtn.Text = "ESP Jugadores (Líneas): OFF"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+        for _, p in pairs(Players:GetPlayers()) do
+            if p.Character then
+                if p.Character:FindFirstChild("BlueHighlightESP") then p.Character.BlueHighlightESP:Destroy() end
+                if p.Character:FindFirstChild("EspTracerBeam") then p.Character.EspTracerBeam:Destroy() end
+            end
+        end
+    end
+end)
+
+-- Botón Shaders / Max Graphics
+local FpsBtn = Instance.new("TextButton")
+FpsBtn.Size = UDim2.new(1, -10, 0, 28)
+FpsBtn.Position = UDim2.new(0, 5, 0, 38)
+FpsBtn.Text = "Shaders + Visuales: OFF"
+FpsBtn.Font = Enum.Font.GothamBold
+FpsBtn.TextSize = 10
+FpsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FpsBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+FpsBtn.ZIndex = 11
+FpsBtn.Parent = MainPage
+Instance.new("UICorner", FpsBtn).CornerRadius = UDim.new(0, 6)
+
+local shadersActive = false
+FpsBtn.MouseButton1Click:Connect(function()
+    shadersActive = not shadersActive
+    if shadersActive then
+        FpsBtn.Text = "Shaders + Visuales: ON"
+        FpsBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
+        Lighting.GlobalShadows = true
+        Lighting.Technology = Enum.Technology.Future
+    else
+        FpsBtn.Text = "Shaders + Visuales: OFF"
+        FpsBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+        Lighting.GlobalShadows = false
+    end
+end)
+
+-- ==================== PESTAÑA AUTO FARM (BUCLE AUTOMÁTICO) ====================
+local AutoFarmBtn = Instance.new("TextButton")
+AutoFarmBtn.Size = UDim2.new(1, -10, 0, 32)
+AutoFarmBtn.Position = UDim2.new(0, 5, 0, 10)
+AutoFarmBtn.Text = "Auto Farm World 1: OFF"
+AutoFarmBtn.Font = Enum.Font.GothamBold
+AutoFarmBtn.TextSize = 11
+AutoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+AutoFarmBtn.ZIndex = 11
+AutoFarmBtn.Parent = AutoFarmPage
+Instance.new("UICorner", AutoFarmBtn).CornerRadius = UDim.new(0, 6)
+
+local autoFarmRunning = false
+
+AutoFarmBtn.MouseButton1Click:Connect(function()
+    autoFarmRunning = not autoFarmRunning
+    if autoFarmRunning then
+        AutoFarmBtn.Text = "Auto Farm World 1: ON"
+        AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
+        
+        task.spawn(function()
+            while autoFarmRunning do
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local hrp = char.HumanoidRootPart
+
+                    -- Teleport Punto A
+                    hrp.CFrame = CFrame.new(COORD_A)
+                    task.wait(0.5)
+
+                    -- Desplazamiento Punto B
+                    if autoFarmRunning then
+                        local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Linear)
+                        local tween = TweenService:Create(hrp, tweenInfo, {CFrame = CFrame.new(COORD_B)})
+                        tween:Play()
+                        tween.Completed:Wait()
+                        task.wait(0.3)
+                    end
+                end
+                task.wait(0.5)
+            end
+        end)
+    else
+        AutoFarmBtn.Text = "Auto Farm World 1: OFF"
+        AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+    end
+end)
+
+-- ==================== PESTAÑA COORDENADA ====================
+local CoordLabel = Instance.new("TextLabel")
+CoordLabel.Size = UDim2.new(1, -10, 0, 45)
+CoordLabel.Position = UDim2.new(0, 5, 0, 10)
+CoordLabel.Text = "X: 0 | Y: 0 | Z: 0"
+CoordLabel.Font = Enum.Font.GothamBold
+CoordLabel.TextSize = 10
+CoordLabel.TextColor3 = Color3.fromRGB(150, 210, 255)
+CoordLabel.BackgroundColor3 = Color3.fromRGB(12, 20, 35)
+CoordLabel.ZIndex = 11
+CoordLabel.Parent = CoordPage
+Instance.new("UICorner", CoordLabel).CornerRadius = UDim.new(0, 6)
+
+RunService.RenderStepped:Connect(function()
+    if CoordPage.Visible and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local pos = LocalPlayer.Character.HumanoidRootPart.Position
+        CoordLabel.Text = string.format("X: %.1f | Y: %.1f | Z: %.1f", pos.X, pos.Y, pos.Z)
+    end
+end)
+
+local CopyCoordBtn = Instance.new("TextButton")
+CopyCoordBtn.Size = UDim2.new(1, -10, 0, 26)
+CopyCoordBtn.Position = UDim2.new(0, 5, 0, 60)
+CopyCoordBtn.Text = "Copiar Coordenada Actual"
+CopyCoordBtn.Font = Enum.Font.GothamMedium
+CopyCoordBtn.TextSize = 10
+CopyCoordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CopyCoordBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+CopyCoordBtn.ZIndex = 11
+CopyCoordBtn.Parent = CoordPage
+Instance.new("UICorner", CopyCoordBtn).CornerRadius = UDim.new(0, 6)
+
+CopyCoordBtn.MouseButton1Click:Connect(function()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local pos = LocalPlayer.Character.HumanoidRootPart.Position
+        setclipboard(string.format("%.1f, %.1f, %.1f", pos.X, pos.Y, pos.Z))
+    end
+end)
+
+-- ==================== PESTAÑA OWNER ====================
+local OwnerCard = Instance.new("Frame")
+OwnerCard.Size = UDim2.new(1, -10, 1, -10)
+OwnerCard.Position = UDim2.new(0, 5, 0, 5)
+OwnerCard.BackgroundColor3 = Color3.fromRGB(12, 20, 35)
+OwnerCard.ZIndex = 11
+OwnerCard.Parent = OwnerPage
+Instance.new("UICorner", OwnerCard).CornerRadius = UDim.new(0, 😎
+
+local OwnerAvatarCircle = Instance.new("ImageLabel")
+OwnerAvatarCircle.Size = UDim2.new(0, 42, 0, 42)
+OwnerAvatarCircle.Position = UDim2.new(0, 10, 0.5, -21)
+OwnerAvatarCircle.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+OwnerAvatarCircle.ZIndex = 12
+OwnerAvatarCircle.Parent = OwnerCard
+Instance.new("UICorner", OwnerAvatarCircle).CornerRadius = UDim.new(1, 0)
+
+pcall(function()
+    OwnerAvatarCircle.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+end)
+
+local OwnerInfoText = Instance.new("TextLabel")
+OwnerInfoText.Size = UDim2.new(1, -62, 1, 0)
+OwnerInfoText.Position = UDim2.new(0, 58, 0, 0)
+OwnerInfoText.Text = "User: " .. LocalPlayer.Name .. "\nID: " .. LocalPlayer.UserId .. "\n\nJujutsu Hub Team."
+OwnerInfoText.Font = Enum.Font.Gotham
+OwnerInfoText.TextSize = 10
+OwnerInfoText.TextColor3 = Color3.fromRGB(200, 230, 255)
+OwnerInfoText.TextXAlignment = Enum.TextXAlignment.Left
+OwnerInfoText.BackgroundTransparency = 1
+OwnerInfoText.ZIndex = 12
+OwnerInfoText.Parent = OwnerCard
+
+-- Apertura y Cierre (+)
+local isOpen, debounce = false, false
+PlusBtn.MouseButton1Click:Connect(function()
+    if debounce then return end
+    debounce = true
+    isOpen = not isOpen
+    if isOpen then
+        MenuContainer.Visible = true
+        TweenService:Create(MenuContainer, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 140)}):Play()
+    else
+        local tween = TweenService:Create(MenuContainer, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.new(1, 0, 0, 0)})
+        tween:Play()
+        tween.Completed:Connect(function() if not isOpen then MenuContainer.Visible = false end end)
+    end
+    task.wait(0.3)
+    debounce = false
+end)
+
+-- Salida (×) con Mensaje BYE
+CloseBtn.MouseButton1Click:Connect(function()
+    if ScreenGui:FindFirstChild("ConfirmModal") then return end
+    local Modal = Instance.new("Frame")
+    Modal.Name = "ConfirmModal"
+    Modal.Size = UDim2.new(0, 230, 0, 95)
+    Modal.Position = UDim2.new(0.5, -115, 0.4, 0)
+    Modal.BackgroundColor3 = Color3.fromRGB(10, 18, 30)
+    Modal.ZIndex = 40
+    Modal.Parent = ScreenGui
+    Instance.new("UICorner", Modal).CornerRadius = UDim.new(0, 10)
+
+    local ModalStroke = Instance.new("UIStroke", Modal)
+    ModalStroke.Color = Color3.fromRGB(0, 140, 255)
+
+    local Msg = Instance.new("TextLabel")
+    Msg.Size = UDim2.new(1, -20, 0, 35)
+    Msg.Position = UDim2.new(0, 10, 0, 😎
+    Msg.Text = "¿Quieres quitar el script o dejarlo?"
+    Msg.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Msg.BackgroundTransparency = 1
+    Msg.Font = Enum.Font.GothamMedium
+    Msg.TextSize = 11
+    Msg.ZIndex = 41
+    Msg.Parent = Modal
+
+    local LeaveBtn = Instance.new("TextButton")
+    LeaveBtn.Size = UDim2.new(0, 90, 0, 26)
+    LeaveBtn.Position = UDim2.new(0, 15, 1, -34)
+    LeaveBtn.Text = "Quitar"
+    LeaveBtn.Font = Enum.Font.GothamBold
+    LeaveBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 50)
+    LeaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    LeaveBtn.ZIndex = 41
+    LeaveBtn.Parent = Modal
+    Instance.new("UICorner", LeaveBtn).CornerRadius = UDim.new(0, 6)
+
+    local KeepBtn = Instance.new("TextButton")
+    KeepBtn.Size = UDim2.new(0, 90, 0, 26)
+    KeepBtn.Position = UDim2.new(1, -105, 1, -34)
+    KeepBtn.Text = "Dejar"
+    KeepBtn.Font = Enum.Font.GothamBold
+    KeepBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 200)
+    KeepBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeepBtn.ZIndex = 41
+    KeepBtn.Parent = Modal
+    Instance.new("UICorner", KeepBtn).CornerRadius = UDim.new(0, 6)
+
+    LeaveBtn.MouseButton1Click:Connect(function()
+        Modal:Destroy()
+        showFullScreenMessage("BYE 👋", "Nos vemos pronto", 2)
+        task.wait(2)
+        ScreenGui:Destroy()
+    end)
+    KeepBtn.MouseButton1Click:Connect(function() Modal:Destroy() end)
+end)
